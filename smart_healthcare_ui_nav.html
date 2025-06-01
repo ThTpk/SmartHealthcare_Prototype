@@ -14,62 +14,179 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .container {
-            display: flex;
-            height: 100vh;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        /* Main Container */
+        .main-container {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            background: white;
+            margin: 0;
+            transition: all 0.3s ease;
         }
 
-        .sidebar {
-            width: 350px;
-            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            overflow-y: auto;
-            border-right: 3px solid #3498db;
-        }
-
-        .sidebar::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: #34495e;
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: #3498db;
-            border-radius: 4px;
-        }
-
+        /* Header */
         .header {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            padding: 20px;
-            text-align: center;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 15px 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .header h1 {
-            font-size: 18px;
-            margin-bottom: 5px;
+            font-size: 24px;
             font-weight: 600;
         }
 
         .header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        .menu-info {
             font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Floating Menu Button */
+        .floating-menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .floating-menu-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(52, 152, 219, 0.6);
+        }
+
+        .floating-menu-btn.active {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            transform: rotate(45deg);
+        }
+
+        /* Navigation Overlay */
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Navigation Panel */
+        .nav-panel {
+            position: fixed;
+            top: 0;
+            left: -400px;
+            width: 400px;
+            height: 100%;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            z-index: 999;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-panel.active {
+            left: 0;
+        }
+
+        .nav-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .nav-panel::-webkit-scrollbar-track {
+            background: #34495e;
+        }
+
+        .nav-panel::-webkit-scrollbar-thumb {
+            background: #3498db;
+            border-radius: 4px;
+        }
+
+        .nav-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            padding: 30px 20px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .nav-header h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .nav-header p {
+            font-size: 14px;
             opacity: 0.9;
         }
 
+        .close-nav {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Menu Sections */
         .menu-section {
             margin: 20px 0;
         }
 
         .menu-title {
             padding: 15px 20px 10px;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
             color: #3498db;
             border-bottom: 1px solid #34495e;
@@ -79,16 +196,16 @@
         }
 
         .menu-title .icon {
-            margin-right: 8px;
-            font-size: 16px;
+            margin-right: 10px;
+            font-size: 18px;
         }
 
         .menu-item {
-            padding: 12px 20px 12px 40px;
+            padding: 15px 20px 15px 40px;
             cursor: pointer;
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
-            font-size: 13px;
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -108,345 +225,629 @@
 
         .menu-item .file-icon {
             color: #95a5a6;
-            font-size: 12px;
-        }
-
-        .content {
-            flex: 1;
-            background: white;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .content-header {
-            background: white;
-            padding: 20px 30px;
-            border-bottom: 2px solid #ecf0f1;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .content-header h2 {
-            color: #2c3e50;
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .content-header p {
-            color: #7f8c8d;
             font-size: 14px;
         }
 
-        .iframe-container {
-            flex: 1;
-            padding: 0;
+        /* Content Area */
+        .content-area {
+            width: 100%;
+            min-height: calc(100vh - 80px);
             background: #f8f9fa;
+            position: relative;
         }
 
-        iframe {
+        .content-frame {
             width: 100%;
-            height: 100%;
+            height: calc(100vh - 80px);
             border: none;
             background: white;
         }
 
-        .welcome-message {
+        /* Welcome Screen */
+        .welcome-screen {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100%;
+            height: calc(100vh - 80px);
             text-align: center;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
         }
 
         .welcome-icon {
-            font-size: 80px;
+            font-size: 100px;
             color: #3498db;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
         }
 
-        .welcome-message h2 {
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .welcome-screen h2 {
             color: #2c3e50;
-            font-size: 28px;
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .welcome-screen p {
+            color: #7f8c8d;
+            font-size: 18px;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .start-instruction {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #3498db;
+            max-width: 500px;
+        }
+
+        .start-instruction h3 {
+            color: #2c3e50;
+            font-size: 18px;
             margin-bottom: 10px;
         }
 
-        .welcome-message p {
-            color: #7f8c8d;
-            font-size: 16px;
-            max-width: 500px;
-            line-height: 1.6;
+        .start-instruction p {
+            color: #34495e;
+            font-size: 14px;
+            margin: 0;
         }
 
         .role-badges {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 30px;
+            gap: 15px;
+            margin-top: 40px;
+            justify-content: center;
         }
 
         .badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
             font-weight: 600;
             color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
         }
 
-        .badge.sa { background: #e74c3c; }
-        .badge.za { background: #3498db; }
-        .badge.zs { background: #2ecc71; }
-        .badge.ec { background: #f39c12; }
-        .badge.er { background: #9b59b6; }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 280px;
-            }
-            
-            .container {
-                flex-direction: column;
-                height: auto;
-            }
+        .badge:hover {
+            transform: translateY(-2px);
         }
 
+        .badge.sa { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .badge.za { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .badge.zs { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .badge.ec { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .badge.er { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+
+        /* Loading Animation */
         .loading {
             display: none;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
             color: #3498db;
-            font-size: 18px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Error Screen */
+        .error-screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 80px);
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+        }
+
+        .error-icon {
+            font-size: 80px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        .error-screen h2 {
+            color: #e74c3c;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .error-screen p {
+            color: #7f8c8d;
+            font-size: 16px;
+            max-width: 500px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-panel {
+                width: 300px;
+                left: -300px;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .header p {
+                font-size: 12px;
+            }
+
+            .menu-info {
+                display: none;
+            }
+
+            .welcome-screen h2 {
+                font-size: 24px;
+            }
+
+            .welcome-screen p {
+                font-size: 16px;
+            }
+
+            .welcome-icon {
+                font-size: 60px;
+            }
+
+            .role-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .floating-menu-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-panel {
+                width: 280px;
+                left: -280px;
+            }
+
+            .header {
+                padding: 10px 15px;
+            }
+
+            .floating-menu-btn {
+                top: 15px;
+                left: 15px;
+            }
+
+            .menu-item {
+                padding: 12px 15px 12px 30px;
+                font-size: 13px;
+            }
+
+            .start-instruction {
+                margin: 0 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="header">
-                <h1>🏥 Smart Healthcare System</h1>
-                <p>UI Examples Navigation</p>
-            </div>
+    <!-- Floating Menu Button -->
+    <button class="floating-menu-btn" id="menuBtn" onclick="toggleNavigation()">
+        ☰
+    </button>
 
-            <!-- System Admin Section -->
-            <div class="menu-section">
-                <div class="menu-title">
-                    <span class="icon">👨‍💼</span>
-                    System Admin (SA)
-                </div>
-                <div class="menu-item" onclick="loadPage('System Admin/sa_sod_mockup.html', 'System Overview Dashboard', 'ภาพรวมระบบทั้งหมด')">
-                    System Overview Dashboard
-                    <span class="file-icon">📊</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('System Admin/sa_zm_mockup.html', 'Zone Management', 'จัดการ Zone ทั้งหมด')">
-                    Zone Management
-                    <span class="file-icon">🏢</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('System Admin/sa_um_mockup.html', 'User Management', 'จัดการผู้ใช้งานระบบ')">
-                    User Management
-                    <span class="file-icon">👥</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('System Admin/sa_shm_mockup.html', 'System Health Monitoring', 'ตรวจสอบสถานะระบบ')">
-                    System Health Monitoring
-                    <span class="file-icon">⚡</span>
-                </div>
-            </div>
+    <!-- Navigation Overlay -->
+    <div class="nav-overlay" id="navOverlay" onclick="closeNavigation()"></div>
 
-            <!-- Zone Admin Section -->
-            <div class="menu-section">
-                <div class="menu-title">
-                    <span class="icon">🏥</span>
-                    Zone Admin (ZA)
-                </div>
-                <div class="menu-item" onclick="loadPage('Zone Admin/za_zd_mockup.html', 'Zone Dashboard', 'ภาพรวม Zone')">
-                    Zone Dashboard
-                    <span class="file-icon">📈</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Zone Admin/za_device_management.html', 'Device Management', 'จัดการอุปกรณ์')">
-                    Device Management
-                    <span class="file-icon">⌚</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Zone Admin/za_elderly_registration.html', 'Elderly Registration', 'ลงทะเบียนผู้สูงอายุ')">
-                    Elderly Registration
-                    <span class="file-icon">👴</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Zone Admin/za_caregiver_management.html', 'Caregiver Management', 'จัดการผู้ดูแลผู้สูงอายุ')">
-                    Caregiver Management
-                    <span class="file-icon">👨‍⚕️</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Zone Admin/za_zone_staff_management.html', 'Zone Staff Management', 'จัดการ Zone Staff')">
-                    Zone Staff Management
-                    <span class="file-icon">👩‍💼</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Zone Admin/za_zone_map_overview.html', 'Zone Map Overview', 'แผนที่ภาพรวม Zone')">
-                    Zone Map Overview
-                    <span class="file-icon">🗺️</span>
-                </div>
-            </div>
+    <!-- Navigation Panel -->
+    <div class="nav-panel" id="navPanel">
+        <button class="close-nav" onclick="closeNavigation()">×</button>
+        
+        <div class="nav-header">
+            <h2>🏥 Smart Healthcare System</h2>
+            <p>UI Examples Navigation</p>
+        </div>
 
-            <!-- Zone Staff Section -->
-            <div class="menu-section">
-                <div class="menu-title">
-                    <span class="icon">📊</span>
-                    Zone Staff (ZS)
-                </div>
-                <div class="menu-item" onclick="loadPage('Zone Staff/zs_elderly_monitoring.html', 'Elderly Monitoring', 'ติดตามผู้สูงอายุ')">
-                    Elderly Monitoring
-                    <span class="file-icon">👀</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Zone Staff/zs_elderly_detail_view.html', 'Elderly Detail View', 'รายละเอียดผู้สูงอายุ')">
-                    Elderly Detail View
-                    <span class="file-icon">📋</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Zone Staff/zs_alert_management.html', 'Alert Management', 'จัดการการแจ้งเตือน')">
-                    Alert Management
-                    <span class="file-icon">🚨</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Zone Staff/zs_reports.html', 'Reports', 'รายงานต่างๆ')">
-                    Reports
-                    <span class="file-icon">📄</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Zone Staff/zs_map-overview.html', 'Zone Map Overview', 'แผนที่ภาพรวม Zone (Read Only)')">
-                    Zone Map Overview
-                    <span class="file-icon">🗺️</span>
-                </div>
+        <!-- System Admin Section -->
+        <div class="menu-section">
+            <div class="menu-title">
+                <span class="icon">👨‍💼</span>
+                System Admin (SA)
             </div>
-
-            <!-- Elderly Caregiver Section -->
-            <div class="menu-section">
-                <div class="menu-title">
-                    <span class="icon">👥</span>
-                    Elderly Caregiver (EC)
-                </div>
-                <div class="menu-item" onclick="loadPage('Caregiver/ec-caregiver dashboard.html', 'Caregiver Dashboard', 'ภาพรวมผู้ดูแล')">
-                    Caregiver Dashboard
-                    <span class="file-icon">🏠</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Caregiver/ec_elderly-health-detail.html', 'Elderly Health Detail', 'รายละเอียดสุขภาพผู้สูงอายุ')">
-                    Elderly Health Detail
-                    <span class="file-icon">❤️</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Caregiver/ec_personal_alerts.html', 'Personal Alerts', 'การแจ้งเตือนส่วนตัว')">
-                    Personal Alerts
-                    <span class="file-icon">🔔</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Caregiver/ec_notification-settings.html', 'Notification Settings', 'ตั้งค่าการแจ้งเตือน')">
-                    Notification Settings
-                    <span class="file-icon">⚙️</span>
-                </div>
+            <div class="menu-item" onclick="loadPage('System Admin/sa_sod_mockup.html', 'System Overview Dashboard', 'ภาพรวมระบบทั้งหมด')">
+                System Overview Dashboard
+                <span class="file-icon">📊</span>
             </div>
+            <div class="menu-item" onclick="loadPage('System Admin/sa_zm_mockup.html', 'Zone Management', 'จัดการ Zone ทั้งหมด')">
+                Zone Management
+                <span class="file-icon">🏢</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('System Admin/sa_um_mockup.html', 'User Management', 'จัดการผู้ใช้งานระบบ')">
+                User Management
+                <span class="file-icon">👥</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('System Admin/sa_shm_mockup.html', 'System Health Monitoring', 'ตรวจสอบสถานะระบบ')">
+                System Health Monitoring
+                <span class="file-icon">⚡</span>
+            </div>
+        </div>
 
-            <!-- Emergency Response Section -->
-            <div class="menu-section">
-                <div class="menu-title">
-                    <span class="icon">🚑</span>
-                    Emergency Response
+        <!-- Zone Admin Section -->
+        <div class="menu-section">
+            <div class="menu-title">
+                <span class="icon">🏥</span>
+                Zone Admin (ZA)
+            </div>
+            <div class="menu-item" onclick="loadPage('Zone Admin/za_zd_mockup.html', 'Zone Dashboard', 'ภาพรวม Zone')">
+                Zone Dashboard
+                <span class="file-icon">📈</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Zone Admin/za_device_management.html', 'Device Management', 'จัดการอุปกรณ์')">
+                Device Management
+                <span class="file-icon">⌚</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Zone Admin/za_elderly_registration.html', 'Elderly Registration', 'ลงทะเบียนผู้สูงอายุ')">
+                Elderly Registration
+                <span class="file-icon">👴</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Zone Admin/za_caregiver_management.html', 'Caregiver Management', 'จัดการผู้ดูแลผู้สูงอายุ')">
+                Caregiver Management
+                <span class="file-icon">👨‍⚕️</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Zone Admin/za_zone_staff_management.html', 'Zone Staff Management', 'จัดการ Zone Staff')">
+                Zone Staff Management
+                <span class="file-icon">👩‍💼</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Zone Admin/za_zone_map_overview.html', 'Zone Map Overview', 'แผนที่ภาพรวม Zone')">
+                Zone Map Overview
+                <span class="file-icon">🗺️</span>
+            </div>
+        </div>
+
+        <!-- Zone Staff Section -->
+        <div class="menu-section">
+            <div class="menu-title">
+                <span class="icon">📊</span>
+                Zone Staff (ZS)
+            </div>
+            <div class="menu-item" onclick="loadPage('Zone Staff/zs_elderly_monitoring.html', 'Elderly Monitoring', 'ติดตามผู้สูงอายุ')">
+                Elderly Monitoring
+                <span class="file-icon">👀</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Zone Staff/zs_elderly_detail_view.html', 'Elderly Detail View', 'รายละเอียดผู้สูงอายุ')">
+                Elderly Detail View
+                <span class="file-icon">📋</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Zone Staff/zs_alert_management.html', 'Alert Management', 'จัดการการแจ้งเตือน')">
+                Alert Management
+                <span class="file-icon">🚨</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Zone Staff/zs_reports.html', 'Reports', 'รายงานต่างๆ')">
+                Reports
+                <span class="file-icon">📄</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Zone Staff/zs_map-overview.html', 'Zone Map Overview', 'แผนที่ภาพรวม Zone (Read Only)')">
+                Zone Map Overview
+                <span class="file-icon">🗺️</span>
+            </div>
+        </div>
+
+        <!-- Elderly Caregiver Section -->
+        <div class="menu-section">
+            <div class="menu-title">
+                <span class="icon">👥</span>
+                Elderly Caregiver (EC)
+            </div>
+            <div class="menu-item" onclick="loadPage('Caregiver/ec-caregiver dashboard.html', 'Caregiver Dashboard', 'ภาพรวมผู้ดูแล')">
+                Caregiver Dashboard
+                <span class="file-icon">🏠</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Caregiver/ec_elderly-health-detail.html', 'Elderly Health Detail', 'รายละเอียดสุขภาพผู้สูงอายุ')">
+                Elderly Health Detail
+                <span class="file-icon">❤️</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Caregiver/ec_personal_alerts.html', 'Personal Alerts', 'การแจ้งเตือนส่วนตัว')">
+                Personal Alerts
+                <span class="file-icon">🔔</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Caregiver/ec_notification-settings.html', 'Notification Settings', 'ตั้งค่าการแจ้งเตือน')">
+                Notification Settings
+                <span class="file-icon">⚙️</span>
+            </div>
+        </div>
+
+        <!-- Emergency Response Section -->
+        <div class="menu-section">
+            <div class="menu-title">
+                <span class="icon">🚑</span>
+                Emergency Response
+            </div>
+            <div class="menu-item" onclick="loadPage('Emergency Response/er_emergency_response_dashboard.html', 'Emergency Response Dashboard', 'การตอบสนองฉุกเฉิน')">
+                Emergency Response Dashboard
+                <span class="file-icon">🆘</span>
+            </div>
+            <div class="menu-item" onclick="loadPage('Emergency Response/er_patient_emergency_profile.html', 'Patient Emergency Profile', 'ข้อมูลผู้ป่วยฉุกเฉิน')">
+                Patient Emergency Profile
+                <span class="file-icon">🏥</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div>
+                    <h1 id="pageTitle">Smart Healthcare System</h1>
+                    <p id="pageDescription">เลือกหน้าจากเมนูเพื่อดู UI Examples</p>
                 </div>
-                <div class="menu-item" onclick="loadPage('Emergency Response/er_emergency_response_dashboard.html', 'Emergency Response Dashboard', 'การตอบสนองฉุกเฉิน')">
-                    Emergency Response Dashboard
-                    <span class="file-icon">🆘</span>
-                </div>
-                <div class="menu-item" onclick="loadPage('Emergency Response/er_patient_emergency_profile.html', 'Patient Emergency Profile', 'ข้อมูลผู้ป่วยฉุกเฉิน')">
-                    Patient Emergency Profile
-                    <span class="file-icon">🏥</span>
+                <div class="menu-info">
+                    คลิกที่ปุ่มเมนู ☰ เพื่อเลือกหน้า
                 </div>
             </div>
         </div>
 
         <!-- Content Area -->
-        <div class="content">
-            <div class="content-header">
-                <h2 id="page-title">Smart Healthcare System</h2>
-                <p id="page-description">เลือกหน้าจากเมนูด้านซ้ายเพื่อดู UI Examples</p>
-            </div>
-
-            <div class="iframe-container">
-                <div class="welcome-message" id="welcome-message">
-                    <div class="welcome-icon">🏥</div>
-                    <h2>ยินดีต้อนรับสู่ Smart Healthcare System</h2>
-                    <p>ระบบการดูแลสุขภาพผู้สูงอายุแบบครบวงจร ที่ใช้เทคโนโลยี Internet of Things (IoT) และ LoRaWAN Network</p>
-                    
-                    <div class="role-badges">
-                        <span class="badge sa">System Admin</span>
-                        <span class="badge za">Zone Admin</span>
-                        <span class="badge zs">Zone Staff</span>
-                        <span class="badge ec">Elderly Caregiver</span>
-                        <span class="badge er">Emergency Response</span>
-                    </div>
+        <div class="content-area">
+            <!-- Welcome Screen -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-icon">🏥</div>
+                <h2>ยินดีต้อนรับสู่ Smart Healthcare System</h2>
+                <p>ระบบการดูแลสุขภาพผู้สูงอายุแบบครบวงจร ที่ใช้เทคโนโลยี Internet of Things (IoT) และ LoRaWAN Network</p>
+                
+                <div class="start-instruction">
+                    <h3>🎯 วิธีการใช้งาน</h3>
+                    <p>คลิกที่ปุ่มเมนู ☰ ที่มุมซ้ายบนเพื่อเลือกดู UI Examples ของแต่ละประเภทผู้ใช้งาน</p>
                 </div>
 
-                <div class="loading" id="loading">กำลังโหลด...</div>
-                <iframe id="content-iframe" style="display: none;"></iframe>
+                <div class="role-badges">
+                    <span class="badge sa">System Admin</span>
+                    <span class="badge za">Zone Admin</span>
+                    <span class="badge zs">Zone Staff</span>
+                    <span class="badge ec">Elderly Caregiver</span>
+                    <span class="badge er">Emergency Response</span>
+                </div>
             </div>
+
+            <!-- Loading Screen -->
+            <div class="loading" id="loadingScreen">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">กำลังโหลด...</div>
+            </div>
+
+            <!-- Error Screen -->
+            <div class="error-screen" id="errorScreen">
+                <div class="error-icon">❌</div>
+                <h2>ไม่สามารถโหลดไฟล์ได้</h2>
+                <p id="errorMessage">ไฟล์ที่เลือกไม่พบหรือมีปัญหาในการโหลด</p>
+            </div>
+
+            <!-- Content Frame -->
+            <iframe class="content-frame" id="contentFrame" style="display: none;"></iframe>
         </div>
     </div>
 
     <script>
+        let currentPage = null;
+
+        function toggleNavigation() {
+            const navPanel = document.getElementById('navPanel');
+            const navOverlay = document.getElementById('navOverlay');
+            const menuBtn = document.getElementById('menuBtn');
+
+            const isActive = navPanel.classList.contains('active');
+            
+            if (isActive) {
+                closeNavigation();
+            } else {
+                openNavigation();
+            }
+        }
+
+        function openNavigation() {
+            const navPanel = document.getElementById('navPanel');
+            const navOverlay = document.getElementById('navOverlay');
+            const menuBtn = document.getElementById('menuBtn');
+
+            navPanel.classList.add('active');
+            navOverlay.classList.add('active');
+            menuBtn.classList.add('active');
+            menuBtn.innerHTML = '×';
+            
+            // Prevent body scroll when nav is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeNavigation() {
+            const navPanel = document.getElementById('navPanel');
+            const navOverlay = document.getElementById('navOverlay');
+            const menuBtn = document.getElementById('menuBtn');
+
+            navPanel.classList.remove('active');
+            navOverlay.classList.remove('active');
+            menuBtn.classList.remove('active');
+            menuBtn.innerHTML = '☰';
+            
+            // Restore body scroll
+            document.body.style.overflow = 'auto';
+        }
+
         function loadPage(pagePath, title, description) {
-            const iframe = document.getElementById('content-iframe');
-            const welcomeMessage = document.getElementById('welcome-message');
-            const loading = document.getElementById('loading');
-            const pageTitle = document.getElementById('page-title');
-            const pageDescription = document.getElementById('page-description');
+            const contentFrame = document.getElementById('contentFrame');
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const loadingScreen = document.getElementById('loadingScreen');
+            const errorScreen = document.getElementById('errorScreen');
+            const pageTitle = document.getElementById('pageTitle');
+            const pageDescription = document.getElementById('pageDescription');
 
             // Update header
             pageTitle.textContent = title;
             pageDescription.textContent = description;
 
-            // Show loading
-            welcomeMessage.style.display = 'none';
-            iframe.style.display = 'none';
-            loading.style.display = 'block';
+            // Hide all screens
+            welcomeScreen.style.display = 'none';
+            contentFrame.style.display = 'none';
+            errorScreen.style.display = 'none';
+            loadingScreen.style.display = 'flex';
 
-            // Remove active class from all menu items
+            // Update active menu item
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.menu-item').classList.add('active');
+
+            // Close navigation on mobile after selection
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    closeNavigation();
+                }, 300);
+            }
+
+            // Set up iframe load handlers
+            contentFrame.onload = function() {
+                loadingScreen.style.display = 'none';
+                contentFrame.style.display = 'block';
+                currentPage = { path: pagePath, title: title, description: description };
+            };
+
+            contentFrame.onerror = function() {
+                showError(pagePath);
+            };
+
+            // Handle load errors
+            setTimeout(() => {
+                if (loadingScreen.style.display === 'flex') {
+                    showError(pagePath);
+                }
+            }, 10000); // 10 second timeout
+
+            // Load the page
+            try {
+                contentFrame.src = pagePath;
+            } catch (error) {
+                showError(pagePath);
+            }
+        }
+
+        function showError(pagePath) {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const errorScreen = document.getElementById('errorScreen');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            loadingScreen.style.display = 'none';
+            errorMessage.textContent = `ไฟล์ ${pagePath} ไม่พบหรือมีปัญหาในการโหลด`;
+            errorScreen.style.display = 'flex';
+        }
+
+        function showWelcomeScreen() {
+            const contentFrame = document.getElementById('contentFrame');
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const loadingScreen = document.getElementById('loadingScreen');
+            const errorScreen = document.getElementById('errorScreen');
+            const pageTitle = document.getElementById('pageTitle');
+            const pageDescription = document.getElementById('pageDescription');
+
+            // Hide all other screens
+            contentFrame.style.display = 'none';
+            loadingScreen.style.display = 'none';
+            errorScreen.style.display = 'none';
+            welcomeScreen.style.display = 'flex';
+
+            // Reset header
+            pageTitle.textContent = 'Smart Healthcare System';
+            pageDescription.textContent = 'เลือกหน้าจากเมนูเพื่อดู UI Examples';
+
+            // Remove active menu items
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.classList.remove('active');
             });
 
-            // Add active class to clicked item
-            event.target.closest('.menu-item').classList.add('active');
-
-            // Load page with error handling
-            iframe.onload = function() {
-                loading.style.display = 'none';
-                iframe.style.display = 'block';
-            };
-
-            iframe.onerror = function() {
-                loading.style.display = 'none';
-                welcomeMessage.innerHTML = `
-                    <div class="welcome-icon" style="color: #e74c3c;">❌</div>
-                    <h2 style="color: #e74c3c;">ไม่สามารถโหลดไฟล์ได้</h2>
-                    <p>ไฟล์ ${pagePath} ไม่พบหรือมีปัญหาในการโหลด</p>
-                `;
-                welcomeMessage.style.display = 'flex';
-            };
-
-            iframe.src = pagePath;
+            currentPage = null;
         }
 
-        // Add keyboard navigation
+        // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
+            // Ctrl + H to show home/welcome
             if (e.ctrlKey && e.key === 'h') {
                 e.preventDefault();
-                // Show welcome message
-                document.getElementById('content-iframe').style.display = 'none';
-                document.getElementById('welcome-message').style.display = 'flex';
-                document.getElementById('page-title').textContent = 'Smart Healthcare System';
-                document.getElementById('page-description').textContent = 'เลือกหน้าจากเมนูด้านซ้ายเพื่อดู UI Examples';
-                
-                // Remove active class
-                document.querySelectorAll('.menu-item').forEach(item => {
-                    item.classList.remove('active');
-                });
+                showWelcomeScreen();
+                closeNavigation();
+            }
+            
+            // Escape to close navigation
+            if (e.key === 'Escape') {
+                closeNavigation();
+            }
+            
+            // Ctrl + M to toggle menu
+            if (e.ctrlKey && e.key === 'm') {
+                e.preventDefault();
+                toggleNavigation();
             }
         });
 
-        // Add smooth scrolling to sidebar
-        document.querySelector('.sidebar').style.scrollBehavior = 'smooth';
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                // Auto-close navigation on desktop resize
+                closeNavigation();
+            }
+        });
+
+        // Prevent context menu on floating button
+        document.getElementById('menuBtn').addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showWelcomeScreen();
+        });
+
+        // Handle iframe communication (if needed)
+        window.addEventListener('message', function(event) {
+            // Handle messages from loaded iframes if needed
+            if (event.data && event.data.type === 'resize') {
+                // Handle iframe resize requests
+                const contentFrame = document.getElementById('contentFrame');
+                if (event.data.height) {
+                    contentFrame.style.height = event.data.height + 'px';
+                }
+            }
+        });
     </script>
 </body>
 </html>
