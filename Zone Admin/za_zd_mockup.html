@@ -503,7 +503,366 @@
             color: #4a5568;
         }
 
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            animation: modalScale 0.3s ease forwards;
+        }
+
+        @keyframes modalScale {
+            to { transform: scale(1); }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-content {
+            padding: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-label.required::after {
+            content: " *";
+            color: #e53e3e;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            background: #f7fafc;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            border-color: #667eea;
+            background: white;
+        }
+
+        .form-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .checkbox-label {
+            font-size: 0.9rem;
+            color: #2d3748;
+            cursor: pointer;
+        }
+
+        .alert-threshold-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .threshold-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .threshold-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .threshold-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .threshold-input {
+            flex: 1;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            padding: 25px 30px;
+            border-top: 1px solid #e2e8f0;
+            background: #f7fafc;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .device-assignment {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .device-search {
+            margin-bottom: 15px;
+        }
+
+        .device-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .device-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .device-item:hover {
+            background: #f7fafc;
+        }
+
+        .device-item:last-child {
+            border-bottom: none;
+        }
+
+        .device-info {
+            flex: 1;
+        }
+
+        .device-id {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .device-status {
+            font-size: 0.85rem;
+            color: #4a5568;
+        }
+
+        .device-available {
+            color: #48bb78;
+            font-weight: 500;
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .radio-item:hover {
+            background: #edf2f7;
+        }
+
+        .form-radio {
+            accent-color: #667eea;
+        }
+
         @media (max-width: 768px) {
+            .modal {
+                width: 95%;
+                margin: 10px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .alert-threshold-group {
+                grid-template-columns: 1fr;
+            }
+
             .header {
                 flex-direction: column;
                 gap: 15px;
@@ -545,13 +904,13 @@
                 </div>
             </div>
             <div class="quick-actions">
-                <button class="action-btn secondary">
+                <button class="action-btn secondary" onclick="openElderlyModal()">
                     <span>➕</span> เพิ่มผู้สูงอายุ
                 </button>
                 <button class="action-btn">
                     <span>📊</span> ดูรายงาน
                 </button>
-                <button class="action-btn">
+                <button class="action-btn" onclick="openZoneSettingsModal()">
                     <span>⚙️</span> ตั้งค่า Zone
                 </button>
             </div>
@@ -566,58 +925,6 @@
                         <div class="stat-label">ผู้สูงอายุทั้งหมด</div>
                         <div class="stat-change positive">
                             <span>↗</span> +3 คน ในสัปดาห์นี้
-                        </div>
-                    </div>
-                    <div class="stat-icon icon-elderly">👴</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div>
-                        <div class="stat-value">218</div>
-                        <div class="stat-label">สุขภาพปกติ</div>
-                        <div class="stat-change positive">
-                            <span>↗</span> +5 คน จากเมื่อวาน
-                        </div>
-                    </div>
-                    <div class="stat-icon icon-healthy">💚</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div>
-                        <div class="stat-value">27</div>
-                        <div class="stat-label">ต้องติดตาม</div>
-                        <div class="stat-change negative">
-                            <span>↘</span> -2 คน จากเมื่อวาน
-                        </div>
-                    </div>
-                    <div class="stat-icon icon-alert">⚠️</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div>
-                        <div class="stat-value">240</div>
-                        <div class="stat-label">อุปกรณ์ออนไลน์</div>
-                        <div class="stat-change neutral">
-                            <span>●</span> 240/245 เครื่อง
-                        </div>
-                    </div>
-                    <div class="stat-icon icon-devices">⌚</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div>
-                        <div class="stat-value">67</div>
-                        <div class="stat-label">ผู้ดูแล (EC)</div>
-                        <div class="stat-change positive">
-                            <span>↗</span> +2 คน ในเดือนนี้
                         </div>
                     </div>
                     <div class="stat-icon icon-caregivers">👨‍⚕️</div>
@@ -793,3 +1100,875 @@
                         <div class="status-indicator status-warning"></div>
                         <span class="status-text" style="color: #ed8936;">เฝ้าระวัง</span>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone Performance -->
+        <div class="zone-performance">
+            <h3 class="section-title">
+                <span>📊</span> ประสิทธิภาพ Zone
+            </h3>
+            <div class="performance-metrics">
+                <div class="performance-item">
+                    <div class="performance-value">98.2%</div>
+                    <div class="performance-label">อุปกรณ์ออนไลน์</div>
+                    <div class="performance-change change-positive">+1.2%</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value">4.5 วิ</div>
+                    <div class="performance-label">เวลาตอบสนอง</div>
+                    <div class="performance-change change-positive">-0.3 วิ</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value">89%</div>
+                    <div class="performance-label">ความพึงพอใจ</div>
+                    <div class="performance-change change-neutral">-</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value">12</div>
+                    <div class="performance-label">เหตุฉุกเฉิน/เดือน</div>
+                    <div class="performance-change change-negative">+2</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Elderly Modal -->
+    <div class="modal-overlay" id="elderlyModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <span>👴</span> เพิ่มผู้สูงอายุใหม่
+                </h2>
+                <button class="modal-close" onclick="closeElderlyModal()">×</button>
+            </div>
+            
+            <div class="modal-content">
+                <form id="elderlyForm">
+                    <!-- Personal Information Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span>📝</span> ข้อมูลส่วนตัว
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label required">ชื่อ</label>
+                                <input type="text" class="form-input" placeholder="เช่น สมใจ" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">นามสกุล</label>
+                                <input type="text" class="form-input" placeholder="เช่น ใจดี" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">เลขบัตรประชาชน</label>
+                                <input type="text" class="form-input" placeholder="1-2345-67890-12-3" maxlength="17" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">วันเกิด</label>
+                                <input type="date" class="form-input" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">เพศ</label>
+                                <select class="form-select" required>
+                                    <option value="">เลือกเพศ</option>
+                                    <option value="male">ชาย</option>
+                                    <option value="female">หญิง</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">เบอร์โทรศัพท์</label>
+                                <input type="tel" class="form-input" placeholder="08X-XXX-XXXX" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label required">ที่อยู่</label>
+                            <textarea class="form-textarea" placeholder="บ้านเลขที่ ซอย ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์" required></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Health Information Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span>🏥</span> ข้อมูลสุขภาพ
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">น้ำหนัก (กก.)</label>
+                                <input type="number" class="form-input" placeholder="เช่น 65" min="30" max="200">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">ส่วนสูง (ซม.)</label>
+                                <input type="number" class="form-input" placeholder="เช่น 165" min="120" max="220">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">กรุ๊ปเลือด</label>
+                                <select class="form-select">
+                                    <option value="">เลือกกรุ๊ปเลือด</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="AB">AB</option>
+                                    <option value="O">O</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">โรคประจำตัว</label>
+                            <div class="form-checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="diabetes">
+                                    <label class="checkbox-label" for="diabetes">เบาหวาน</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="hypertension">
+                                    <label class="checkbox-label" for="hypertension">ความดันโลหิตสูง</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="heart_disease">
+                                    <label class="checkbox-label" for="heart_disease">โรคหัวใจ</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="stroke">
+                                    <label class="checkbox-label" for="stroke">โรคหลอดเลือดสมอง</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="kidney_disease">
+                                    <label class="checkbox-label" for="kidney_disease">โรคไต</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="other_disease">
+                                    <label class="checkbox-label" for="other_disease">อื่นๆ</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">ยาที่รับประทานประจำ</label>
+                            <textarea class="form-textarea" placeholder="ระบุชื่อยา ขนาด และความถี่ในการรับประทาน"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">ยาที่แพ้</label>
+                            <textarea class="form-textarea" placeholder="ระบุยาที่แพ้และอาการที่เกิดขึ้น"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contact Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span>🚨</span> ผู้ติดต่อฉุกเฉิน
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label required">ชื่อ-นามสกุล</label>
+                                <input type="text" class="form-input" placeholder="ชื่อผู้ติดต่อฉุกเฉิน" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">ความสัมพันธ์</label>
+                                <select class="form-select" required>
+                                    <option value="">เลือกความสัมพันธ์</option>
+                                    <option value="spouse">คู่สมรส</option>
+                                    <option value="child">บุตร/ธิดา</option>
+                                    <option value="sibling">พี่น้อง</option>
+                                    <option value="relative">ญาติ</option>
+                                    <option value="friend">เพื่อน</option>
+                                    <option value="neighbor">เพื่อนบ้าน</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">เบอร์โทรศัพท์</label>
+                                <input type="tel" class="form-input" placeholder="08X-XXX-XXXX" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">อีเมล</label>
+                                <input type="email" class="form-input" placeholder="example@email.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Device Assignment Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span>⌚</span> จับคู่อุปกรณ์
+                        </div>
+                        
+                        <div class="device-assignment">
+                            <div class="device-search">
+                                <input type="text" class="form-input" placeholder="🔍 ค้นหาอุปกรณ์... (Device ID, Serial Number)">
+                            </div>
+                            
+                            <div class="device-list">
+                                <div class="device-item">
+                                    <input type="radio" name="device" id="device1" class="form-radio">
+                                    <label for="device1" class="device-info">
+                                        <div class="device-id">SW-HAT-001</div>
+                                        <div class="device-status device-available">✓ พร้อมใช้งาน • Serial: SM7890123</div>
+                                    </label>
+                                </div>
+                                
+                                <div class="device-item">
+                                    <input type="radio" name="device" id="device2" class="form-radio">
+                                    <label for="device2" class="device-info">
+                                        <div class="device-id">SW-HAT-002</div>
+                                        <div class="device-status device-available">✓ พร้อมใช้งาน • Serial: SM7890124</div>
+                                    </label>
+                                </div>
+                                
+                                <div class="device-item">
+                                    <input type="radio" name="device" id="device3" class="form-radio">
+                                    <label for="device3" class="device-info">
+                                        <div class="device-id">SW-HAT-003</div>
+                                        <div class="device-status device-available">✓ พร้อมใช้งาน • Serial: SM7890125</div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alert Threshold Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span>⚠️</span> เกณฑ์การแจ้งเตือน
+                        </div>
+                        
+                        <div class="alert-threshold-group">
+                            <div class="threshold-item">
+                                <div class="threshold-label">Heart Rate (bpm)</div>
+                                <div class="threshold-inputs">
+                                    <input type="number" class="threshold-input" placeholder="Min" value="60" min="40" max="100">
+                                    <span>-</span>
+                                    <input type="number" class="threshold-input" placeholder="Max" value="100" min="80" max="150">
+                                </div>
+                            </div>
+                            
+                            <div class="threshold-item">
+                                <div class="threshold-label">SpO2 (%)</div>
+                                <div class="threshold-inputs">
+                                    <input type="number" class="threshold-input" placeholder="Min" value="95" min="85" max="100">
+                                    <span>-</span>
+                                    <input type="number" class="threshold-input" placeholder="Max" value="100" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="threshold-item">
+                                <div class="threshold-label">Body Temp (°C)</div>
+                                <div class="threshold-inputs">
+                                    <input type="number" class="threshold-input" placeholder="Min" value="36.0" min="35.0" max="37.0" step="0.1">
+                                    <span>-</span>
+                                    <input type="number" class="threshold-input" placeholder="Max" value="37.5" min="37.0" max="39.0" step="0.1">
+                                </div>
+                            </div>
+                            
+                            <div class="threshold-item">
+                                <div class="threshold-label">Blood Pressure (mmHg)</div>
+                                <div class="threshold-inputs">
+                                    <input type="text" class="threshold-input" placeholder="Min SYS/DIA" value="90/60">
+                                    <span>-</span>
+                                    <input type="text" class="threshold-input" placeholder="Max SYS/DIA" value="140/90">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeElderlyModal()">
+                    <span>❌</span> ยกเลิก
+                </button>
+                <button type="submit" class="btn btn-primary" form="elderlyForm">
+                    <span>💾</span> บันทึกข้อมูล
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Zone Settings Modal -->
+    <div class="modal-overlay" id="zoneSettingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <span>⚙️</span> ตั้งค่า Zone - อบต.หาดใหญ่
+                </h2>
+                <button class="modal-close" onclick="closeZoneSettingsModal()">×</button>
+            </div>
+            
+            <div class="modal-content">
+                <form id="zoneSettingsForm">
+                    <!-- Basic Zone Information -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span>🏢</span> ข้อมูลพื้นฐาน Zone
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label required">ชื่อ Zone</label>
+                                <input type="text" class="form-input" value="อบต.หาดใหญ่" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">รหัส Zone</label>
+                                <input type="text" class="form-input" value="ZN001" required readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">เบอร์โทรศัพท์สำนักงาน</label>
+                                <input type="tel" class="form-input" value="074-123456" placeholder="074-XXXXXX">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">อีเมลสำนักงาน</label>
+                                <input type="email" class="form-input" value="admin@hatyai.go.th" placeholder="admin@zone.go.th">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">จำนวนอุปกรณ์สูงสุด</label>
+                                <input type="number" class="form-input" value="300" min="50" max="1000">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">จำนวน Zone Staff สูงสุด</label>
+                                <input type="number" class="form-input" value="5" min="1" max="20">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">ที่อยู่สำนักงาน</label>
+                            <textarea class="form-textarea">123 ถนนเพชรเกษม ตำบลหาดใหญ่ อำเภอหาดใหญ่ จังหวัดสงขลา 90110</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Gateway Configuration -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span>📡</span> การตั้งค่า LoRaWAN Gateway
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Gateway ID</label>
+                                <input type="text" class="form-input" value="GW-HAT-001" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Gateway Model</label>
+                                <select class="form-select">
+                                    <option value="DSGW-014" selected>DSGW-014 LoRaWAN Gateway</option>
+                                    <option value="R3000">R3000 LG-OG Outdoor Gateway</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">LoRaWAN Frequency Plan</label>
+                                <select class="form-select">
+                                    <option value="AS923" selected>AS923 (Thailand)</option>
+                                    <option value="EU868">EU868</option>
+                                    <option value="US915">US915</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Network Connection</label>
+                                <div class="radio-group">
+                                    <div class="radio-item">
+                                        <input type="radio" name="connection" id="conn_4g" class="form-radio" checked>
+                                        <label for="conn_4g">4G/LTE</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" name="connection" id="conn_wifi" class="form-radio">
+                                        <label for="conn_wifi">WiFi</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Gateway Location (GPS)</label>
+                                <div class="threshold-inputs">
+                                    <input type="text" class="threshold-input" placeholder="Latitude" value="7.0098">
+                                    <span>,</span>
+                                    <input type="text" class="threshold-input" placeholder="Longitude" value="100.4681">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alert Configuration -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span>🚨</span> การตั้งค่าการแจ้งเตือน
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">ช่องทางการแจ้งเตือน</label>
+                            <div class="form-checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="alert_sms" checked>
+                                    <label class="checkbox-label" for="alert_sms">SMS</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="alert_email" checked>
+                                    <label class="checkbox-label" for="alert_email">Email</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="alert_line" checked>
+                                    <label class="checkbox-label" for="alert_line">LINE Notify</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="alert_push">
+                                    <label class="checkbox-label" for="alert_push">Push Notification</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">เวลาตอบสนอง EC (นาที)</label>
+                                <input type="number" class="form-input" value="5" min="1" max="30">
+                                <small style="color: #666; font-size: 0.8rem;">หาก EC ไม่ตอบสนองภายในเวลานี้ จะแจ้งเตือน Zone Staff</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">เวลาตอบสนอง Zone Staff (นาที)</label>
+                                <input type="number" class="form-input" value="10" min="5" max="60">
+                                <small style="color: #666; font-size: 0.8rem;">หากไม่ตอบสนองภายในเวลานี้ จะแจ้งเตือนหน่วยงานกู้ภัย</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">ความถี่การส่งข้อมูล (วินาที)</label>
+                                <select class="form-select">
+                                    <option value="30">30 วินาที</option>
+                                    <option value="60">1 นาที</option>
+                                    <option value="120" selected>2 นาที</option>
+                                    <option value="300">5 นาที</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">โหมดประหยัดแบตเตอรี่</label>
+                                <select class="form-select">
+                                    <option value="normal" selected>ปกติ</option>
+                                    <option value="eco">ประหยัดพลังงาน</option>
+                                    <option value="ultra">ประหยัดสูงสุด</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Services Configuration -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span>🚑</span> การเชื่อมต่อหน่วยงานกู้ภัย
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">โรงพยาบาลหลัก</label>
+                                <input type="text" class="form-input" value="โรงพยาบาลหาดใหญ่">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">เบอร์โทรฉุกเฉิน</label>
+                                <input type="tel" class="form-input" value="074-273100">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">ศูนย์การแพทย์ฉุกเฉิน</label>
+                                <input type="text" class="form-input" value="EMS สงขลา">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">เบอร์ EMS</label>
+                                <input type="tel" class="form-input" value="1669">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">สถานีตำรวจ</label>
+                                <input type="text" class="form-input" value="สภ.หาดใหญ่">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">เบอร์ตำรวจ</label>
+                                <input type="tel" class="form-input" value="074-245977">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">API Endpoint สำหรับการแจ้งเตือนหน่วยงานภายนอก</label>
+                            <input type="url" class="form-input" value="https://api.emergency.hatyai.go.th/webhook" placeholder="https://api.emergency.zone.go.th/webhook">
+                        </div>
+                    </div>
+
+                    <!-- Data Management -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span>💾</span> การจัดการข้อมูล
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">ระยะเวลาเก็บข้อมูลรายละเอียด</label>
+                                <select class="form-select">
+                                    <option value="30">30 วัน</option>
+                                    <option value="90" selected>90 วัน</option>
+                                    <option value="180">180 วัน</option>
+                                    <option value="365">365 วัน</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">ระยะเวลาเก็บข้อมูลสรุป</label>
+                                <select class="form-select">
+                                    <option value="365">1 ปี</option>
+                                    <option value="730" selected>2 ปี</option>
+                                    <option value="1095">3 ปี</option>
+                                    <option value="1825">5 ปี</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">การสำรองข้อมูลอัตโนมัติ</label>
+                                <select class="form-select">
+                                    <option value="6" selected>ทุก 6 ชั่วโมง</option>
+                                    <option value="12">ทุก 12 ชั่วโมง</option>
+                                    <option value="24">ทุก 24 ชั่วโมง</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">การเข้ารหัสข้อมูล</label>
+                                <select class="form-select">
+                                    <option value="AES256" selected>AES-256</option>
+                                    <option value="AES128">AES-128</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">การปฏิบัติตาม PDPA</label>
+                            <div class="form-checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="pdpa_consent" checked>
+                                    <label class="checkbox-label" for="pdpa_consent">เปิดใช้การขอความยินยอม</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="pdpa_anonymize" checked>
+                                    <label class="checkbox-label" for="pdpa_anonymize">ทำ Data Anonymization สำหรับการวิเคราะห์</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="form-checkbox" id="pdpa_audit" checked>
+                                    <label class="checkbox-label" for="pdpa_audit">บันทึก Audit Trail</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Monitoring -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span>📊</span> การตรวจสอบประสิทธิภาพ
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">เปอร์เซ็นต์อุปกรณ์ออนไลน์ขั้นต่ำ (%)</label>
+                                <input type="number" class="form-input" value="95" min="80" max="100">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">เวลาตอบสนองของระบบสูงสุด (วินาที)</label>
+                                <input type="number" class="form-input" value="30" min="10" max="300">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">การแจ้งเตือนเมื่อระบบล่าช้า</label>
+                                <select class="form-select">
+                                    <option value="enabled" selected>เปิดใช้งาน</option>
+                                    <option value="disabled">ปิดใช้งาน</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">รายงานประสิทธิภาพอัตโนมัติ</label>
+                                <select class="form-select">
+                                    <option value="daily">รายวัน</option>
+                                    <option value="weekly" selected>รายสัปดาห์</option>
+                                    <option value="monthly">รายเดือน</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeZoneSettingsModal()">
+                    <span>❌</span> ยกเลิก
+                </button>
+                <button type="button" class="btn btn-secondary">
+                    <span>🔄</span> รีเซ็ตค่าเริ่มต้น
+                </button>
+                <button type="submit" class="btn btn-primary" form="zoneSettingsForm">
+                    <span>💾</span> บันทึกการตั้งค่า
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal Functions
+        function openElderlyModal() {
+            document.getElementById('elderlyModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeElderlyModal() {
+            document.getElementById('elderlyModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openZoneSettingsModal() {
+            document.getElementById('zoneSettingsModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeZoneSettingsModal() {
+            document.getElementById('zoneSettingsModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Form submission handlers
+        document.getElementById('elderlyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulate form submission
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalContent = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<span>⏳</span> กำลังบันทึก...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                alert('✅ บันทึกข้อมูลผู้สูงอายุเรียบร้อยแล้ว!');
+                closeElderlyModal();
+                submitBtn.innerHTML = originalContent;
+                submitBtn.disabled = false;
+                
+                // Reset form
+                e.target.reset();
+            }, 2000);
+        });
+
+        document.getElementById('zoneSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulate form submission
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalContent = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<span>⏳</span> กำลังบันทึก...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                alert('✅ บันทึกการตั้งค่า Zone เรียบร้อยแล้ว!');
+                closeZoneSettingsModal();
+                submitBtn.innerHTML = originalContent;
+                submitBtn.disabled = false;
+            }, 2000);
+        });
+
+        // ID Card formatting
+        document.querySelector('input[placeholder="1-2345-67890-12-3"]').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 1) value = value.substring(0,1) + '-' + value.substring(1);
+            if (value.length >= 6) value = value.substring(0,6) + '-' + value.substring(6);
+            if (value.length >= 12) value = value.substring(0,12) + '-' + value.substring(12);
+            if (value.length >= 15) value = value.substring(0,15) + '-' + value.substring(15);
+            if (value.length > 17) value = value.substring(0,17);
+            e.target.value = value;
+        });
+
+        // Phone number formatting
+        document.querySelectorAll('input[type="tel"]').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 3) value = value.substring(0,3) + '-' + value.substring(3);
+                if (value.length >= 7) value = value.substring(0,7) + '-' + value.substring(7);
+                if (value.length > 12) value = value.substring(0,12);
+                e.target.value = value;
+            });
+        });
+
+        // Device search functionality
+        document.querySelector('.device-search input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const deviceItems = document.querySelectorAll('.device-item');
+            
+            deviceItems.forEach(item => {
+                const deviceId = item.querySelector('.device-id').textContent.toLowerCase();
+                const deviceStatus = item.querySelector('.device-status').textContent.toLowerCase();
+                
+                if (deviceId.includes(searchTerm) || deviceStatus.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Auto-calculate BMI when weight and height are entered
+        function calculateBMI() {
+            const weight = document.querySelector('input[placeholder="เช่น 65"]').value;
+            const height = document.querySelector('input[placeholder="เช่น 165"]').value;
+            
+            if (weight && height) {
+                const heightInM = height / 100;
+                const bmi = (weight / (heightInM * heightInM)).toFixed(1);
+                
+                // You can add BMI display here if needed
+                console.log('BMI:', bmi);
+            }
+        }
+
+        // Add event listeners for BMI calculation
+        document.querySelector('input[placeholder="เช่น 65"]')?.addEventListener('input', calculateBMI);
+        document.querySelector('input[placeholder="เช่น 165"]')?.addEventListener('input', calculateBMI);
+
+        // Real-time validation for threshold values
+        document.querySelectorAll('.threshold-input').forEach(input => {
+            input.addEventListener('input', function() {
+                const min = parseFloat(input.getAttribute('min'));
+                const max = parseFloat(input.getAttribute('max'));
+                const value = parseFloat(input.value);
+                
+                if (value < min || value > max) {
+                    input.style.borderColor = '#f56565';
+                } else {
+                    input.style.borderColor = '#e2e8f0';
+                }
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // ESC to close modals
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                });
+            }
+            
+            // Ctrl+Shift+E to open elderly modal
+            if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+                e.preventDefault();
+                openElderlyModal();
+            }
+            
+            // Ctrl+Shift+S to open zone settings modal
+            if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+                e.preventDefault();
+                openZoneSettingsModal();
+            }
+        });
+
+        // Form validation helpers
+        function validateElderlyForm() {
+            const requiredFields = document.querySelectorAll('#elderlyForm [required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.style.borderColor = '#f56565';
+                    isValid = false;
+                } else {
+                    field.style.borderColor = '#e2e8f0';
+                }
+            });
+            
+            return isValid;
+        }
+
+        // Initialize tooltips or help text (if needed)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add any initialization code here
+            console.log('Smart Healthcare Dashboard loaded successfully');
+        });
+    </script>
+</body>
+</html> icon-elderly">👴</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">218</div>
+                        <div class="stat-label">สุขภาพปกติ</div>
+                        <div class="stat-change positive">
+                            <span>↗</span> +5 คน จากเมื่อวาน
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-healthy">💚</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">27</div>
+                        <div class="stat-label">ต้องติดตาม</div>
+                        <div class="stat-change negative">
+                            <span>↘</span> -2 คน จากเมื่อวาน
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-alert">⚠️</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">240</div>
+                        <div class="stat-label">อุปกรณ์ออนไลน์</div>
+                        <div class="stat-change neutral">
+                            <span>●</span> 240/245 เครื่อง
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-devices">⌚</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">67</div>
+                        <div class="stat-label">ผู้ดูแล (EC)</div>
+                        <div class="stat-change positive">
+                            <span>↗</span> +2 คน ในเดือนนี้
+                        </div>
+                    </div>
+                    <div class="stat-icon
