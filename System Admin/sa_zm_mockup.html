@@ -265,6 +265,18 @@
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .modal-header {
@@ -298,8 +310,18 @@
             color: #4a5568;
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
         .form-group {
             margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
         }
 
         .form-group label {
@@ -307,6 +329,13 @@
             color: #4a5568;
             font-weight: 500;
             margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .required-field::after {
+            content: ' *';
+            color: #e53e3e;
+            font-weight: bold;
         }
 
         .form-group input, .form-group select, .form-group textarea {
@@ -315,18 +344,27 @@
             border: 2px solid #e2e8f0;
             border-radius: 8px;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
+            font-family: inherit;
         }
 
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
         }
 
         .form-group textarea {
             resize: vertical;
             min-height: 80px;
+        }
+
+        .form-help {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 5px;
+            font-style: italic;
         }
 
         .form-actions {
@@ -348,6 +386,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            min-width: 120px;
         }
 
         .btn-primary:hover {
@@ -365,6 +404,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
+            min-width: 120px;
         }
 
         .btn-secondary:hover {
@@ -399,6 +439,29 @@
             border-color: #667eea;
         }
 
+        /* Security indicator */
+        .security-note {
+            background: linear-gradient(135deg, #fef5e7, #fed7aa);
+            border: 1px solid #f6ad55;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #744210;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .zone-description-preview {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #718096;
+            font-style: italic;
+        }
+
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -422,6 +485,10 @@
             .modal-content {
                 width: 95%;
                 padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -479,6 +546,7 @@
                         <th>รหัส Zone</th>
                         <th>ชื่อ Zone</th>
                         <th>ที่อยู่</th>
+                        <th>คำอธิบาย</th>
                         <th>เบอร์โทรศัพท์</th>
                         <th>สถานะ</th>
                         <th>สถิติการใช้งาน</th>
@@ -491,6 +559,7 @@
                         <td><strong>ZN001</strong></td>
                         <td>อบต.หาดใหญ่</td>
                         <td>123 ถ.เพชรเกษม หาดใหญ่ สงขลา 90110</td>
+                        <td><div class="zone-description-preview">พื้นที่เมืองหลักของจังหวัดสงขลา มีประชากรผู้สูงอายุจำนวนมาก</div></td>
                         <td>074-123-456</td>
                         <td><span class="status-badge status-active">ใช้งาน</span></td>
                         <td>
@@ -524,7 +593,8 @@
                     <tr>
                         <td><strong>ZN002</strong></td>
                         <td>อบต.บางละมุง</td>
-                        <td>456 ถ.สุขุมวิท บางละมุง ชลบุรี 20150</td>
+                        <td>456 ถ.สุขุมวิท บangละมุง ชลบุรี 20150</td>
+                        <td><div class="zone-description-preview">พื้นที่ชายฝั่งทะเล เป็นเมืองท่องเที่ยวสำคัญ มีผู้สูงอายุอาศัยอยู่ในชุมชน</div></td>
                         <td>038-789-012</td>
                         <td><span class="status-badge status-active">ใช้งาน</span></td>
                         <td>
@@ -559,6 +629,7 @@
                         <td><strong>ZN003</strong></td>
                         <td>อบต.คลองหอยโข่ง</td>
                         <td>789 หมู่ 3 คลองหอยโข่ง สงขลา 90115</td>
+                        <td><div class="zone-description-preview">พื้นที่ชนบท มีชุมชนประมงพื้นบ้าน กำลังอยู่ระหว่างการอัพเกรดระบบ</div></td>
                         <td>074-456-789</td>
                         <td><span class="status-badge status-maintenance">บำรุงรักษา</span></td>
                         <td>
@@ -593,6 +664,7 @@
                         <td><strong>ZN004</strong></td>
                         <td>อบต.ป่าพะยอม</td>
                         <td>234 หมู่ 5 ป่าพะยอม พัทลุง 93110</td>
+                        <td><div class="zone-description-preview">พื้นที่การเกษตร มีชุมชนผู้สูงอายุที่อาศัยในครัวเรือนขยายแบบดั้งเดิม</div></td>
                         <td>074-234-567</td>
                         <td><span class="status-badge status-active">ใช้งาน</span></td>
                         <td>
@@ -627,6 +699,7 @@
                         <td><strong>ZN005</strong></td>
                         <td>อบต.บางพลี</td>
                         <td>567 ถ.เทพารักษ์ บางพลี สมุทรปราการ 10540</td>
+                        <td><div class="zone-description-preview">-</div></td>
                         <td>02-567-890</td>
                         <td><span class="status-badge status-inactive">ไม่ใช้งาน</span></td>
                         <td>
@@ -679,49 +752,64 @@
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             
-            <form id="zoneForm">
-                <div class="form-group">
-                    <label for="zoneCode">รหัส Zone *</label>
-                    <input type="text" id="zoneCode" placeholder="เช่น ZN006" required>
+            <div class="security-note">
+                🔒 ข้อมูลทั้งหมดจะถูกเข้ารหัสและจัดเก็บอย่างปลอดภัยตามมาตรฐาน PDPA
+            </div>
+            
+            <form id="zoneForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="zoneCode" class="required-field">รหัส Zone</label>
+                        <input type="text" id="zoneCode" placeholder="เช่น ZN006" required maxlength="10" pattern="[A-Z]{2}[0-9]{3}">
+                        <div class="form-help">รูปแบบ: 2 ตัวอักษรตามด้วยเลข 3 หลัก (เช่น ZN001)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxDevices" class="required-field">จำนวนอุปกรณ์สูงสุด</label>
+                        <input type="number" id="maxDevices" placeholder="เช่น 300" min="1" max="999" required>
+                        <div class="form-help">จำนวนอุปกรณ์สูงสุดที่รองรับใน Zone นี้</div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="zoneName">ชื่อ Zone *</label>
-                    <input type="text" id="zoneName" placeholder="เช่น อบต.หาดใหญ่" required>
+                <div class="form-group full-width">
+                    <label for="zoneName" class="required-field">ชื่อ Zone</label>
+                    <input type="text" id="zoneName" placeholder="เช่น อบต.หาดใหญ่" required maxlength="100">
+                    <div class="form-help">ชื่อเต็มของหน่วยงานหรือพื้นที่</div>
                 </div>
 
-                <div class="form-group">
-                    <label for="zoneAddress">ที่อยู่ *</label>
-                    <textarea id="zoneAddress" placeholder="ที่อยู่เต็ม รวมถึงรหัสไปรษณีย์" required></textarea>
+                <div class="form-group full-width">
+                    <label for="zoneAddress" class="required-field">ที่อยู่</label>
+                    <textarea id="zoneAddress" placeholder="ที่อยู่เต็ม รวมถึงรหัสไปรษณีย์" required maxlength="500"></textarea>
+                    <div class="form-help">ระบุที่อยู่เต็มพร้อมรหัสไปรษณีย์</div>
                 </div>
 
-                <div class="form-group">
-                    <label for="zonePhone">เบอร์โทรศัพท์ *</label>
-                    <input type="tel" id="zonePhone" placeholder="เช่น 074-123-456" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="zonePhone" class="required-field">เบอร์โทรศัพท์</label>
+                        <input type="tel" id="zonePhone" placeholder="เช่น 074-123-456" required pattern="[0-9\-\(\)\+\s]+">
+                        <div class="form-help">เบอร์โทรศัพท์ติดต่อหลัก</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="zoneStatus">สถานะ</label>
+                        <select id="zoneStatus" required>
+                            <option value="active">ใช้งาน</option>
+                            <option value="inactive">ไม่ใช้งาน</option>
+                            <option value="maintenance">บำรุงรักษา</option>
+                        </select>
+                        <div class="form-help">สถานะปัจจุบันของ Zone</div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="maxDevices">จำนวนอุปกรณ์สูงสุด *</label>
-                    <input type="number" id="maxDevices" placeholder="เช่น 300" min="1" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="zoneStatus">สถานะ</label>
-                    <select id="zoneStatus" required>
-                        <option value="active">ใช้งาน</option>
-                        <option value="inactive">ไม่ใช้งาน</option>
-                        <option value="maintenance">บำรุงรักษา</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="zoneDescription">หมายเหตุ</label>
-                    <textarea id="zoneDescription" placeholder="ข้อมูลเพิ่มเติมเกี่ยวกับ Zone นี้"></textarea>
+                <div class="form-group full-width">
+                    <label for="zoneDescription">คำอธิบาย Zone</label>
+                    <textarea id="zoneDescription" placeholder="อธิบายเกี่ยวกับลักษณะพื้นที่ ประชากร หรือข้อมูลที่สำคัญของ Zone นี้" maxlength="1000"></textarea>
+                    <div class="form-help">ข้อมูลเพิ่มเติมเกี่ยวกับ Zone นี้ เช่น ลักษณะพื้นที่ ประชากร หรือข้อมูลสำคัญอื่นๆ</div>
                 </div>
 
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeModal()">ยกเลิก</button>
-                    <button type="submit" class="btn-primary">บันทึก</button>
+                    <button type="submit" class="btn-primary" id="submitBtn">บันทึก</button>
                 </div>
             </form>
         </div>
@@ -729,38 +817,177 @@
 
     <script>
         let currentEditingZone = null;
+        const zoneData = {
+            'ZN001': {
+                code: 'ZN001',
+                name: 'อบต.หาดใหญ่',
+                address: '123 ถ.เพชรเกษม หาดใหญ่ สงขลา 90110',
+                phone: '074-123-456',
+                maxDevices: 300,
+                status: 'active',
+                description: 'พื้นที่เมืองหลักของจังหวัดสงขลา มีประชากรผู้สูงอายุจำนวนมาก มีโรงพยาบาลและสถานพยาบาลครบครัน เหมาะสำหรับการติดตามสุขภาพผู้สูงอายุอย่างต่อเนื่อง'
+            },
+            'ZN002': {
+                code: 'ZN002',
+                name: 'อบต.บางละมุง',
+                address: '456 ถ.สุขุมวิท บางละมุง ชลบุรี 20150',
+                phone: '038-789-012',
+                maxDevices: 250,
+                status: 'active',
+                description: 'พื้นที่ชายฝั่งทะเล เป็นเมืองท่องเที่ยวสำคัญ มีผู้สูงอายุอาศัยอยู่ในชุมชนหลากหลาย ทั้งไทยและชาวต่างชาติ'
+            },
+            'ZN003': {
+                code: 'ZN003',
+                name: 'อบต.คลองหอยโข่ง',
+                address: '789 หมู่ 3 คลองหอยโข่ง สงขลา 90115',
+                phone: '074-456-789',
+                maxDevices: 150,
+                status: 'maintenance',
+                description: 'พื้นที่ชนบท มีชุมชนประมงพื้นบ้าน กำลังอยู่ระหว่างการอัพเกรดระบบเครือข่าย LoRaWAN เพื่อให้ครอบคลุมพื้นที่ได้ดีขึ้น'
+            }
+        };
 
         function openAddModal() {
             document.getElementById('modalTitle').textContent = 'เพิ่ม Zone ใหม่';
             document.getElementById('zoneForm').reset();
+            document.getElementById('submitBtn').textContent = 'บันทึก';
             currentEditingZone = null;
             document.getElementById('zoneModal').classList.add('show');
+            
+            // Focus on first input
+            setTimeout(() => {
+                document.getElementById('zoneCode').focus();
+            }, 100);
         }
 
         function editZone(zoneId) {
-            document.getElementById('modalTitle').textContent = 'แก้ไข Zone';
+            document.getElementById('modalTitle').textContent = 'แก้ไข Zone: ' + zoneId;
+            document.getElementById('submitBtn').textContent = 'อัปเดต';
             currentEditingZone = zoneId;
             
-            // Simulate loading existing data
-            if (zoneId === 'ZN001') {
-                document.getElementById('zoneCode').value = 'ZN001';
-                document.getElementById('zoneName').value = 'อบต.หาดใหญ่';
-                document.getElementById('zoneAddress').value = '123 ถ.เพชรเกษม หาดใหญ่ สงขลา 90110';
-                document.getElementById('zonePhone').value = '074-123-456';
-                document.getElementById('maxDevices').value = '300';
-                document.getElementById('zoneStatus').value = 'active';
+            const zone = zoneData[zoneId];
+            if (zone) {
+                document.getElementById('zoneCode').value = zone.code;
+                document.getElementById('zoneName').value = zone.name;
+                document.getElementById('zoneAddress').value = zone.address;
+                document.getElementById('zonePhone').value = zone.phone;
+                document.getElementById('maxDevices').value = zone.maxDevices;
+                document.getElementById('zoneStatus').value = zone.status;
+                document.getElementById('zoneDescription').value = zone.description;
             }
             
             document.getElementById('zoneModal').classList.add('show');
         }
 
+        function closeModal() {
+            document.getElementById('zoneModal').classList.remove('show');
+            document.getElementById('zoneForm').reset();
+            currentEditingZone = null;
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const formData = {
+                code: document.getElementById('zoneCode').value,
+                name: document.getElementById('zoneName').value,
+                address: document.getElementById('zoneAddress').value,
+                phone: document.getElementById('zonePhone').value,
+                maxDevices: document.getElementById('maxDevices').value,
+                status: document.getElementById('zoneStatus').value,
+                description: document.getElementById('zoneDescription').value
+            };
+
+            // Basic validation
+            if (!validateZoneCode(formData.code)) {
+                alert('รูปแบบรหัส Zone ไม่ถูกต้อง กรุณาใช้รูปแบบ 2 ตัวอักษรตามด้วยเลข 3 หลัก เช่น ZN001');
+                return;
+            }
+
+            if (currentEditingZone) {
+                // Update existing zone
+                console.log('Updating zone:', currentEditingZone, formData);
+                alert(`อัปเดต Zone ${formData.code} เรียบร้อยแล้ว`);
+            } else {
+                // Add new zone
+                console.log('Adding new zone:', formData);
+                alert(`เพิ่ม Zone ${formData.code} เรียบร้อยแล้ว`);
+            }
+
+            closeModal();
+            // In real implementation, this would call API to save data
+        }
+
+        function validateZoneCode(code) {
+            const pattern = /^[A-Z]{2}[0-9]{3}$/;
+            return pattern.test(code);
+        }
+
         function deleteZone(zoneId) {
-            if (confirm(`คุณแน่ใจหรือไม่ที่จะลบ Zone ${zoneId}?\n\nการลบ Zone จะส่งผลกระทบต่อข้อมูลผู้สูงอายุและอุปกรณ์ในพื้นที่นี้`)) {
-                // Simulate delete operation
-                alert(`ลบ Zone ${zoneId} เรียบร้อยแล้ว`);
+            const zone = zoneData[zoneId];
+            const zoneName = zone ? zone.name : zoneId;
+            
+            if (confirm(`คุณแน่ใจหรือไม่ที่จะลบ Zone "${zoneName}" (${zoneId})?\n\n⚠️ การลบ Zone จะส่งผลกระทบต่อ:\n• ข้อมูลผู้สูงอายุและอุปกรณ์ในพื้นที่นี้\n• บัญชีผู้ใช้งานที่เกี่ยวข้อง\n• ข้อมูลสถิติและรายงานที่ผ่านมา\n\nการดำเนินการนี้ไม่สามารถยกเลิกได้`)) {
+                console.log('Deleting zone:', zoneId);
+                alert(`ลบ Zone ${zoneName} (${zoneId}) เรียบร้อยแล้ว`);
                 // In real implementation, this would call API to delete zone
             }
         }
 
         function zoneSettings(zoneId) {
-            alert(`เปิดหน้าตั้งค่าสำหรับ Zone ${zone
+            console.log('Opening settings for zone:', zoneId);
+            alert(`เปิดหน้าตั้งค่าสำหรับ Zone ${zoneId}\n\nจะรวมถึง:\n• การจัดการผู้ใช้งาน\n• การตั้งค่า Gateway\n• การกำหนดพื้นที่ Geofencing\n• การตั้งค่าการแจ้งเตือน`);
+            // In real implementation, this would navigate to zone settings page
+        }
+
+        function filterZones() {
+            // Implementation for filtering zones based on search criteria
+            console.log('Filtering zones...');
+        }
+
+        function clearFilters() {
+            document.querySelectorAll('.filter-input, .filter-select').forEach(input => {
+                input.value = '';
+            });
+            filterZones();
+        }
+
+        function changePage(page) {
+            console.log('Changing to page:', page);
+            // Implementation for pagination
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('zoneModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('zoneModal').classList.contains('show')) {
+                closeModal();
+            }
+        });
+
+        // Auto-format zone code
+        document.getElementById('zoneCode').addEventListener('input', function(e) {
+            let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (value.length > 2) {
+                value = value.substring(0, 2) + value.substring(2).replace(/[^0-9]/g, '');
+            }
+            if (value.length > 5) {
+                value = value.substring(0, 5);
+            }
+            e.target.value = value;
+        });
+
+        // Auto-format phone number
+        document.getElementById('zonePhone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^\d\-\(\)\+\s]/g, '');
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
