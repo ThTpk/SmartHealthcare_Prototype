@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการ Zone Staff - Smart Healthcare System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .breadcrumb {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .zone-info {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .zone-details {
+            flex: 1;
+        }
+
+        .zone-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .zone-code {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .zone-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .zone-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .staff-quota {
+            background: rgba(243, 156, 18, 0.1);
+            border: 1px solid rgba(243, 156, 18, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .quota-title {
+            font-size: 14px;
+            color: #e67e22;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .quota-count {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .content-title {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 2px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 50px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+
+        .staff-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 25px;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .staff-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .staff-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .staff-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .staff-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        .staff-info {
+            flex: 1;
+        }
+
+        .staff-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .staff-position {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+
+        .status-inactive {
+            background: rgba(149, 165, 166, 0.2);
+            color: #7f8c8d;
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: #e67e22;
+        }
+
+        .contact-info {
+            background: rgba(52, 152, 219, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3498db;
+        }
+
+        .permissions-section {
+            margin-bottom: 20px;
+        }
+
+        .permissions-title {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .permission-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .permission-tag {
+            padding: 4px 8px;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .activity-log {
+            background: rgba(243, 156, 18, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .activity-item {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .staff-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        .btn-edit {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-permissions {
+            background: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-reset {
+            background: rgba(243, 156, 18, 0.1);
+            color: #f39c12;
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-remove {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .close {
+            color: #7f8c8d;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-grid-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .permissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .permission-group {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .permission-group-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #2c3e50;
+        }
+
+        .checkbox {
+            width: 16px;
+            height: 16px;
+            accent-color: #667eea;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-info {
+            background: rgba(52, 152, 219, 0.1);
+            color: #2980b9;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
+        .alert-warning {
+            background: rgba(243, 156, 18, 0.1);
+            color: #e67e22;
+            border: 1px solid rgba(243, 156, 18, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .empty-description {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .zone-info {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .zone-stats {
+                justify-content: space-around;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .action-buttons {
+                justify-content: stretch;
+            }
+            
+            .search-filter {
+                flex-direction: column;
+            }
+            
+            .staff-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <div class="header-icon">👨‍💼</div>
+                จัดการ Zone Staff Smart Healthcare
+            </h1>
+            <div class="breadcrumb">หน้าหลัก > จัดการโซน > จัดการ Zone Staff</div>
+        </div>
+
+        <!-- Zone Information -->
+        <div class="zone-info">
+            <div class="zone-details">
+                <div class="zone-name">โซนตำบลศรีสำโรง</div>
+                <div class="zone-code">รหัสโซน: ZONE-SR-001</div>
+                <div class="zone-stats">
+                    <div class="zone-stat">
+                        <div class="stat-number">147</div>
+                        <div class="stat-label">ผู้สูงอายุ</div>
+                    </div>
+                    <div class="zone-stat">
+                        <div class="stat-number">142</div>
+                        <div class="stat-label">อุปกรณ์ใช้งาน</div>
+                    </div>
+                    <div class="zone-stat">
+                        <div class="stat-number">47</div>
+                        <div class="stat-label">ผู้ดูแล</div>
+                    </div>
+                </div>
+            </div>
+            <div class="staff-quota">
+                <div class="quota-title">โควต้า Zone Staff</div>
+                <div class="quota-count">3 / 5 คน</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <h2 class="content-title">รายการ Zone Staff</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="openAddStaffModal()" id="addStaffBtn">
+                        ➕ เพิ่ม Zone Staff
+                    </button>
+                    <button class="btn btn-secondary">
+                        📊 ส่งออกรายงาน
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="search-filter">
+                <div class="search-box">
+                    <div class="search-icon">🔍</div>
+                    <input type="text" class="search-input" placeholder="ค้นหาด้วยชื่อ เบอร์โทร หรือตำแหน่ง..." id="searchInput">
+                </div>
+                <select class="filter-select" id="statusFilter">
+                    <option value="">สถานะทั้งหมด</option>
+                    <option value="active">ใช้งานปกติ</option>
+                    <option value="inactive">ไม่ใช้งาน</option>
+                    <option value="pending">รอยืนยัน</option>
+                </select>
+            </div>
+
+            <!-- Staff Grid -->
+            <div class="staff-grid" id="staffGrid">
+                <!-- Staff cards will be generated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Staff Modal -->
+    <div id="addStaffModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">เพิ่ม Zone Staff ใหม่</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div class="alert alert-info">
+                ℹ️ Zone Staff จะได้รับสิทธิ์ในการดูข้อมูลผู้สูงอายุและจัดการการแจ้งเตือนในโซนนี้เท่านั้น
+            </div>
+
+            <div class="alert alert-warning" id="quotaWarning" style="display: none;">
+                ⚠️ โซนนี้มี Zone Staff เกินโควต้าแล้ว (5 คน) ไม่สามารถเพิ่มได้อีก
+            </div>
+
+            <form id="addStaffForm">
+                <div class="form-grid form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">ชื่อ <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="staffFirstName" required placeholder="ชื่อจริง">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">นามสกุล <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="staffLastName" required placeholder="นามสกุล">
+                    </div>
+                </div>
+
+                <div class="form-grid form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">ตำแหน่ง <span class="required">*</span></label>
+                        <select class="form-input" id="staffPosition" required>
+                            <option value="">เลือกตำแหน่ง</option>
+                            <option value="healthcare_officer">เจ้าหน้าที่สาธารณสุข</option>
+                            <option value="social_worker">นักสังคมสงเคราะห์</option>
+                            <option value="admin_officer">เจ้าหน้าที่ธุรการ</option>
+                            <option value="community_health">อาสาสมัครสาธารณสุข</option>
+                            <option value="it_support">เจ้าหน้าที่ IT</option>
+                            <option value="other">อื่นๆ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">เบอร์โทรศัพท์ <span class="required">*</span></label>
+                        <input type="tel" class="form-input" id="staffPhone" required placeholder="08X-XXX-XXXX">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">อีเมล <span class="required">*</span></label>
+                    <input type="email" class="form-input" id="staffEmail" required placeholder="example@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">หมายเหตุ</label>
+                    <textarea class="form-input" id="staffNotes" rows="3" placeholder="หมายเหตุเพิ่มเติม เช่น ความเชี่ยวชาญ ประสบการณ์ ฯลฯ"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🔐 กำหนดสิทธิ์การเข้าถึง</label>
+                    <div class="permissions-grid">
+                        <div class="permission-group">
+                            <div class="permission-group-title">ข้อมูลผู้สูงอายุ</div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="perm_view_elderly" checked disabled>
+                                <label for="perm_view_elderly">ดูข้อมูลผู้สูงอายุ</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="perm_view_health">
+                                <label for="perm_view_health">ดูข้อมูลสุขภาพ</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="perm_view_reports">
+                                <label for="perm_view_reports">ดูรายงานสุขภาพ</label>
+                            </div>
+                        </div>
+
+                        <div class="permission-group">
+                            <div class="permission-group-title">การแจ้งเตือน</div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="perm_view_alerts" checked disabled>
+                                <label for="perm_view_alerts">ดูการแจ้งเตือน</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="perm_manage_alerts" checked>
+                                <label for="perm_manage_alerts">จัดการการแจ้งเตือน</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="perm_emergency_response">
+                                <label for="perm_emergency_response">ตอบสนองฉุกเฉิน</label>
+                            </div>
+                        </div>
+
+                        <div class="permission-group">
+                            <div class="permission-group-title">อุปกรณ์</div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="perm_view_devices" checked disabled>
+                                <label for="perm_view_devices">ดูข้อมูลอุปกรณ์</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="perm_device_status">
+                                <label for="perm_device_status">ตรวจสอบสถานะ</label>
+                            </div>
+                        </div>
+
+                        <div class="permission-group">
+                            <div class="permission-group-title">รายงาน</div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="perm_generate_reports">
+                                <label for="perm_generate_reports">สร้างรายงาน</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="perm_export_data">
+                                <label for="perm_export_data">ส่งออกข้อมูล</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>
+                    <button type="submit" class="btn btn-primary">เพิ่ม Zone Staff</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample staff data
+        const zoneStaff = [
+            {
+                id: 'ZS001',
+                firstName: 'สมหญิง',
+                lastName: 'ใจดี',
+                position: 'healthcare_officer',
+                phone: '089-111-2222',
+                email: 'somying@tambon.go.th',
+                status: 'active',
+                joinDate: '2024-01-15',
+                lastLogin: '2024-05-31 14:45',
+                permissions: ['view_elderly', 'view_health', 'view_reports', 'view_alerts', 'manage_alerts', 'emergency_response', 'view_devices', 'device_status', 'generate_reports'],
+                notes: 'หัวหน้าทีมสาธารณสุข มีประสบการณ์ 8 ปี'
+            },
+            {
+                id: 'ZS002',
+                firstName: 'ประชา',
+                lastName: 'สุขใส',
+                position: 'social_worker',
+                phone: '081-333-4444',
+                email: 'pracha@tambon.go.th',
+                status: 'active',
+                joinDate: '2024-02-01',
+                lastLogin: '2024-05-31 13:20',
+                permissions: ['view_elderly', 'view_health', 'view_alerts', 'manage_alerts', 'view_devices', 'generate_reports'],
+                notes: 'นักสังคมสงเคราะห์ เชี่ยวชาญด้านการดูแลผู้สูงอายุ'
+            },
+            {
+                id: 'ZS003',
+                firstName: 'วิชัย',
+                lastName: 'ทำดี',
+                position: 'it_support',
+                phone: '087-555-6666',
+                email: 'wichai@tambon.go.th',
+                status: 'active',
+                joinDate: '2024-03-15',
+                lastLogin: '2024-05-31 16:10',
+                permissions: ['view_elderly', 'view_alerts', 'view_devices', 'device_status', 'generate_reports', 'export_data'],
+                notes: 'เจ้าหน้าที่ IT รับผิดชอบระบบและอุปกรณ์'
+            }
+        ];
+
+        const maxStaffQuota = 5;
+        const currentStaffCount = zoneStaff.length;
+
+        function getStatusBadge(status) {
+            const statusMap = {
+                'active': { class: 'status-active', text: 'ใช้งานปกติ' },
+                'inactive': { class: 'status-inactive', text: 'ไม่ใช้งาน' },
+                'pending': { class: 'status-pending', text: 'รอยืนยัน' }
+            };
+            const statusInfo = statusMap[status] || { class: 'status-inactive', text: 'ไม่ทราบ' };
+            return `<span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
+        }
+
+        function getPositionLabel(position) {
+            const positionMap = {
+                'healthcare_officer': 'เจ้าหน้าที่สาธารณสุข',
+                'social_worker': 'นักสังคมสงเคราะห์',
+                'admin_officer': 'เจ้าหน้าที่ธุรการ',
+                'community_health': 'อาสาสมัครสาธารณสุข',
+                'it_support': 'เจ้าหน้าที่ IT',
+                'other': 'อื่นๆ'
+            };
+            return positionMap[position] || 'ไม่ระบุ';
+        }
+
+        function getStaffAvatar(firstName) {
+            const avatars = ['👨‍💼', '👩‍💼', '👨‍⚕️', '👩‍⚕️', '👨‍💻', '👩‍💻'];
+            return avatars[firstName.length % avatars.length];
+        }
+
+        function getPermissionLabel(permission) {
+            const permissionMap = {
+                'view_elderly': 'ดูข้อมูลผู้สูงอายุ',
+                'view_health': 'ดูข้อมูลสุขภาพ',
+                'view_reports': 'ดูรายงานสุขภาพ',
+                'view_alerts': 'ดูการแจ้งเตือน',
+                'manage_alerts': 'จัดการการแจ้งเตือน',
+                'emergency_response': 'ตอบสนองฉุกเฉิน',
+                'view_devices': 'ดูข้อมูลอุปกรณ์',
+                'device_status': 'ตรวจสอบสถานะ',
+                'generate_reports': 'สร้างรายงาน',
+                'export_data': 'ส่งออกข้อมูล'
+            };
+            return permissionMap[permission] || permission;
+        }
+
+        function createStaffCard(staff) {
+            const recentActivities = [
+                { action: 'เข้าดูข้อมูลผู้สูงอายุ', time: '14:45' },
+                { action: 'จัดการการแจ้งเตือน', time: '13:20' },
+                { action: 'สร้างรายงานรายวัน', time: '09:15' }
+            ];
+
+            return `
+                <div class="staff-card" data-status="${staff.status}">
+                    <div class="staff-header">
+                        <div style="display: flex; align-items: center;">
+                            <div class="staff-avatar">${getStaffAvatar(staff.firstName)}</div>
+                            <div class="staff-info">
+                                <div class="staff-name">${staff.firstName} ${staff.lastName}</div>
+                                <div class="staff-position">${getPositionLabel(staff.position)}</div>
+                            </div>
+                        </div>
+                        ${getStatusBadge(staff.status)}
+                    </div>
+                    
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon">📞</div>
+                            <span>${staff.phone}</span>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">✉️</div>
+                            <span>${staff.email}</span>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">📅</div>
+                            <span>เข้าร่วม: ${new Date(staff.joinDate).toLocaleDateString('th-TH')}</span>
+                        </div>
+                        ${staff.lastLogin ? `
+                        <div class="contact-item">
+                            <div class="contact-icon">🕒</div>
+                            <span>เข้าใช้ล่าสุด: ${staff.lastLogin}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="permissions-section">
+                        <div class="permissions-title">🔐 สิทธิ์การเข้าถึง</div>
+                        <div class="permission-list">
+                            ${staff.permissions.slice(0, 4).map(permission => 
+                                `<span class="permission-tag">${getPermissionLabel(permission)}</span>`
+                            ).join('')}
+                            ${staff.permissions.length > 4 ? 
+                                `<span class="permission-tag">+${staff.permissions.length - 4} อื่นๆ</span>` : ''
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="activity-log">
+                        <div class="activity-title">📋 กิจกรรมล่าสุด</div>
+                        ${recentActivities.slice(0, 3).map(activity => `
+                            <div class="activity-item">
+                                <span>${activity.action}</span>
+                                <span>${activity.time}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    ${staff.notes ? `
+                    <div style="background: rgba(102, 126, 234, 0.05); border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 13px; color: #2c3e50;">
+                        💡 ${staff.notes}
+                    </div>
+                    ` : ''}
+                    
+                    <div class="staff-actions">
+                        <button class="btn btn-small btn-edit" onclick="editStaff('${staff.id}')">
+                            ✏️ แก้ไข
+                        </button>
+                        <button class="btn btn-small btn-permissions" onclick="managePermissions('${staff.id}')">
+                            🔐 สิทธิ์
+                        </button>
+                        <button class="btn btn-small btn-reset" onclick="resetPassword('${staff.id}')">
+                            🔑 รีเซ็ตรหัสผ่าน
+                        </button>
+                        <button class="btn btn-small btn-remove" onclick="removeStaff('${staff.id}')">
+                            🗑️ ลบ
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStaff(staffToRender = zoneStaff) {
+            const staffGrid = document.getElementById('staffGrid');
+            
+            if (staffToRender.length === 0) {
+                staffGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">👨‍💼</div>
+                        <div class="empty-title">ยังไม่มี Zone Staff</div>
+                        <div class="empty-description">
+                            เพิ่ม Zone Staff เพื่อช่วยในการดูแลและติดตามผู้สูงอายุในโซนนี้<br>
+                            สามารถเพิ่มได้สูงสุด ${maxStaffQuota} คน
+                        </div>
+                    </div>
+                `;
+            } else {
+                staffGrid.innerHTML = staffToRender.map(staff => createStaffCard(staff)).join('');
+            }
+        }
+
+        function filterStaff() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            const filteredStaff = zoneStaff.filter(staff => {
+                const matchesSearch = !searchTerm || 
+                    `${staff.firstName} ${staff.lastName}`.toLowerCase().includes(searchTerm) ||
+                    staff.phone.includes(searchTerm) ||
+                    staff.email.toLowerCase().includes(searchTerm) ||
+                    getPositionLabel(staff.position).toLowerCase().includes(searchTerm);
+                
+                const matchesStatus = !statusFilter || staff.status === statusFilter;
+                
+                return matchesSearch && matchesStatus;
+            });
+
+            renderStaff(filteredStaff);
+        }
+
+        function updateQuotaDisplay() {
+            const quotaElement = document.querySelector('.quota-count');
+            quotaElement.textContent = `${currentStaffCount} / ${maxStaffQuota} คน`;
+            
+            const addButton = document.getElementById('addStaffBtn');
+            const quotaWarning = document.getElementById('quotaWarning');
+            
+            if (currentStaffCount >= maxStaffQuota) {
+                addButton.disabled = true;
+                addButton.innerHTML = '🚫 เกินโควต้า';
+                if (quotaWarning) quotaWarning.style.display = 'block';
+            } else {
+                addButton.disabled = false;
+                addButton.innerHTML = '➕ เพิ่ม Zone Staff';
+                if (quotaWarning) quotaWarning.style.display = 'none';
+            }
+        }
+
+        function openAddStaffModal() {
+            if (currentStaffCount >= maxStaffQuota) {
+                alert(`ไม่สามารถเพิ่ม Zone Staff ได้อีก\nโซนนี้มีโควต้าสูงสุด ${maxStaffQuota} คน`);
+                return;
+            }
+            
+            document.getElementById('addStaffModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('addStaffModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('addStaffForm').reset();
+        }
+
+        function editStaff(staffId) {
+            const staff = zoneStaff.find(s => s.id === staffId);
+            if (staff) {
+                alert(`แก้ไขข้อมูล Zone Staff: ${staff.firstName} ${staff.lastName}\n(ฟีเจอร์นี้จะเปิดหน้าแก้ไขข้อมูล)`);
+            }
+        }
+
+        function managePermissions(staffId) {
+            const staff = zoneStaff.find(s => s.id === staffId);
+            if (staff) {
+                alert(`จัดการสิทธิ์: ${staff.firstName} ${staff.lastName}\n(ฟีเจอร์นี้จะเปิดหน้าจัดการสิทธิ์)`);
+            }
+        }
+
+        function resetPassword(staffId) {
+            const staff = zoneStaff.find(s => s.id === staffId);
+            if (staff && confirm(`รีเซ็ตรหัสผ่านของ ${staff.firstName} ${staff.lastName}?\nรหัสผ่านใหม่จะถูกส่งไปยังอีเมล`)) {
+                alert('ส่งรหัสผ่านใหม่เรียบร้อยแล้ว');
+            }
+        }
+
+        function removeStaff(staffId) {
+            const staff = zoneStaff.find(s => s.id === staffId);
+            if (staff && confirm(`ต้องการลบ Zone Staff: ${staff.firstName} ${staff.lastName}?\n\nการลบจะทำให้:\n- ไม่สามารถเข้าใช้งานระบบได้\n- ข้อมูลการเข้าใช้งานจะถูกเก็บไว้เพื่อการตรวจสอบ`)) {
+                const index = zoneStaff.findIndex(s => s.id === staffId);
+                zoneStaff.splice(index, 1);
+                renderStaff();
+                updateQuotaDisplay();
+                alert('ลบ Zone Staff เรียบร้อยแล้ว');
+            }
+        }
+
+        function formatPhoneNumber(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length >= 3) {
+                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+            }
+            input.value = value;
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterStaff);
+        document.getElementById('statusFilter').addEventListener('change', filterStaff);
+
+        document.getElementById('staffPhone').addEventListener('input', function() {
+            formatPhoneNumber(this);
+        });
+
+        document.getElementById('addStaffForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (currentStaffCount >= maxStaffQuota) {
+                alert('ไม่สามารถเพิ่ม Zone Staff ได้อีก เกินโควต้าแล้ว');
+                return;
+            }
+
+            // Collect selected permissions
+            const permissions = [];
+            const checkboxes = document.querySelectorAll('#addStaffModal input[type="checkbox"]:checked');
+            checkboxes.forEach(cb => {
+                permissions.push(cb.id.replace('perm_', ''));
+            });
+
+            const newStaff = {
+                id: `ZS${String(zoneStaff.length + 1).padStart(3, '0')}`,
+                firstName: document.getElementById('staffFirstName').value,
+                lastName: document.getElementById('staffLastName').value,
+                position: document.getElementById('staffPosition').value,
+                phone: document.getElementById('staffPhone').value,
+                email: document.getElementById('staffEmail').value,
+                status: 'active',
+                joinDate: new Date().toISOString().split('T')[0],
+                lastLogin: null,
+                permissions: permissions,
+                notes: document.getElementById('staffNotes').value
+            };
+
+            zoneStaff.push(newStaff);
+            renderStaff();
+            updateQuotaDisplay();
+            closeModal();
+            
+            alert(`เพิ่ม Zone Staff ${newStaff.firstName} ${newStaff.lastName} เรียบร้อยแล้ว\nข้อมูลการเข้าใช้งานจะถูกส่งไปยัง ${newStaff.email}`);
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('addStaffModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderStaff();
+            updateQuotaDisplay();
+        });
+
+        // Auto-refresh status (simulate real-time updates)
+        setInterval(function() {
+            // Simulate random login updates
+            zoneStaff.forEach(staff => {
+                if (Math.random() < 0.1 && staff.status === 'active') { // 10% chance
+                    staff.lastLogin = new Date().toLocaleString('th-TH');
+                }
+            });
+            
+            // Update display if needed
+            if (Math.random() < 0.05) { // 5% chance to refresh
+                renderStaff();
+            }
+        }, 30000); // Update every 30 seconds
+    </script>
+</body>
+</html>

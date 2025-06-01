@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนที่ภาพรวมโซน - Smart Healthcare System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .breadcrumb {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .map-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+        }
+
+        .map-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            min-height: 600px;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .map-title {
+            font-size: 20px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .map-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-filter {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-filter.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-refresh {
+            background: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-fullscreen {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .map-canvas {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(45deg, #e8f5e8 25%, transparent 25%), 
+                        linear-gradient(-45deg, #e8f5e8 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #e8f5e8 75%), 
+                        linear-gradient(-45deg, transparent 75%, #e8f5e8 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-color: #f0f8f0;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .zone-boundary {
+            position: absolute;
+            border: 3px dashed rgba(102, 126, 234, 0.5);
+            border-radius: 20px;
+            background: rgba(102, 126, 234, 0.05);
+            pointer-events: none;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+        }
+
+        .zone-label {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .elderly-marker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .elderly-marker:hover {
+            transform: scale(1.2);
+            z-index: 20;
+        }
+
+        .marker-normal {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .marker-risk {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .marker-warning {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+
+        .marker-emergency {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            animation: pulse 1.5s infinite;
+        }
+
+        .marker-offline {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .marker-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            min-width: 200px;
+        }
+
+        .marker-tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .tooltip-status {
+            margin-bottom: 3px;
+        }
+
+        .tooltip-time {
+            font-size: 10px;
+            color: #bdc3c7;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .legend-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .legend-title {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 8px 0;
+        }
+
+        .legend-marker {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .legend-text {
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .legend-count {
+            margin-left: auto;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stats-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .alerts-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            border-left: 4px solid;
+        }
+
+        .alert-emergency {
+            border-left-color: #e74c3c;
+        }
+
+        .alert-warning {
+            border-left-color: #f39c12;
+        }
+
+        .alert-info {
+            border-left-color: #3498db;
+        }
+
+        .alert-icon {
+            font-size: 16px;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .alert-time {
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+
+        .filters-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-group {
+            margin-bottom: 15px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-option {
+            padding: 6px 12px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .filter-option.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .time-filter {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .time-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .time-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .emergency-banner {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+            z-index: 1000;
+            animation: slideIn 0.5s ease;
+            display: none;
+        }
+
+        .emergency-banner.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .banner-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .banner-message {
+            font-size: 14px;
+        }
+
+        @media (max-width: 1024px) {
+            .map-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: -1;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .map-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .elderly-marker {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <div class="header-icon">🗺️</div>
+                แผนที่ภาพรวมโซน Smart Healthcare
+            </h1>
+            <div class="breadcrumb">หน้าหลัก > จัดการโซน > แผนที่ภาพรวมโซน</div>
+        </div>
+
+        <!-- Emergency Banner -->
+        <div class="emergency-banner" id="emergencyBanner">
+            <div class="banner-title">🚨 เหตุฉุกเฉิน!</div>
+            <div class="banner-message">นายสมชาย มั่นคง - อัตราการเต้นหัวใจผิดปกติ</div>
+        </div>
+
+        <div class="map-layout">
+            <!-- Map Container -->
+            <div class="map-container">
+                <div class="map-header">
+                    <div class="map-title">📍 แผนที่ตำบลศรีสำโรง</div>
+                    <div class="map-controls">
+                        <button class="control-btn btn-filter active" onclick="toggleFilter('all')">
+                            👥 ทั้งหมด
+                        </button>
+                        <button class="control-btn btn-filter" onclick="toggleFilter('emergency')">
+                            🚨 ฉุกเฉิน
+                        </button>
+                        <button class="control-btn btn-filter" onclick="toggleFilter('warning')">
+                            ⚠️ เตือน
+                        </button>
+                        <button class="control-btn btn-refresh" onclick="refreshMap()">
+                            🔄 รีเฟรช
+                        </button>
+                        <button class="control-btn btn-fullscreen" onclick="toggleFullscreen()">
+                            🔍 ขยาย
+                        </button>
+                    </div>
+                </div>
+
+                <div class="map-canvas" id="mapCanvas">
+                    <div class="zone-boundary"></div>
+                    <div class="zone-label">โซนตำบลศรีสำโรง</div>
+                    
+                    <!-- Elderly Markers will be added by JavaScript -->
+                </div>
+
+                <!-- Tooltip -->
+                <div class="marker-tooltip" id="tooltip">
+                    <div class="tooltip-name"></div>
+                    <div class="tooltip-status"></div>
+                    <div class="tooltip-time"></div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Legend Card -->
+                <div class="legend-card">
+                    <div class="legend-title">
+                        🎯 สัญลักษณ์สถานะ
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-marker marker-normal"></div>
+                        <div class="legend-text">ปกติ</div>
+                        <div class="legend-count" id="normalCount">142</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-marker marker-risk"></div>
+                        <div class="legend-text">เสี่ยง</div>
+                        <div class="legend-count" id="riskCount">3</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-marker marker-warning"></div>
+                        <div class="legend-text">เฝ้าระวัง</div>
+                        <div class="legend-count" id="warningCount">1</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-marker marker-emergency"></div>
+                        <div class="legend-text">ฉุกเฉิน</div>
+                        <div class="legend-count" id="emergencyCount">1</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-marker marker-offline"></div>
+                        <div class="legend-text">ขาดสัญญาณ</div>
+                        <div class="legend-count" id="offlineCount">0</div>
+                    </div>
+                </div>
+
+                <!-- Statistics Card -->
+                <div class="stats-card">
+                    <div class="legend-title">
+                        📊 สถิติโซน
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">147</div>
+                            <div class="stat-label">ผู้สูงอายุทั้งหมด</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">97%</div>
+                            <div class="stat-label">อัตราออนไลน์</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">2.3</div>
+                            <div class="stat-label">ค่าเฉลี่ยความปลอดภัย</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">การแจ้งเตือนวันนี้</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Alerts -->
+                <div class="alerts-card">
+                    <div class="legend-title">
+                        🔔 การแจ้งเตือนล่าสุด
+                    </div>
+                    <div class="alert-item alert-emergency">
+                        <div class="alert-icon">🚨</div>
+                        <div class="alert-content">
+                            <div class="alert-title">นายสมชาย มั่นคง - หัวใจเต้นผิดปกติ</div>
+                            <div class="alert-time">14:30 น.</div>
+                        </div>
+                    </div>
+                    <div class="alert-item alert-warning">
+                        <div class="alert-icon">⚠️</div>
+                        <div class="alert-content">
+                            <div class="alert-title">นางสมใจ ใจดี - ความดันโลหิตสูง</div>
+                            <div class="alert-time">13:45 น.</div>
+                        </div>
+                    </div>
+                    <div class="alert-item alert-info">
+                        <div class="alert-icon">ℹ️</div>
+                        <div class="alert-content">
+                            <div class="alert-title">นายประยุทธ ดีใจ - แบตเตอรี่ต่ำ</div>
+                            <div class="alert-time">12:20 น.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-card">
+                    <div class="legend-title">
+                        🔍 ตัวกรอง
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-label">อายุ</div>
+                        <div class="filter-options">
+                            <div class="filter-option active" data-filter="age-all">ทั้งหมด</div>
+                            <div class="filter-option" data-filter="age-60-70">60-70 ปี</div>
+                            <div class="filter-option" data-filter="age-70-80">70-80 ปี</div>
+                            <div class="filter-option" data-filter="age-80+">80+ ปี</div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-label">เพศ</div>
+                        <div class="filter-options">
+                            <div class="filter-option active" data-filter="gender-all">ทั้งหมด</div>
+                            <div class="filter-option" data-filter="gender-male">ชาย</div>
+                            <div class="filter-option" data-filter="gender-female">หญิง</div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-label">ช่วงเวลา</div>
+                        <div class="time-filter">
+                            <button class="time-btn active">เรียลไทม์</button>
+                            <button class="time-btn">1 ชั่วโมง</button>
+                            <button class="time-btn">24 ชั่วโมง</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample elderly data with GPS coordinates
+        const elderlyData = [
+            { id: 1, name: 'นางสมใจ ใจดี', x: 15, y: 20, status: 'warning', lastUpdate: '14:25', age: 68, gender: 'female', vitals: { hr: 85, bp: '145/90', spo2: 96, temp: 36.8 } },
+            { id: 2, name: 'นายสมชาย มั่นคง', x: 45, y: 35, status: 'emergency', lastUpdate: '14:30', age: 72, gender: 'male', vitals: { hr: 125, bp: '160/95', spo2: 94, temp: 37.1 } },
+            { id: 3, name: 'นางสาววิไล สุขใส', x: 75, y: 15, status: 'normal', lastUpdate: '14:28', age: 65, gender: 'female', vitals: { hr: 78, bp: '120/80', spo2: 98, temp: 36.5 } },
+            { id: 4, name: 'นายประยุทธ ดีใจ', x: 30, y: 60, status: 'risk', lastUpdate: '14:15', age: 74, gender: 'male', vitals: { hr: 95, bp: '140/85', spo2: 95, temp: 36.9 } },
+            { id: 5, name: 'นางสุมาลี อารมณ์ดี', x: 65, y: 45, status: 'normal', lastUpdate: '14:29', age: 69, gender: 'female', vitals: { hr: 72, bp: '115/75', spo2: 99, temp: 36.4 } },
+            { id: 6, name: 'นายสมศักดิ์ มีสุข', x: 85, y: 70, status: 'normal', lastUpdate: '14:27', age: 71, gender: 'male', vitals: { hr: 80, bp: '125/78', spo2: 97, temp: 36.6 } },
+            { id: 7, name: 'นางพิมพ์ใส จันทร์เจ้า', x: 20, y: 80, status: 'risk', lastUpdate: '14:20', age: 76, gender: 'female', vitals: { hr: 88, bp: '135/82', spo2: 96, temp: 36.7 } },
+            { id: 8, name: 'นายสมบัติ รวยมาก', x: 55, y: 25, status: 'normal', lastUpdate: '14:26', age: 63, gender: 'male', vitals: { hr: 75, bp: '118/76', spo2: 98, temp: 36.3 } },
+            { id: 9, name: 'นางรัตนา ดีงาม', x: 40, y: 55, status: 'risk', lastUpdate: '14:22', age: 78, gender: 'female', vitals: { hr: 90, bp: '138/88', spo2: 95, temp: 37.0 } },
+            { id: 10, name: 'นายวิชาญ สุขสม', x: 70, y: 65, status: 'normal', lastUpdate: '14:31', age: 67, gender: 'male', vitals: { hr: 76, bp: '122/79', spo2: 97, temp: 36.5 } }
+        ];
+
+        let currentFilter = 'all';
+        let isFullscreen = false;
+
+        function getMarkerIcon(status) {
+            const icons = {
+                'normal': '🟢',
+                'risk': '🟡',
+                'warning': '🟠',
+                'emergency': '🔴',
+                'offline': '⚫'
+            };
+            return icons[status] || '❓';
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'normal': 'ปกติ',
+                'risk': 'เสี่ยง',
+                'warning': 'เฝ้าระวัง',
+                'emergency': 'ฉุกเฉิน',
+                'offline': 'ขาดสัญญาณ'
+            };
+            return statusMap[status] || 'ไม่ทราบ';
+        }
+
+        function createMarker(elderly) {
+            const marker = document.createElement('div');
+            marker.className = `elderly-marker marker-${elderly.status}`;
+            marker.style.left = `${elderly.x}%`;
+            marker.style.top = `${elderly.y}%`;
+            marker.innerHTML = getMarkerIcon(elderly.status);
+            marker.dataset.id = elderly.id;
+
+            // Add event listeners
+            marker.addEventListener('mouseenter', (e) => showTooltip(e, elderly));
+            marker.addEventListener('mouseleave', hideTooltip);
+            marker.addEventListener('click', () => openElderlyDetail(elderly));
+
+            return marker;
+        }
+
+        function showTooltip(event, elderly) {
+            const tooltip = document.getElementById('tooltip');
+            const rect = event.target.getBoundingClientRect();
+            
+            tooltip.querySelector('.tooltip-name').textContent = elderly.name;
+            tooltip.querySelector('.tooltip-status').textContent = `สถานะ: ${getStatusText(elderly.status)}`;
+            tooltip.querySelector('.tooltip-time').textContent = `อัพเดทล่าสุด: ${elderly.lastUpdate} น.`;
+            
+            tooltip.style.left = `${rect.left + window.scrollX + 50}px`;
+            tooltip.style.top = `${rect.top + window.scrollY - 10}px`;
+            tooltip.classList.add('show');
+        }
+
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+        }
+
+        function openElderlyDetail(elderly) {
+            const vitals = elderly.vitals;
+            const details = `
+รายละเอียด: ${elderly.name}
+อายุ: ${elderly.age} ปี (${elderly.gender === 'male' ? 'ชาย' : 'หญิง'})
+สถานะ: ${getStatusText(elderly.status)}
+
+ข้อมูลสุขภาพปัจจุบัน:
+• อัตราการเต้นหัวใจ: ${vitals.hr} bpm
+• ความดันโลหิต: ${vitals.bp} mmHg
+• ออกซิเจนในเลือด: ${vitals.spo2}%
+• อุณหภูมิร่างกาย: ${vitals.temp}°C
+
+อัพเดทล่าสุด: ${elderly.lastUpdate} น.
+            `.trim();
+            
+            alert(details);
+        }
+
+        function renderMarkers() {
+            const mapCanvas = document.getElementById('mapCanvas');
+            
+            // Remove existing markers
+            const existingMarkers = mapCanvas.querySelectorAll('.elderly-marker');
+            existingMarkers.forEach(marker => marker.remove());
+
+            // Filter data based on current filter
+            let filteredData = elderlyData;
+            
+            if (currentFilter !== 'all') {
+                filteredData = elderlyData.filter(elderly => elderly.status === currentFilter);
+            }
+
+            // Create and add new markers
+            filteredData.forEach(elderly => {
+                const marker = createMarker(elderly);
+                mapCanvas.appendChild(marker);
+            });
+
+            updateCounts();
+        }
+
+        function updateCounts() {
+            const counts = {
+                normal: elderlyData.filter(e => e.status === 'normal').length,
+                risk: elderlyData.filter(e => e.status === 'risk').length,
+                warning: elderlyData.filter(e => e.status === 'warning').length,
+                emergency: elderlyData.filter(e => e.status === 'emergency').length,
+                offline: elderlyData.filter(e => e.status === 'offline').length
+            };
+
+            document.getElementById('normalCount').textContent = counts.normal;
+            document.getElementById('riskCount').textContent = counts.risk;
+            document.getElementById('warningCount').textContent = counts.warning;
+            document.getElementById('emergencyCount').textContent = counts.emergency;
+            document.getElementById('offlineCount').textContent = counts.offline;
+
+            // Show emergency banner if there are emergencies
+            const emergencyBanner = document.getElementById('emergencyBanner');
+            if (counts.emergency > 0) {
+                emergencyBanner.classList.add('show');
+                setTimeout(() => {
+                    emergencyBanner.classList.remove('show');
+                }, 5000);
+            }
+        }
+
+        function toggleFilter(filter) {
+            currentFilter = filter;
+            
+            // Update button states
+            const filterButtons = document.querySelectorAll('.btn-filter');
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            const activeButton = Array.from(filterButtons).find(btn => 
+                btn.textContent.includes(getFilterLabel(filter))
+            );
+            if (activeButton) activeButton.classList.add('active');
+            
+            renderMarkers();
+        }
+
+        function getFilterLabel(filter) {
+            const labels = {
+                'all': 'ทั้งหมด',
+                'emergency': 'ฉุกเฉิน',
+                'warning': 'เตือน',
+                'risk': 'เสี่ยง',
+                'normal': 'ปกติ',
+                'offline': 'ออฟไลน์'
+            };
+            return labels[filter] || 'ทั้งหมด';
+        }
+
+        function refreshMap() {
+            // Simulate data refresh
+            const refreshBtn = document.querySelector('.btn-refresh');
+            refreshBtn.innerHTML = '⏳ กำลังรีเฟรช...';
+            refreshBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Simulate small changes in data
+                elderlyData.forEach(elderly => {
+                    if (Math.random() < 0.1) { // 10% chance to update
+                        const statuses = ['normal', 'risk', 'warning'];
+                        if (elderly.status !== 'emergency') {
+                            elderly.status = statuses[Math.floor(Math.random() * statuses.length)];
+                        }
+                        elderly.lastUpdate = new Date().toLocaleTimeString('th-TH', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        });
+                    }
+                });
+                
+                renderMarkers();
+                refreshBtn.innerHTML = '🔄 รีเฟรช';
+                refreshBtn.disabled = false;
+            }, 1500);
+        }
+
+        function toggleFullscreen() {
+            const mapContainer = document.querySelector('.map-container');
+            const sidebar = document.querySelector('.sidebar');
+            const fullscreenBtn = document.querySelector('.btn-fullscreen');
+            
+            if (!isFullscreen) {
+                mapContainer.style.position = 'fixed';
+                mapContainer.style.top = '20px';
+                mapContainer.style.left = '20px';
+                mapContainer.style.right = '20px';
+                mapContainer.style.bottom = '20px';
+                mapContainer.style.zIndex = '1000';
+                mapContainer.style.width = 'auto';
+                mapContainer.style.height = 'auto';
+                
+                sidebar.style.display = 'none';
+                fullscreenBtn.innerHTML = '❌ ปิด';
+                isFullscreen = true;
+            } else {
+                mapContainer.style.position = 'static';
+                mapContainer.style.zIndex = 'auto';
+                mapContainer.style.width = '';
+                mapContainer.style.height = '';
+                
+                sidebar.style.display = 'flex';
+                fullscreenBtn.innerHTML = '🔍 ขยาย';
+                isFullscreen = false;
+            }
+        }
+
+        // Filter options functionality
+        function initializeFilters() {
+            const filterOptions = document.querySelectorAll('.filter-option');
+            filterOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from siblings
+                    const siblings = this.parentElement.querySelectorAll('.filter-option');
+                    siblings.forEach(sibling => sibling.classList.remove('active'));
+                    
+                    // Add active class to clicked option
+                    this.classList.add('active');
+                    
+                    // Apply filter logic here
+                    applyAdvancedFilters();
+                });
+            });
+
+            const timeButtons = document.querySelectorAll('.time-btn');
+            timeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    timeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    applyTimeFilter(this.textContent);
+                });
+            });
+        }
+
+        function applyAdvancedFilters() {
+            // Get active filters
+            const activeAgeFilter = document.querySelector('[data-filter^="age-"].active')?.dataset.filter;
+            const activeGenderFilter = document.querySelector('[data-filter^="gender-"].active')?.dataset.filter;
+            
+            let filteredData = elderlyData;
+            
+            // Apply status filter
+            if (currentFilter !== 'all') {
+                filteredData = filteredData.filter(elderly => elderly.status === currentFilter);
+            }
+            
+            // Apply age filter
+            if (activeAgeFilter && activeAgeFilter !== 'age-all') {
+                filteredData = filteredData.filter(elderly => {
+                    switch (activeAgeFilter) {
+                        case 'age-60-70': return elderly.age >= 60 && elderly.age < 70;
+                        case 'age-70-80': return elderly.age >= 70 && elderly.age < 80;
+                        case 'age-80+': return elderly.age >= 80;
+                        default: return true;
+                    }
+                });
+            }
+            
+            // Apply gender filter
+            if (activeGenderFilter && activeGenderFilter !== 'gender-all') {
+                const gender = activeGenderFilter.replace('gender-', '');
+                filteredData = filteredData.filter(elderly => elderly.gender === gender);
+            }
+            
+            renderFilteredMarkers(filteredData);
+        }
+
+        function renderFilteredMarkers(filteredData) {
+            const mapCanvas = document.getElementById('mapCanvas');
+            
+            // Remove existing markers
+            const existingMarkers = mapCanvas.querySelectorAll('.elderly-marker');
+            existingMarkers.forEach(marker => marker.remove());
+            
+            // Create and add filtered markers
+            filteredData.forEach(elderly => {
+                const marker = createMarker(elderly);
+                mapCanvas.appendChild(marker);
+            });
+        }
+
+        function applyTimeFilter(timeRange) {
+            // Simulate time-based filtering
+            console.log(`Applying time filter: ${timeRange}`);
+            
+            // In a real application, this would filter based on the last update time
+            // For demo purposes, we'll just show an alert
+            if (timeRange !== 'เรียลไทม์') {
+                alert(`แสดงข้อมูลย้อนหลัง: ${timeRange}\n(ในระบบจริงจะแสดงข้อมูลตามช่วงเวลาที่เลือก)`);
+            }
+        }
+
+        // Simulate real-time updates
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                // Randomly update some elderly statuses
+                const randomIndex = Math.floor(Math.random() * elderlyData.length);
+                const elderly = elderlyData[randomIndex];
+                
+                // Small chance of status change
+                if (Math.random() < 0.05) { // 5% chance
+                    const statuses = ['normal', 'risk', 'warning'];
+                    const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                    
+                    if (elderly.status !== 'emergency') {
+                        elderly.status = newStatus;
+                        elderly.lastUpdate = new Date().toLocaleTimeString('th-TH', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        });
+                        
+                        // Re-render if this elderly is currently visible
+                        applyAdvancedFilters();
+                    }
+                }
+            }, 10000); // Update every 10 seconds
+        }
+
+        // Keyboard shortcuts
+        function initializeKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && isFullscreen) {
+                    toggleFullscreen();
+                } else if (e.key === 'r' || e.key === 'R') {
+                    refreshMap();
+                } else if (e.key >= '1' && e.key <= '5') {
+                    const filters = ['all', 'emergency', 'warning', 'risk', 'normal'];
+                    const filterIndex = parseInt(e.key) - 1;
+                    if (filterIndex < filters.length) {
+                        toggleFilter(filters[filterIndex]);
+                    }
+                }
+            });
+        }
+
+        // Initialize the map
+        document.addEventListener('DOMContentLoaded', function() {
+            renderMarkers();
+            initializeFilters();
+            startRealTimeUpdates();
+            initializeKeyboardShortcuts();
+            
+            // Show emergency banner after 2 seconds for demo
+            setTimeout(() => {
+                const emergencyBanner = document.getElementById('emergencyBanner');
+                emergencyBanner.classList.add('show');
+                
+                // Hide after 5 seconds
+                setTimeout(() => {
+                    emergencyBanner.classList.remove('show');
+                }, 5000);
+            }, 2000);
+        });
+
+        // Handle window resize for responsive design
+        window.addEventListener('resize', () => {
+            if (isFullscreen) {
+                // Adjust fullscreen map if needed
+                const mapContainer = document.querySelector('.map-container');
+                // Recalculate dimensions if necessary
+            }
+        });
+
+        // Export functions for external use
+        window.mapFunctions = {
+            toggleFilter,
+            refreshMap,
+            toggleFullscreen,
+            openElderlyDetail
+        };
+    </script>
+</body>
+</html>
+            

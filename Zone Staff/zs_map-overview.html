@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zone Staff - Zone Map Overview</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .controls-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .filter-item label {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .filter-item select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            min-width: 120px;
+        }
+
+        .alert-summary {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            background: #f8f9ff;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .alert-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .alert-normal { background: #e8f5e8; color: #2d5016; }
+        .alert-warning { background: #fff3cd; color: #856404; }
+        .alert-danger { background: #f8d7da; color: #721c24; }
+        .alert-offline { background: #e2e3e5; color: #383d41; }
+
+        .map-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+            height: 70vh;
+            position: relative;
+        }
+
+        .map-area {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #e8f4fd 0%, #f0f8ff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .elderly-marker {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .elderly-marker:hover {
+            transform: scale(1.2);
+            z-index: 10;
+        }
+
+        .marker-normal { background: linear-gradient(135deg, #48bb78, #38a169); color: white; }
+        .marker-warning { background: linear-gradient(135deg, #ed8936, #dd6b20); color: white; }
+        .marker-danger { background: linear-gradient(135deg, #f56565, #e53e3e); color: white; }
+        .marker-offline { background: linear-gradient(135deg, #a0aec0, #718096); color: white; }
+
+        .marker-normal::before { content: "●"; }
+        .marker-warning::before { content: "▲"; }
+        .marker-danger::before { content: "★"; }
+        .marker-offline::before { content: "✕"; }
+
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.95);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 0.85rem;
+        }
+
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .legend-marker {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            pointer-events: none;
+            z-index: 1000;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip-header {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .tooltip-data {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .data-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .data-label {
+            font-size: 0.75rem;
+            color: #ccc;
+        }
+
+        .data-value {
+            font-weight: 600;
+        }
+
+        .status-normal { color: #68d391; }
+        .status-warning { color: #fbb454; }
+        .status-danger { color: #fc8181; }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .emergency-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+            z-index: 1001;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .emergency-alert.show {
+            display: block;
+        }
+
+        .emergency-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .emergency-icon {
+            font-size: 1.5rem;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .emergency-text {
+            font-weight: 600;
+        }
+
+        .emergency-time {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 1rem;
+            }
+            
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+            
+            .filter-group {
+                justify-content: space-between;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .map-container {
+                height: 60vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fas fa-map-marked-alt"></i>
+                <h1>แผนที่ภาพรวม Zone - บุรีรัมย์ เขต 3</h1>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span>สมชาย ใจดี (Zone Staff)</span>
+                <span>|</span>
+                <span>อบต.หนองกี่</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="controls-panel">
+            <div class="controls-row">
+                <div class="filter-group">
+                    <div class="filter-item">
+                        <label>กรองตามสถานะ</label>
+                        <select id="statusFilter">
+                            <option value="all">ทั้งหมด</option>
+                            <option value="normal">ปกติ</option>
+                            <option value="warning">เสี่ยง</option>
+                            <option value="danger">ฉุกเฉิน</option>
+                            <option value="offline">ขาดสัญญาณ</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>ช่วงอายุ</label>
+                        <select id="ageFilter">
+                            <option value="all">ทุกช่วงอายุ</option>
+                            <option value="60-70">60-70 ปี</option>
+                            <option value="71-80">71-80 ปี</option>
+                            <option value="81+">81+ ปี</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="alert-summary">
+                    <div class="alert-badge alert-normal">
+                        <i class="fas fa-check-circle"></i>
+                        ปกติ: <span id="normalCount">12</span>
+                    </div>
+                    <div class="alert-badge alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        เสี่ยง: <span id="warningCount">3</span>
+                    </div>
+                    <div class="alert-badge alert-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        ฉุกเฉิน: <span id="dangerCount">1</span>
+                    </div>
+                    <div class="alert-badge alert-offline">
+                        <i class="fas fa-wifi"></i>
+                        ออฟไลน์: <span id="offlineCount">1</span>
+                    </div>
+                </div>
+
+                <button class="refresh-btn" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i>
+                    รีเฟรช
+                </button>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div class="map-area" id="mapArea">
+                <div class="map-grid"></div>
+                
+                <!-- Elderly Markers -->
+                <div class="elderly-marker marker-normal" style="top: 15%; left: 20%;" 
+                     data-name="สมหญิง จันทร์ดี" data-age="68" data-heart="72" data-spo2="98" data-temp="36.5" data-bp="120/80" data-status="normal"></div>
+                
+                <div class="elderly-marker marker-normal" style="top: 25%; left: 35%;" 
+                     data-name="บุญมี ศรีสุข" data-age="73" data-heart="68" data-spo2="97" data-temp="36.2" data-bp="115/75" data-status="normal"></div>
+                
+                <div class="elderly-marker marker-warning" style="top: 40%; left: 60%;" 
+                     data-name="วิไล สุขใส" data-age="81" data-heart="85" data-spo2="94" data-temp="37.1" data-bp="145/90" data-status="warning"></div>
+                
+                <div class="elderly-marker marker-danger" style="top: 60%; left: 25%;" 
+                     data-name="สมศักดิ์ รักดี" data-age="76" data-heart="105" data-spo2="88" data-temp="38.2" data-bp="165/100" data-status="danger"></div>
+                
+                <div class="elderly-marker marker-normal" style="top: 70%; left: 45%;" 
+                     data-name="มาลี ใจบุญ" data-age="65" data-heart="70" data-spo2="99" data-temp="36.3" data-bp="118/78" data-status="normal"></div>
+                
+                <div class="elderly-marker marker-offline" style="top: 30%; left: 80%;" 
+                     data-name="สมพงษ์ ดีใจ" data-age="78" data-heart="--" data-spo2="--" data-temp="--" data-bp="--" data-status="offline"></div>
+                
+                <div class="elderly-marker marker-normal" style="top: 50%; left: 15%;" 
+                     data-name="ประไพ สว่างใส" data-age="69" data-heart="74" data-spo2="96" data-temp="36.4" data-bp="122/82" data-status="normal"></div>
+                
+                <div class="elderly-marker marker-warning" style="top: 80%; left: 70%;" 
+                     data-name="จำนง รู้ดี" data-age="84" data-heart="92" data-spo2="93" data-temp="37.3" data-bp="150/95" data-status="warning"></div>
+                
+                <div class="elderly-marker marker-normal" style="top: 35%; left: 50%;" 
+                     data-name="สุกัญญา มีสุข" data-age="71" data-heart="69" data-spo2="98" data-temp="36.1" data-bp="119/79" data-status="normal"></div>
+                
+                <div class="elderly-marker marker-normal" style="top: 65%; left: 85%;" 
+                     data-name="อนันต์ ใจดี" data-age="67" data-heart="75" data-spo2="97" data-temp="36.6" data-bp="125/85" data-status="normal"></div>
+                
+                <div class="elderly-marker marker-warning" style="top: 20%; left: 65%;" 
+                     data-name="วิมล สุขสบาย" data-age="79" data-heart="88" data-spo2="95" data-temp="36.9" data-bp="140/88" data-status="warning"></div>
+                
+                <div class="elderly-marker marker-normal" style="top: 45%; left: 30%;" 
+                     data-name="ประสงค์ ดีงาม" data-age="72" data-heart="71" data-spo2="98" data-temp="36.3" data-bp="116/76" data-status="normal"></div>
+                
+                <div class="elderly-marker marker-normal" style="top: 55%; left: 75%;" 
+                     data-name="สุพิน หวานใจ" data-age="66" data-heart="73" data-spo2="99" data-temp="36.2" data-bp="120/80" data-status="normal"></div>
+                
+                <div class="elderly-marker marker-normal" style="top: 85%; left: 40%;" 
+                     data-name="บุญส่ง มั่งมี" data-age="70" data-heart="68" data-spo2="97" data-temp="36.4" data-bp="118/78" data-status="normal"></div>
+                
+                <div class="elderly-marker marker-normal" style="top: 10%; left: 45%;" 
+                     data-name="สมบัติ รวยใจ" data-age="74" data-heart="76" data-spo2="96" data-temp="36.5" data-bp="123/83" data-status="normal"></div>
+                
+                <div class="elderly-marker marker-normal" style="top: 75%; left: 20%;" 
+                     data-name="นงลักษณ์ สุขเจริญ" data-age="63" data-heart="72" data-spo2="98" data-temp="36.1" data-bp="117/77" data-status="normal"></div>
+                
+                <div class="elderly-marker marker-normal" style="top: 90%; left: 60%;" 
+                     data-name="ธนาคาร มีเงิน" data-age="75" data-heart="70" data-spo2="97" data-temp="36.3" data-bp="121/81" data-status="normal"></div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-title">สัญลักษณ์สถานะ</div>
+                <div class="legend-item">
+                    <div class="legend-marker marker-normal">●</div>
+                    <span>สถานะปกติ</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-marker marker-warning">▲</div>
+                    <span>ค่าเสี่ยง</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-marker marker-danger">★</div>
+                    <span>ภาวะฉุกเฉิน</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-marker marker-offline">✕</div>
+                    <span>ขาดสัญญาณ</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-header" id="tooltipHeader"></div>
+        <div class="tooltip-data">
+            <div class="data-item">
+                <div class="data-label">อายุ</div>
+                <div class="data-value" id="tooltipAge"></div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">อัตราการเต้นหัวใจ</div>
+                <div class="data-value" id="tooltipHeart"></div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">ระดับออกซิเจน</div>
+                <div class="data-value" id="tooltipSpo2"></div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">อุณหภูมิร่างกาย</div>
+                <div class="data-value" id="tooltipTemp"></div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">ความดันโลหิต</div>
+                <div class="data-value" id="tooltipBp"></div>
+            </div>
+            <div class="data-item">
+                <div class="data-label">อัพเดทล่าสุด</div>
+                <div class="data-value">2 นาทีที่แล้ว</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="emergency-alert" id="emergencyAlert">
+        <div class="emergency-content">
+            <i class="fas fa-exclamation-triangle emergency-icon"></i>
+            <div>
+                <div class="emergency-text">สมศักดิ์ รักดี - ภาวะฉุกเฉิน!</div>
+                <div class="emergency-time">อัตราการเต้นหัวใจ 105 bpm, SpO2 88%</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let elderlyData = [];
+        let filteredData = [];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMarkers();
+            attachEventListeners();
+            updateCounts();
+            
+            // Simulate emergency alert
+            setTimeout(() => {
+                showEmergencyAlert();
+            }, 3000);
+        });
+
+        function initializeMarkers() {
+            const markers = document.querySelectorAll('.elderly-marker');
+            elderlyData = Array.from(markers).map(marker => ({
+                element: marker,
+                name: marker.dataset.name,
+                age: parseInt(marker.dataset.age),
+                heart: marker.dataset.heart,
+                spo2: marker.dataset.spo2,
+                temp: marker.dataset.temp,
+                bp: marker.dataset.bp,
+                status: marker.dataset.status
+            }));
+            filteredData = [...elderlyData];
+        }
+
+        function attachEventListeners() {
+            const tooltip = document.getElementById('tooltip');
+            
+            // Marker hover events
+            elderlyData.forEach(data => {
+                data.element.addEventListener('mouseenter', (e) => {
+                    showTooltip(e, data);
+                });
+                
+                data.element.addEventListener('mouseleave', () => {
+                    hideTooltip();
+                });
+                
+                data.element.addEventListener('mousemove', (e) => {
+                    updateTooltipPosition(e);
+                });
+            });
+
+            // Filter events
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+            document.getElementById('ageFilter').addEventListener('change', applyFilters);
+        }
+
+        function showTooltip(event, data) {
+            const tooltip = document.getElementById('tooltip');
+            
+            document.getElementById('tooltipHeader').textContent = data.name;
+            document.getElementById('tooltipAge').textContent = `${data.age} ปี`;
+            document.getElementById('tooltipHeart').textContent = data.heart !== '--' ? `${data.heart} bpm` : 'ไม่มีข้อมูล';
+            document.getElementById('tooltipSpo2').textContent = data.spo2 !== '--' ? `${data.spo2}%` : 'ไม่มีข้อมูล';
+            document.getElementById('tooltipTemp').textContent = data.temp !== '--' ? `${data.temp}°C` : 'ไม่มีข้อมูล';
+            document.getElementById('tooltipBp').textContent = data.bp !== '--' ? `${data.bp} mmHg` : 'ไม่มีข้อมูล';
+            
+            // Apply status color to heart rate
+            const heartElement = document.getElementById('tooltipHeart');
+            heartElement.className = 'data-value';
+            if (data.status === 'danger') heartElement.classList.add('status-danger');
+            else if (data.status === 'warning') heartElement.classList.add('status-warning');
+            else if (data.status === 'normal') heartElement.classList.add('status-normal');
+            
+            updateTooltipPosition(event);
+            tooltip.classList.add('show');
+        }
+
+        function hideTooltip() {
+            document.getElementById('tooltip').classList.remove('show');
+        }
+
+        function updateTooltipPosition(event) {
+            const tooltip = document.getElementById('tooltip');
+            const rect = document.getElementById('mapArea').getBoundingClientRect();
+            
+            let x = event.clientX - rect.left + 10;
+            let y = event.clientY - rect.top - 10;
+            
+            // Prevent tooltip from going off-screen
+            if (x + tooltip.offsetWidth > rect.width) {
+                x = event.clientX - rect.left - tooltip.offsetWidth - 10;
+            }
+            if (y < 0) {
+                y = event.clientY - rect.top + 10;
+            }
+            
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y}px`;
+        }
+
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const ageFilter = document.getElementById('ageFilter').value;
+            
+            elderlyData.forEach(data => {
+                let show = true;
+                
+                // Status filter
+                if (statusFilter !== 'all' && data.status !== statusFilter) {
+                    show = false;
+                }
+                
+                // Age filter
+                if (ageFilter !== 'all') {
+                    if (ageFilter === '60-70' && (data.age < 60 || data.age > 70)) show = false;
+                    if (ageFilter === '71-80' && (data.age < 71 || data.age > 80)) show = false;
+                    if (ageFilter === '81+' && data.age < 81) show = false;
+                }
+                
+                data.element.style.display = show ? 'flex' : 'none';
+            });
+            
+            updateCounts();
+        }
+
+        function updateCounts() {
+            const visibleMarkers = elderlyData.filter(data => 
+                data.element.style.display !== 'none'
+            );
+            
+            const counts = {
+                normal: visibleMarkers.filter(d => d.status === 'normal').length,
+                warning: visibleMarkers.filter(d => d.status === 'warning').length,
+                danger: visibleMarkers.filter(d => d.status === 'danger').length,
+                offline: visibleMarkers.filter(d => d.status === 'offline').length
+            };
+            
+            document.getElementById('normalCount').textContent = counts.normal;
+            document.getElementById('warningCount').textContent = counts.warning;
+            document.getElementById('dangerCount').textContent = counts.danger;
+            document.getElementById('offlineCount').textContent = counts.offline;
+        }
+
+        function refreshData() {
+            const btn = document.querySelector('.refresh-btn');
+            const icon = btn.querySelector('i');
+            
+            icon.style.animation = 'spin 1s linear infinite';
+            btn.disabled = true;
+            
+            // Simulate data refresh
+            setTimeout(() => {
+                // Randomly update some marker positions and statuses
+                elderlyData.forEach(data => {
+                    if (Math.random() < 0.3) { // 30% chance to update
+                        const newTop = Math.random() * 80 + 10;
+                        const newLeft = Math.random() * 80 + 10;
+                        data.element.style.top = `${newTop}%`;
+                        data.element.style.left = `${newLeft}%`;
+                    }
+                });
+                
+                icon.style.animation = '';
+                btn.disabled = false;
+            }, 1000);
+        }
+
+        function showEmergencyAlert() {
+            const alert = document.getElementById('emergencyAlert');
+            alert.classList.add('show');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        // CSS animation for spin
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            // Simulate real-time data updates
+            elderlyData.forEach(data => {
+                if (data.status !== 'offline' && Math.random() < 0.1) { // 10% chance to update
+                    // Slightly modify health values
+                    const heartRate = parseInt(data.heart);
+                    if (!isNaN(heartRate)) {
+                        const newHeart = heartRate + (Math.random() - 0.5) * 10;
+                        data.heart = Math.max(50, Math.min(150, Math.round(newHeart))).toString();
+                        data.element.dataset.heart = data.heart;
+                    }
+                    
+                    const spo2 = parseInt(data.spo2);
+                    if (!isNaN(spo2)) {
+                        const newSpo2 = spo2 + (Math.random() - 0.5) * 4;
+                        data.spo2 = Math.max(80, Math.min(100, Math.round(newSpo2))).toString();
+                        data.element.dataset.spo2 = data.spo2;
+                    }
+                    
+                    // Update status based on new values
+                    updateMarkerStatus(data);
+                }
+            });
+            updateCounts();
+        }, 30000);
+
+        function updateMarkerStatus(data) {
+            const heart = parseInt(data.heart);
+            const spo2 = parseInt(data.spo2);
+            const temp = parseFloat(data.temp);
+            
+            let newStatus = 'normal';
+            
+            // Determine status based on health values
+            if (heart > 100 || spo2 < 90 || temp > 37.5) {
+                newStatus = 'danger';
+            } else if (heart > 90 || spo2 < 95 || temp > 37.0) {
+                newStatus = 'warning';
+            }
+            
+            // Update marker appearance if status changed
+            if (data.status !== newStatus) {
+                data.element.classList.remove(`marker-${data.status}`);
+                data.element.classList.add(`marker-${newStatus}`);
+                data.status = newStatus;
+                data.element.dataset.status = newStatus;
+                
+                // Show emergency alert for new danger status
+                if (newStatus === 'danger') {
+                    showEmergencyAlert();
+                }
+            }
+        }
+
+        // Handle click events on markers for detailed view
+        elderlyData.forEach(data => {
+            data.element.addEventListener('click', () => {
+                if (confirm(`ต้องการดูรายละเอียดของ ${data.name} หรือไม่?`)) {
+                    // In real application, this would navigate to detail page
+                    alert(`กำลังเปิดหน้ารายละเอียดของ ${data.name}`);
+                }
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                refreshData();
+            } else if (e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                document.getElementById('statusFilter').focus();
+            }
+        });
+
+        // Real-time status updates simulation
+        function simulateStatusUpdates() {
+            const dangerMarkers = elderlyData.filter(d => d.status === 'danger');
+            const warningMarkers = elderlyData.filter(d => d.status === 'warning');
+            
+            // Occasionally resolve danger situations
+            if (dangerMarkers.length > 0 && Math.random() < 0.2) {
+                const marker = dangerMarkers[Math.floor(Math.random() * dangerMarkers.length)];
+                marker.element.classList.remove('marker-danger');
+                marker.element.classList.add('marker-warning');
+                marker.status = 'warning';
+                marker.element.dataset.status = 'warning';
+            }
+            
+            // Occasionally resolve warning situations
+            if (warningMarkers.length > 0 && Math.random() < 0.3) {
+                const marker = warningMarkers[Math.floor(Math.random() * warningMarkers.length)];
+                marker.element.classList.remove('marker-warning');
+                marker.element.classList.add('marker-normal');
+                marker.status = 'normal';
+                marker.element.dataset.status = 'normal';
+            }
+            
+            updateCounts();
+        }
+
+        // Run status simulation every 45 seconds
+        setInterval(simulateStatusUpdates, 45000);
+
+        // Connection status indicator
+        function updateConnectionStatus() {
+            const onlineCount = elderlyData.filter(d => d.status !== 'offline').length;
+            const totalCount = elderlyData.length;
+            
+            if (onlineCount < totalCount * 0.8) {
+                console.warn('การเชื่อมต่อไม่เสถียร: อุปกรณ์ออฟไลน์มากกว่า 20%');
+            }
+        }
+
+        // Emergency response simulation
+        function handleEmergencyResponse() {
+            const emergencyMarkers = elderlyData.filter(d => d.status === 'danger');
+            
+            if (emergencyMarkers.length > 0) {
+                emergencyMarkers.forEach(marker => {
+                    marker.element.style.animation = 'pulse 1s infinite';
+                });
+            }
+        }
+
+        // Run emergency check every 10 seconds
+        setInterval(handleEmergencyResponse, 10000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[SA:SOD] System Overview Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #4a5568;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #48bb78;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .icon-zones { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .icon-users { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .icon-elderly { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .icon-devices { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #4a5568;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-change {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .positive { color: #48bb78; }
+        .negative { color: #f56565; }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4a5568;
+            font-size: 1.1rem;
+            border: 2px dashed #cbd5e0;
+        }
+
+        .system-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .server-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .server-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 15px;
+        }
+
+        .server-name {
+            font-weight: 600;
+            color: #2d3748;
+            flex: 1;
+        }
+
+        .server-status {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-online {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-warning {
+            background: #feebc8;
+            color: #c05621;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #edf2f7;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-cpu { background: linear-gradient(90deg, #667eea, #764ba2); }
+        .progress-memory { background: linear-gradient(90deg, #f093fb, #f5576c); }
+        .progress-disk { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        .alerts-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 25px;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .alert-critical {
+            background: #fed7d7;
+            border-left-color: #e53e3e;
+        }
+
+        .alert-warning {
+            background: #feebc8;
+            border-left-color: #dd6b20;
+        }
+
+        .alert-info {
+            background: #bee3f8;
+            border-left-color: #3182ce;
+        }
+
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🖥️ ระบบภาพรวม Smart Healthcare System</h1>
+            <div class="subtitle">
+                <span>ผู้ดูแลระบบส่วนกลาง | System Administrator</span>
+                <div class="status-indicator">
+                    <span>●</span> ระบบทำงานปกติ
+                </div>
+                <span style="margin-left: auto; color: #666;">อัพเดทล่าสุด: 31 พ.ค. 2568 14:30 น.</span>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">24</div>
+                        <div class="stat-label">จำนวน Zone ที่ใช้งาน</div>
+                        <div class="stat-change positive">↗ +2 Zone ในเดือนนี้</div>
+                    </div>
+                    <div class="stat-icon icon-zones">🏢</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">จำนวนผู้ใช้งานทั้งหมด</div>
+                        <div class="stat-change positive">↗ +12 คน ในสัปดาห์นี้</div>
+                    </div>
+                    <div class="stat-icon icon-users">👥</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">2,847</div>
+                        <div class="stat-label">ผู้สูงอายุที่ลงทะเบียน</div>
+                        <div class="stat-change positive">↗ +45 คน ในเดือนนี้</div>
+                    </div>
+                    <div class="stat-icon icon-elderly">👴</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">2,721</div>
+                        <div class="stat-label">อุปกรณ์ที่เชื่อมต่อ</div>
+                        <div class="stat-change negative">↘ -3 เครื่อง (บำรุงรักษา)</div>
+                    </div>
+                    <div class="stat-icon icon-devices">⌚</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-title">📈 แนวโน้มการใช้งานระบบ (30 วันที่ผ่านมา)</div>
+                <div class="chart-placeholder">
+                    กราฟแสดงจำนวนการเข้าใช้งาน, การแจ้งเตือน, และข้อมูลสุขภาพที่ประมวลผลต่อวัน
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-title">🏥 สถิติ Zone ที่ใช้งานมากสุด</div>
+                <div class="chart-placeholder">
+                    กราฟวงกลมแสดงการกระจายผู้ใช้งานในแต่ละ Zone
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="chart-card">
+            <div class="chart-title">🖥️ สถานะเซิร์ฟเวอร์และระบบ</div>
+            <div class="system-status">
+                <div class="server-card">
+                    <div class="server-header">
+                        <div class="server-name">LoRaWAN Network Server</div>
+                        <div class="server-status status-online">Online</div>
+                    </div>
+                    <div class="metric-row">
+                        <span>CPU Usage</span>
+                        <span>45%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-cpu" style="width: 45%;"></div>
+                    </div>
+                    <div class="metric-row">
+                        <span>Memory</span>
+                        <span>12.8GB / 16GB</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-memory" style="width: 80%;"></div>
+                    </div>
+                    <div class="metric-row">
+                        <span>Disk Space</span>
+                        <span>456GB / 1TB</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-disk" style="width: 45%;"></div>
+                    </div>
+                </div>
+
+                <div class="server-card">
+                    <div class="server-header">
+                        <div class="server-name">Database Server</div>
+                        <div class="server-status status-online">Online</div>
+                    </div>
+                    <div class="metric-row">
+                        <span>CPU Usage</span>
+                        <span>67%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-cpu" style="width: 67%;"></div>
+                    </div>
+                    <div class="metric-row">
+                        <span>Memory</span>
+                        <span>28.4GB / 32GB</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-memory" style="width: 89%;"></div>
+                    </div>
+                    <div class="metric-row">
+                        <span>Disk Space</span>
+                        <span>1.2TB / 2TB</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-disk" style="width: 60%;"></div>
+                    </div>
+                </div>
+
+                <div class="server-card">
+                    <div class="server-header">
+                        <div class="server-name">Analytics Server</div>
+                        <div class="server-status status-warning">High Load</div>
+                    </div>
+                    <div class="metric-row">
+                        <span>CPU Usage</span>
+                        <span>89%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-cpu" style="width: 89%;"></div>
+                    </div>
+                    <div class="metric-row">
+                        <span>Memory</span>
+                        <span>30.1GB / 32GB</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-memory" style="width: 94%;"></div>
+                    </div>
+                    <div class="metric-row">
+                        <span>Disk Space</span>
+                        <span>1.8TB / 2TB</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-disk" style="width: 90%;"></div>
+                    </div>
+                </div>
+
+                <div class="server-card">
+                    <div class="server-header">
+                        <div class="server-name">Web Application Server</div>
+                        <div class="server-status status-online">Online</div>
+                    </div>
+                    <div class="metric-row">
+                        <span>CPU Usage</span>
+                        <span>34%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-cpu" style="width: 34%;"></div>
+                    </div>
+                    <div class="metric-row">
+                        <span>Memory</span>
+                        <span>8.2GB / 16GB</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-memory" style="width: 51%;"></div>
+                    </div>
+                    <div class="metric-row">
+                        <span>Disk Space</span>
+                        <span>234GB / 1TB</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-disk" style="width: 23%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Alerts -->
+        <div class="alerts-panel">
+            <div class="chart-title">🚨 การแจ้งเตือนล่าสุด</div>
+            
+            <div class="alert-item alert-critical">
+                <div style="flex: 1;">
+                    <strong>Analytics Server High Memory Usage</strong><br>
+                    <small>Memory usage reached 94% - immediate attention required</small>
+                </div>
+                <div style="color: #666; font-size: 0.9rem;">2 นาทีที่แล้ว</div>
+            </div>
+
+            <div class="alert-item alert-warning">
+                <div style="flex: 1;">
+                    <strong>3 อุปกรณ์ใน Zone พัทลุง ไม่ส่งสัญญาณ</strong><br>
+                    <small>Device offline เกิน 30 นาที - ตรวจสอบการเชื่อมต่อ</small>
+                </div>
+                <div style="color: #666; font-size: 0.9rem;">15 นาทีที่แล้ว</div>
+            </div>
+
+            <div class="alert-item alert-info">
+                <div style="flex: 1;">
+                    <strong>Database Backup Completed</strong><br>
+                    <small>Daily backup successfully completed at 02:00 AM</small>
+                </div>
+                <div style="color: #666; font-size: 0.9rem;">12 ชั่วโมงที่แล้ว</div>
+            </div>
+
+            <div class="alert-item alert-info">
+                <div style="flex: 1;">
+                    <strong>Zone ใหม่ "อบต.บางละมุง" เข้าร่วมระบบ</strong><br>
+                    <small>เพิ่ม Zone ใหม่พร้อมอุปกรณ์ 120 เครื่อง</small>
+                </div>
+                <div style="color: #666; font-size: 0.9rem;">2 วันที่แล้ว</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate real-time updates
+        setInterval(() => {
+            // Update CPU usage for Analytics Server
+            const cpuBar = document.querySelector('.progress-cpu[style*="89%"]');
+            if (cpuBar) {
+                const randomCpu = 85 + Math.random() * 10;
+                cpuBar.style.width = randomCpu + '%';
+                cpuBar.parentElement.previousElementSibling.lastElementChild.textContent = Math.round(randomCpu) + '%';
+            }
+        }, 3000);
+
+        // Add hover effects for interactive elements
+        document.querySelectorAll('.stat-card, .server-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-5px)';
+                card.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.15)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+                card.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+            });
+        });
+    </script>
+</body>
+</html>

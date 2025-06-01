@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[SA:ZM] Zone Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            color: #2d3748;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-left .subtitle {
+            color: #4a5568;
+            font-size: 1.1rem;
+        }
+
+        .add-zone-btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .add-zone-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .filters-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .filters-row {
+            display: grid;
+            grid-template-columns: 1fr 200px 200px 150px;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            color: #4a5568;
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .filter-input, .filter-select {
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .zones-table-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .zones-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .zones-table thead {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .zones-table th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .zones-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+        }
+
+        .zones-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .zones-table tbody tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-inactive {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-maintenance {
+            background: #feebc8;
+            color: #c05621;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .btn-edit:hover {
+            background: #90cdf4;
+        }
+
+        .btn-delete {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .btn-delete:hover {
+            background: #feb2b2;
+        }
+
+        .btn-settings {
+            background: #d6f5d6;
+            color: #276749;
+        }
+
+        .btn-settings:hover {
+            background: #c6f6d5;
+        }
+
+        .zone-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .stat-number {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .modal-header h2 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #a0aec0;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: #f7fafc;
+            color: #4a5568;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #4a5568;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination button:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .pagination button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .filters-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .zones-table-container {
+                overflow-x: auto;
+            }
+
+            .zones-table {
+                min-width: 800px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <h1>🏢 จัดการ Zone (พื้นที่)</h1>
+                <div class="subtitle">ระบบจัดการพื้นที่ใช้งาน Smart Healthcare System</div>
+            </div>
+            <button class="add-zone-btn" onclick="openAddModal()">
+                <span>➕</span> เพิ่ม Zone ใหม่
+            </button>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label>ค้นหา Zone</label>
+                    <input type="text" class="filter-input" placeholder="ชื่อ Zone, รหัส Zone, หรือที่อยู่..." onkeyup="filterZones()">
+                </div>
+                <div class="filter-group">
+                    <label>สถานะ</label>
+                    <select class="filter-select" onchange="filterZones()">
+                        <option value="">ทั้งหมด</option>
+                        <option value="active">ใช้งาน</option>
+                        <option value="inactive">ไม่ใช้งาน</option>
+                        <option value="maintenance">บำรุงรักษา</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>จังหวัด</label>
+                    <select class="filter-select" onchange="filterZones()">
+                        <option value="">ทั้งหมด</option>
+                        <option value="กรุงเทพฯ">กรุงเทพฯ</option>
+                        <option value="สงขลา">สงขลา</option>
+                        <option value="ชลบุรี">ชลบุรี</option>
+                        <option value="พัทลุง">พัทลุง</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="btn-secondary" onclick="clearFilters()">ล้างตัวกรอง</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zones Table -->
+        <div class="zones-table-container">
+            <table class="zones-table">
+                <thead>
+                    <tr>
+                        <th>รหัส Zone</th>
+                        <th>ชื่อ Zone</th>
+                        <th>ที่อยู่</th>
+                        <th>เบอร์โทรศัพท์</th>
+                        <th>สถานะ</th>
+                        <th>สถิติการใช้งาน</th>
+                        <th>วันที่สร้าง</th>
+                        <th>การดำเนินการ</th>
+                    </tr>
+                </thead>
+                <tbody id="zonesTableBody">
+                    <tr>
+                        <td><strong>ZN001</strong></td>
+                        <td>อบต.หาดใหญ่</td>
+                        <td>123 ถ.เพชรเกษม หาดใหญ่ สงขลา 90110</td>
+                        <td>074-123-456</td>
+                        <td><span class="status-badge status-active">ใช้งาน</span></td>
+                        <td>
+                            <div class="zone-stats">
+                                <div class="stat-item">
+                                    <span>👤</span>
+                                    <span class="stat-number">8</span>
+                                    <span>ผู้ใช้</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>👴</span>
+                                    <span class="stat-number">245</span>
+                                    <span>ผู้สูงอายุ</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>⌚</span>
+                                    <span class="stat-number">240</span>
+                                    <span>อุปกรณ์</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>15 ม.ค. 2568</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn btn-edit" onclick="editZone('ZN001')">แก้ไข</button>
+                                <button class="action-btn btn-settings" onclick="zoneSettings('ZN001')">ตั้งค่า</button>
+                                <button class="action-btn btn-delete" onclick="deleteZone('ZN001')">ลบ</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>ZN002</strong></td>
+                        <td>อบต.บางละมุง</td>
+                        <td>456 ถ.สุขุมวิท บางละมุง ชลบุรี 20150</td>
+                        <td>038-789-012</td>
+                        <td><span class="status-badge status-active">ใช้งาน</span></td>
+                        <td>
+                            <div class="zone-stats">
+                                <div class="stat-item">
+                                    <span>👤</span>
+                                    <span class="stat-number">6</span>
+                                    <span>ผู้ใช้</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>👴</span>
+                                    <span class="stat-number">189</span>
+                                    <span>ผู้สูงอายุ</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>⌚</span>
+                                    <span class="stat-number">185</span>
+                                    <span>อุปกรณ์</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>28 ก.พ. 2568</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn btn-edit" onclick="editZone('ZN002')">แก้ไข</button>
+                                <button class="action-btn btn-settings" onclick="zoneSettings('ZN002')">ตั้งค่า</button>
+                                <button class="action-btn btn-delete" onclick="deleteZone('ZN002')">ลบ</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>ZN003</strong></td>
+                        <td>อบต.คลองหอยโข่ง</td>
+                        <td>789 หมู่ 3 คลองหอยโข่ง สงขลา 90115</td>
+                        <td>074-456-789</td>
+                        <td><span class="status-badge status-maintenance">บำรุงรักษา</span></td>
+                        <td>
+                            <div class="zone-stats">
+                                <div class="stat-item">
+                                    <span>👤</span>
+                                    <span class="stat-number">4</span>
+                                    <span>ผู้ใช้</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>👴</span>
+                                    <span class="stat-number">98</span>
+                                    <span>ผู้สูงอายุ</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>⌚</span>
+                                    <span class="stat-number">95</span>
+                                    <span>อุปกรณ์</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>10 มี.ค. 2568</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn btn-edit" onclick="editZone('ZN003')">แก้ไข</button>
+                                <button class="action-btn btn-settings" onclick="zoneSettings('ZN003')">ตั้งค่า</button>
+                                <button class="action-btn btn-delete" onclick="deleteZone('ZN003')">ลบ</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>ZN004</strong></td>
+                        <td>อบต.ป่าพะยอม</td>
+                        <td>234 หมู่ 5 ป่าพะยอม พัทลุง 93110</td>
+                        <td>074-234-567</td>
+                        <td><span class="status-badge status-active">ใช้งาน</span></td>
+                        <td>
+                            <div class="zone-stats">
+                                <div class="stat-item">
+                                    <span>👤</span>
+                                    <span class="stat-number">5</span>
+                                    <span>ผู้ใช้</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>👴</span>
+                                    <span class="stat-number">156</span>
+                                    <span>ผู้สูงอายุ</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>⌚</span>
+                                    <span class="stat-number">150</span>
+                                    <span>อุปกรณ์</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>22 เม.ย. 2568</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn btn-edit" onclick="editZone('ZN004')">แก้ไข</button>
+                                <button class="action-btn btn-settings" onclick="zoneSettings('ZN004')">ตั้งค่า</button>
+                                <button class="action-btn btn-delete" onclick="deleteZone('ZN004')">ลบ</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>ZN005</strong></td>
+                        <td>อบต.บางพลี</td>
+                        <td>567 ถ.เทพารักษ์ บางพลี สมุทรปราการ 10540</td>
+                        <td>02-567-890</td>
+                        <td><span class="status-badge status-inactive">ไม่ใช้งาน</span></td>
+                        <td>
+                            <div class="zone-stats">
+                                <div class="stat-item">
+                                    <span>👤</span>
+                                    <span class="stat-number">0</span>
+                                    <span>ผู้ใช้</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>👴</span>
+                                    <span class="stat-number">0</span>
+                                    <span>ผู้สูงอายุ</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>⌚</span>
+                                    <span class="stat-number">0</span>
+                                    <span>อุปกรณ์</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>05 พ.ค. 2568</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn btn-edit" onclick="editZone('ZN005')">แก้ไข</button>
+                                <button class="action-btn btn-settings" onclick="zoneSettings('ZN005')">ตั้งค่า</button>
+                                <button class="action-btn btn-delete" onclick="deleteZone('ZN005')">ลบ</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button onclick="changePage(-1)">‹ ก่อนหน้า</button>
+            <button class="active">1</button>
+            <button onclick="changePage(2)">2</button>
+            <button onclick="changePage(3)">3</button>
+            <button onclick="changePage(1)">ถัดไป ›</button>
+        </div>
+    </div>
+
+    <!-- Add/Edit Zone Modal -->
+    <div id="zoneModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">เพิ่ม Zone ใหม่</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <form id="zoneForm">
+                <div class="form-group">
+                    <label for="zoneCode">รหัส Zone *</label>
+                    <input type="text" id="zoneCode" placeholder="เช่น ZN006" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="zoneName">ชื่อ Zone *</label>
+                    <input type="text" id="zoneName" placeholder="เช่น อบต.หาดใหญ่" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="zoneAddress">ที่อยู่ *</label>
+                    <textarea id="zoneAddress" placeholder="ที่อยู่เต็ม รวมถึงรหัสไปรษณีย์" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="zonePhone">เบอร์โทรศัพท์ *</label>
+                    <input type="tel" id="zonePhone" placeholder="เช่น 074-123-456" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="maxDevices">จำนวนอุปกรณ์สูงสุด *</label>
+                    <input type="number" id="maxDevices" placeholder="เช่น 300" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="zoneStatus">สถานะ</label>
+                    <select id="zoneStatus" required>
+                        <option value="active">ใช้งาน</option>
+                        <option value="inactive">ไม่ใช้งาน</option>
+                        <option value="maintenance">บำรุงรักษา</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="zoneDescription">หมายเหตุ</label>
+                    <textarea id="zoneDescription" placeholder="ข้อมูลเพิ่มเติมเกี่ยวกับ Zone นี้"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">ยกเลิก</button>
+                    <button type="submit" class="btn-primary">บันทึก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentEditingZone = null;
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'เพิ่ม Zone ใหม่';
+            document.getElementById('zoneForm').reset();
+            currentEditingZone = null;
+            document.getElementById('zoneModal').classList.add('show');
+        }
+
+        function editZone(zoneId) {
+            document.getElementById('modalTitle').textContent = 'แก้ไข Zone';
+            currentEditingZone = zoneId;
+            
+            // Simulate loading existing data
+            if (zoneId === 'ZN001') {
+                document.getElementById('zoneCode').value = 'ZN001';
+                document.getElementById('zoneName').value = 'อบต.หาดใหญ่';
+                document.getElementById('zoneAddress').value = '123 ถ.เพชรเกษม หาดใหญ่ สงขลา 90110';
+                document.getElementById('zonePhone').value = '074-123-456';
+                document.getElementById('maxDevices').value = '300';
+                document.getElementById('zoneStatus').value = 'active';
+            }
+            
+            document.getElementById('zoneModal').classList.add('show');
+        }
+
+        function deleteZone(zoneId) {
+            if (confirm(`คุณแน่ใจหรือไม่ที่จะลบ Zone ${zoneId}?\n\nการลบ Zone จะส่งผลกระทบต่อข้อมูลผู้สูงอายุและอุปกรณ์ในพื้นที่นี้`)) {
+                // Simulate delete operation
+                alert(`ลบ Zone ${zoneId} เรียบร้อยแล้ว`);
+                // In real implementation, this would call API to delete zone
+            }
+        }
+
+        function zoneSettings(zoneId) {
+            alert(`เปิดหน้าตั้งค่าสำหรับ Zone ${zone

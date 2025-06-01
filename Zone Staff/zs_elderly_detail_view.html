@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายละเอียดผู้สูงอายุ - Smart Healthcare System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .breadcrumb {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .elderly-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+
+        .elderly-profile {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .elderly-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .elderly-info {
+            flex: 1;
+        }
+
+        .elderly-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .elderly-id {
+            color: #7f8c8d;
+            font-size: 16px;
+            font-family: monospace;
+            margin-bottom: 12px;
+        }
+
+        .elderly-meta {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .status-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 15px;
+        }
+
+        .status-badge {
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .status-normal {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .status-risk {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .status-warning {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+        }
+
+        .status-emergency {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-offline {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .emergency-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-emergency {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-emergency:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-contact {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-contact:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 2px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        .content-left {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .content-right {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-title {
+            font-size: 20px;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .vital-card {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .vital-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .vital-card.warning {
+            border-color: #f39c12;
+            background: rgba(243, 156, 18, 0.1);
+        }
+
+        .vital-card.danger {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .vital-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .vital-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .vital-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .vital-value.warning {
+            color: #e67e22;
+        }
+
+        .vital-value.danger {
+            color: #e74c3c;
+        }
+
+        .vital-unit {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .vital-trend {
+            font-size: 12px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .trend-up {
+            color: #e74c3c;
+        }
+
+        .trend-down {
+            color: #27ae60;
+        }
+
+        .trend-stable {
+            color: #3498db;
+        }
+
+        .chart-container {
+            height: 300px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-placeholder {
+            color: #7f8c8d;
+            text-align: center;
+        }
+
+        .mini-chart {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(102, 126, 234, 0.1) 25%, 
+                rgba(102, 126, 234, 0.2) 50%, 
+                rgba(102, 126, 234, 0.1) 75%, 
+                transparent 100%);
+            border-radius: 8px;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .chart-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #667eea;
+            transform: translateY(-50%);
+        }
+
+        .device-info {
+            background: rgba(52, 152, 219, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .device-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .device-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .device-online {
+            background: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+
+        .device-offline {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+
+        .device-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .device-detail {
+            text-align: center;
+        }
+
+        .device-detail-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .device-detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .battery-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .battery-bar {
+            width: 30px;
+            height: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 3px;
+            position: relative;
+            background: #ecf0f1;
+        }
+
+        .battery-bar::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 2px;
+            width: 2px;
+            height: 8px;
+            background: #bdc3c7;
+            border-radius: 0 1px 1px 0;
+        }
+
+        .battery-fill {
+            height: 100%;
+            border-radius: 1px;
+            transition: width 0.3s ease;
+        }
+
+        .battery-high { background: #27ae60; }
+        .battery-medium { background: #f39c12; }
+        .battery-low { background: #e74c3c; }
+
+        .personal-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .medical-history {
+            background: rgba(243, 156, 18, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .history-title {
+            font-size: 16px;
+            color: #e67e22;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #f39c12;
+        }
+
+        .history-condition {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .history-medication {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .caregiver-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .caregiver-item {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .caregiver-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .caregiver-info {
+            flex: 1;
+        }
+
+        .caregiver-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+
+        .caregiver-relation {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 3px;
+        }
+
+        .caregiver-contact {
+            font-size: 12px;
+            color: #3498db;
+        }
+
+        .caregiver-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        .btn-call {
+            background: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-message {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .alert-history {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .alert-item {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .alert-item:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateX(5px);
+        }
+
+        .alert-emergency {
+            border-left-color: #e74c3c;
+        }
+
+        .alert-warning {
+            border-left-color: #f39c12;
+        }
+
+        .alert-info {
+            border-left-color: #3498db;
+        }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .alert-type {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .alert-type.emergency {
+            background: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+        }
+
+        .alert-type.warning {
+            background: rgba(243, 156, 18, 0.2);
+            color: #e67e22;
+        }
+
+        .alert-type.info {
+            background: rgba(52, 152, 219, 0.2);
+            color: #2980b9;
+        }
+
+        .alert-time {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .alert-message {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .alert-status {
+            font-size: 12px;
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .elderly-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .status-section {
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .elderly-profile {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .vitals-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .personal-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .device-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <div class="header-icon">👤</div>
+                รายละเอียดผู้สูงอายุ Smart Healthcare
+            </h1>
+            <div class="breadcrumb">
+                <a href="#">หน้าหลัก</a> > <a href="#">Zone Staff</a> > <a href="#">ติดตามผู้สูงอายุ</a> > รายละเอียดผู้สูงอายุ
+            </div>
+        </div>
+
+        <!-- Elderly Header -->
+        <div class="elderly-header">
+            <div class="elderly-profile">
+                <div class="elderly-avatar">👴</div>
+                <div class="elderly-info">
+                    <div class="elderly-name">นายสมชาย มั่นคง</div>
+                    <div class="elderly-id">ID: E001 • เลขบัตรประชาชน: 1-1234-56789-12-3</div>
+                    <div class="elderly-meta">
+                        <div class="meta-item">
+                            <span>🎂</span>
+                            <span>อายุ 72 ปี</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>🚹</span>
+                            <span>ชาย</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>📱</span>
+                            <span>SW-2024-001</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>🕐</span>
+                            <span>อัพเดทล่าสุด: 14:30 น.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="status-section">
+                <div class="status-badge status-emergency">🚨 ฉุกเฉิน</div>
+                <div class="emergency-actions">
+                    <button class="btn btn-emergency" onclick="handleEmergency()">
+                        🚨 ตอบสนองฉุกเฉิน
+                    </button>
+                    <button class="btn btn-contact" onclick="contactCaregiver()">
+                        📞 แจ้งผู้ดูแล
+                    </button>
+                    <button class="btn btn-secondary">
+                        📊 ดูประวัติ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Column -->
+            <div class="content-left">
+                <!-- Real-time Vitals -->
+                <div class="card">
+                    <div class="card-title">
+                        💓 ข้อมูลสุขภาพเรียลไทม์
+                    </div>
+                    <div class="vitals-grid">
+                        <div class="vital-card danger">
+                            <div class="vital-icon">💓</div>
+                            <div class="vital-label">Heart Rate</div>
+                            <div class="vital-value danger">125 <span class="vital-unit">bpm</span></div>
+                            <div class="vital-trend trend-up">
+                                <span>📈</span>
+                                <span>+15 bpm</span>
+                            </div>
+                            <div class="mini-chart">
+                                <div class="chart-line"></div>
+                            </div>
+                        </div>
+                        <div class="vital-card danger">
+                            <div class="vital-icon">🩸</div>
+                            <div class="vital-label">Blood Pressure</div>
+                            <div class="vital-value danger">160/95 <span class="vital-unit">mmHg</span></div>
+                            <div class="vital-trend trend-up">
+                                <span>📈</span>
+                                <span>สูงผิดปกติ</span>
+                            </div>
+                            <div class="mini-chart">
+                                <div class="chart-line"></div>
+                            </div>
+                        </div>
+                        <div class="vital-card warning">
+                            <div class="vital-icon">🫁</div>
+                            <div class="vital-label">Oxygen Saturation</div>
+                            <div class="vital-value warning">94 <span class="vital-unit">%</span></div>
+                            <div class="vital-trend trend-down">
+                                <span>📉</span>
+                                <span>-2%</span>
+                            </div>
+                            <div class="mini-chart">
+                                <div class="chart-line"></div>
+                            </div>
+                        </div>
+                        <div class="vital-card warning">
+                            <div class="vital-icon">🌡️</div>
+                            <div class="vital-label">Body Temperature</div>
+                            <div class="vital-value warning">37.1 <span class="vital-unit">°C</span></div>
+                            <div class="vital-trend trend-up">
+                                <span>📈</span>
+                                <span>+0.3°C</span>
+                            </div>
+                            <div class="mini-chart">
+                                <div class="chart-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Health Trend Chart -->
+                    <div class="chart-container">
+                        <div class="chart-placeholder">
+                            📊 กราฟแนวโน้มสุขภาพ 24 ชั่วโมงล่าสุด<br>
+                            <small style="color: #bdc3c7;">แสดงการเปลี่ยนแปลงของค่าต่างๆ แบบเรียลไทม์</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="card">
+                    <div class="card-title">
+                        👤 ข้อมูลส่วนตัว
+                    </div>
+                    <div class="personal-info">
+                        <div class="info-item">
+                            <div class="info-label">ชื่อ-นามสกุล</div>
+                            <div class="info-value">นายสมชาย มั่นคง</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">วันเกิด</div>
+                            <div class="info-value">15 มกราคม 2495</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">เพศ</div>
+                            <div class="info-value">ชาย</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">หมู่เลือด</div>
+                            <div class="info-value">A+</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">เบอร์โทรศัพท์</div>
+                            <div class="info-value">089-123-4567</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">ที่อยู่</div>
+                            <div class="info-value">123/45 หมู่ 7 ตำบลศรีสำโรง</div>
+                        </div>
+                    </div>
+
+                    <!-- Medical History -->
+                    <div class="medical-history">
+                        <div class="history-title">
+                            🏥 ประวัติการรักษาและยา
+                        </div>
+                        <div class="history-item">
+                            <div class="history-condition">เบาหวานชนิดที่ 2</div>
+                            <div class="history-medication">💊 Metformin 500mg วันละ 2 ครั้ง หลังอาหาร</div>
+                        </div>
+                        <div class="history-item">
+                            <div class="history-condition">ความดันโลหิตสูง</div>
+                            <div class="history-medication">💊 Amlodipine 5mg วันละ 1 ครั้ง ตอนเช้า</div>
+                        </div>
+                        <div class="history-item">
+                            <div class="history-condition">โรคหัวใจ</div>
+                            <div class="history-medication">💊 Aspirin 81mg วันละ 1 ครั้ง หลังอาหาร</div>
+                        </div>
+                        <div class="history-item">
+                            <div class="history-condition">ยาที่แพ้</div>
+                            <div class="history-medication">⚠️ Penicillin, Sulfa drugs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="content-right">
+                <!-- Device Status -->
+                <div class="card">
+                    <div class="card-title">
+                        📱 สถานะอุปกรณ์
+                    </div>
+                    <div class="device-info">
+                        <div class="device-header">
+                            <div class="device-name">SmartWatch SW-2024-001</div>
+                            <div class="device-status device-online">
+                                <span>🟢</span>
+                                <span>ออนไลน์</span>
+                            </div>
+                        </div>
+                        <div class="device-details">
+                            <div class="device-detail">
+                                <div class="device-detail-label">แบตเตอรี่</div>
+                                <div class="device-detail-value">
+                                    <div class="battery-indicator">
+                                        <div class="battery-bar">
+                                            <div class="battery-fill battery-high" style="width: 78%"></div>
+                                        </div>
+                                        <span>78%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="device-detail">
+                                <div class="device-detail-label">สัญญาณ</div>
+                                <div class="device-detail-value">
+                                    <span>📶 แรง (-45 dBm)</span>
+                                </div>
+                            </div>
+                            <div class="device-detail">
+                                <div class="device-detail-label">อัพเดทล่าสุด</div>
+                                <div class="device-detail-value">14:30:25</div>
+                            </div>
+                            <div class="device-detail">
+                                <div class="device-detail-label">รุ่นอุปกรณ์</div>
+                                <div class="device-detail-value">J3 iSmarch v2.1</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sensor Status -->
+                    <div style="margin-top: 20px;">
+                        <div style="font-size: 16px; font-weight: 600; color: #2c3e50; margin-bottom: 15px;">
+                            🔧 สถานะเซ็นเซอร์
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(39, 174, 96, 0.1); border-radius: 8px;">
+                                <span>💓</span>
+                                <span style="font-size: 12px; color: #27ae60;">Heart Rate: ปกติ</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(39, 174, 96, 0.1); border-radius: 8px;">
+                                <span>🩸</span>
+                                <span style="font-size: 12px; color: #27ae60;">BP Monitor: ปกติ</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(39, 174, 96, 0.1); border-radius: 8px;">
+                                <span>🫁</span>
+                                <span style="font-size: 12px; color: #27ae60;">SpO2: ปกติ</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(39, 174, 96, 0.1); border-radius: 8px;">
+                                <span>🌡️</span>
+                                <span style="font-size: 12px; color: #27ae60;">Temperature: ปกติ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Caregivers -->
+                <div class="card">
+                    <div class="card-title">
+                        👥 ผู้ดูแลและติดต่อฉุกเฉิน
+                    </div>
+                    <div class="caregiver-list">
+                        <div class="caregiver-item">
+                            <div class="caregiver-avatar">👩</div>
+                            <div class="caregiver-info">
+                                <div class="caregiver-name">สมใส ใจดี</div>
+                                <div class="caregiver-relation">ลูกสาว (ผู้ดูแลหลัก)</div>
+                                <div class="caregiver-contact">📞 089-111-2222 • somsai@email.com</div>
+                            </div>
+                            <div class="caregiver-actions">
+                                <button class="btn btn-small btn-call" onclick="callCaregiver('089-111-2222')">
+                                    📞 โทร
+                                </button>
+                                <button class="btn btn-small btn-message" onclick="messageCaregiver('somsai@email.com')">
+                                    💬 ข้อความ
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="caregiver-item">
+                            <div class="caregiver-avatar">👨</div>
+                            <div class="caregiver-info">
+                                <div class="caregiver-name">ประชา สุขใส</div>
+                                <div class="caregiver-relation">ลูกชาย (ผู้ดูแลรอง)</div>
+                                <div class="caregiver-contact">📞 081-333-4444 • pracha@email.com</div>
+                            </div>
+                            <div class="caregiver-actions">
+                                <button class="btn btn-small btn-call" onclick="callCaregiver('081-333-4444')">
+                                    📞 โทร
+                                </button>
+                                <button class="btn btn-small btn-message" onclick="messageCaregiver('pracha@email.com')">
+                                    💬 ข้อความ
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="caregiver-item">
+                            <div class="caregiver-avatar">🏥</div>
+                            <div class="caregiver-info">
+                                <div class="caregiver-name">โรงพยาบาลส่งเสริมสุขภาพ</div>
+                                <div class="caregiver-relation">หน่วยงานฉุกเฉิน</div>
+                                <div class="caregiver-contact">📞 1669 • emergency@hospital.go.th</div>
+                            </div>
+                            <div class="caregiver-actions">
+                                <button class="btn btn-small btn-call" onclick="callEmergency()">
+                                    🚨 ฉุกเฉิน
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Alerts -->
+                <div class="card">
+                    <div class="card-title">
+                        🔔 ประวัติการแจ้งเตือน
+                    </div>
+                    <div class="alert-history">
+                        <div class="alert-item alert-emergency">
+                            <div class="alert-header">
+                                <div class="alert-type emergency">ฉุกเฉิน</div>
+                                <div class="alert-time">14:30 น.</div>
+                            </div>
+                            <div class="alert-message">
+                                อัตราการเต้นหัวใจสูงผิดปกติ (125 bpm) และความดันโลหิตสูง (160/95 mmHg)
+                            </div>
+                            <div class="alert-status">🔄 กำลังดำเนินการ</div>
+                        </div>
+                        
+                        <div class="alert-item alert-warning">
+                            <div class="alert-header">
+                                <div class="alert-type warning">เตือน</div>
+                                <div class="alert-time">13:45 น.</div>
+                            </div>
+                            <div class="alert-message">
+                                ความดันโลหิตเริ่มสูงเกินเกณฑ์ปกติ (145/90 mmHg)
+                            </div>
+                            <div class="alert-status">✅ จัดการแล้ว</div>
+                        </div>
+                        
+                        <div class="alert-item alert-info">
+                            <div class="alert-header">
+                                <div class="alert-type info">ข้อมูล</div>
+                                <div class="alert-time">12:30 น.</div>
+                            </div>
+                            <div class="alert-message">
+                                ไม่ได้รับประทานยาเบาหวานตามเวลา (เลื่อนจาก 12:00 น.)
+                            </div>
+                            <div class="alert-status">✅ จัดการแล้ว</div>
+                        </div>
+                        
+                        <div class="alert-item alert-warning">
+                            <div class="alert-header">
+                                <div class="alert-type warning">เตือน</div>
+                                <div class="alert-time">11:15 น.</div>
+                            </div>
+                            <div class="alert-message">
+                                อุณหภูมิร่างกายสูงเล็กน้อย (37.0°C)
+                            </div>
+                            <div class="alert-status">✅ จัดการแล้ว</div>
+                        </div>
+                        
+                        <div class="alert-item alert-info">
+                            <div class="alert-header">
+                                <div class="alert-type info">ข้อมูล</div>
+                                <div class="alert-time">09:00 น.</div>
+                            </div>
+                            <div class="alert-message">
+                                เริ่มวันใหม่ - ระบบติดตามปกติ
+                            </div>
+                            <div class="alert-status">✅ สมบูรณ์</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate real-time vital updates
+        function updateVitals() {
+            const vitals = {
+                heartRate: { element: document.querySelector('.vital-card.danger .vital-value'), baseValue: 125, range: 5 },
+                bloodPressure: { element: document.querySelectorAll('.vital-card.danger .vital-value')[1], systolic: 160, diastolic: 95 },
+                spo2: { element: document.querySelector('.vital-card.warning .vital-value'), baseValue: 94, range: 2 },
+                temperature: { element: document.querySelectorAll('.vital-card.warning .vital-value')[1], baseValue: 37.1, range: 0.2 }
+            };
+
+            setInterval(() => {
+                // Update heart rate
+                const newHR = Math.round(vitals.heartRate.baseValue + (Math.random() - 0.5) * vitals.heartRate.range);
+                vitals.heartRate.element.innerHTML = `${newHR} <span class="vital-unit">bpm</span>`;
+
+                // Update SpO2
+                const newSpO2 = Math.round(vitals.spo2.baseValue + (Math.random() - 0.5) * vitals.spo2.range);
+                vitals.spo2.element.innerHTML = `${newSpO2} <span class="vital-unit">%</span>`;
+
+                // Update temperature
+                const newTemp = (vitals.temperature.baseValue + (Math.random() - 0.5) * vitals.temperature.range).toFixed(1);
+                vitals.temperature.element.innerHTML = `${newTemp} <span class="vital-unit">°C</span>`;
+
+                // Update last update time
+                const now = new Date().toLocaleTimeString('th-TH', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                document.querySelector('.elderly-meta .meta-item:last-child span:last-child').textContent = `อัพเดทล่าสุด: ${now.slice(0, 5)} น.`;
+            }, 5000); // Update every 5 seconds
+        }
+
+        function handleEmergency() {
+            const confirmation = confirm(`🚨 ตอบสนองเหตุฉุกเฉิน: นายสมชาย มั่นคง
+
+ข้อมูลปัจจุบัน:
+• อัตราการเต้นหัวใจ: 125 bpm (สูงผิดปกติ)
+• ความดันโลหิต: 160/95 mmHg (สูงอันตราย)
+• ออกซิเจนในเลือด: 94% (ต่ำกว่าปกติ)
+• อุณหภูมิร่างกาย: 37.1°C (สูงเล็กน้อย)
+
+ดำเนินการ:
+1. แจ้งผู้ดูแลหลัก (สมใส ใจดี)
+2. แจ้งหน่วยกู้ภัย 1669
+3. บันทึกการตอบสนอง
+
+ยืนยันการดำเนินการ?`);
+
+            if (confirmation) {
+                // Simulate emergency response
+                const responseTime = new Date().toLocaleTimeString('th-TH', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+
+                alert(`✅ ดำเนินการตอบสนองฉุกเฉินเรียบร้อย
+
+เวลาตอบสนอง: ${responseTime}
+ผู้ปฏิบัติการ: สมหญิง ใจดี (Zone Staff)
+
+การดำเนินการ:
+✓ แจ้งผู้ดูแลหลัก: สมใส ใจดี
+✓ แจ้งหน่วยกู้ภัย: 1669
+✓ บันทึกเข้าระบบ
+
+สถานะ: รอหน่วยกู้ภัยเดินทางถึง`);
+
+                // Update alert status in UI
+                const currentAlert = document.querySelector('.alert-item.alert-emergency .alert-status');
+                currentAlert.innerHTML = '🚑 กู้ภัยเดินทาง ETA 8 นาที';
+                currentAlert.style.color = '#e67e22';
+            }
+        }
+
+        function contactCaregiver() {
+            const caregivers = [
+                { name: 'สมใส ใจดี', phone: '089-111-2222', relation: 'ลูกสาว' },
+                { name: 'ประชา สุขใส', phone: '081-333-4444', relation: 'ลูกชาย' }
+            ];
+
+            let message = '📞 แจ้งผู้ดูแล - นายสมชาย มั่นคง\n\nเลือกช่องทางการติดต่อ:\n\n';
+            caregivers.forEach((caregiver, index) => {
+                message += `${index + 1}. ${caregiver.name} (${caregiver.relation})\n   📞 ${caregiver.phone}\n\n`;
+            });
+            message += `ข้อความที่จะส่ง:\n"เรียน คุณ [ชื่อ] ผู้ดูแลคุณสมชาย มั่นคง\n\nขณะนี้คุณสมชาย มีค่าสุขภาพผิดปกติ กรุณาติดต่อกลับด่วน\n\nขอบคุณครับ\nทีมงาน Smart Healthcare"`;
+
+            alert(message);
+        }
+
+        function callCaregiver(phone) {
+            alert(`📞 กำลังโทรหา: ${phone}\n\n(ในระบบจริงจะเชื่อมต่อกับระบบโทรศัพท์)\n\nข้อความที่แนะนำ:\n"สวัสดีครับ นี่ทีม Smart Healthcare\nขณะนี้คุณสมชาย มีค่าสุขภาพผิดปกติ\nกรุณาติดต่อกลับหรือมาดูด่วนครับ"`);
+        }
+
+        function messageCaregiver(email) {
+            alert(`💬 ส่งข้อความไปยัง: ${email}\n\n(ในระบบจริงจะเชื่อมต่อกับระบบอีเมลและ SMS)\n\nเนื้อหาข้อความ:\n"เรียน ผู้ดูแลคุณสมชาย มั่นคง\n\nขณะนี้มีการแจ้งเตือนสุขภาพ:\n• อัตราการเต้นหัวใจ: 125 bpm\n• ความดันโลหิต: 160/95 mmHg\n\nกรุณาติดต่อกลับด่วน\nTel: 02-XXX-XXXX"`);
+        }
+
+        function callEmergency() {
+            const confirmation = confirm(`🚨 โทรหาหน่วยกู้ภัย 1669
+
+ข้อมูลผู้ป่วย:
+ชื่อ: นายสมชาย มั่นคง
+อายุ: 72 ปี
+ที่อยู่: 123/45 หมู่ 7 ตำบลศรีสำโรง
+
+อาการ:
+• อัตราการเต้นหัวใจสูง (125 bpm)
+• ความดันโลหิตสูง (160/95 mmHg)
+• ออกซิเจนในเลือดต่ำ (94%)
+
+ยืนยันการโทรหาหน่วยกู้ภัย?`);
+
+            if (confirmation) {
+                alert(`📞 กำลังเชื่อมต่อ 1669...\n\n✅ เชื่อมต่อสำเร็จ\n\nข้อมูลที่ส่งให้หน่วยกู้ภัย:\n• ตำแหน่ง GPS: 13.7563°N, 100.5018°E\n• ข้อมูลผู้ป่วยและอาการ\n• ข้อมูลการติดต่อผู้ดูแล\n\nหน่วยกู้ภัยจะเดินทางถึงในอีก 8-10 นาที`);
+            }
+        }
+
+        // Initialize real-time updates
+        document.addEventListener('DOMContentLoaded', function() {
+            updateVitals();
+            
+            // Simulate battery drain
+            let batteryLevel = 78;
+            setInterval(() => {
+                if (Math.random() < 0.1) { // 10% chance every 30 seconds
+                    batteryLevel = Math.max(0, batteryLevel - 1);
+                    const batteryFill = document.querySelector('.battery-fill');
+                    const batteryText = batteryFill.parentElement.nextElementSibling;
+                    
+                    batteryFill.style.width = `${batteryLevel}%`;
+                    batteryText.textContent = `${batteryLevel}%`;
+                    
+                    // Change color based on battery level
+                    batteryFill.className = `battery-fill ${batteryLevel < 30 ? 'battery-low' : batteryLevel < 60 ? 'battery-medium' : 'battery-high'}`;
+                }
+            }, 30000); // Check every 30 seconds
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'e':
+                        e.preventDefault();
+                        handleEmergency();
+                        break;
+                    case 'c':
+                        e.preventDefault();
+                        contactCaregiver();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        location.reload();
+                        break;
+                }
+            }
+        });
+
+        // Add tooltip information
+        document.querySelectorAll('.vital-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                const label = this.querySelector('.vital-label').textContent;
+                const value = this.querySelector('.vital-value').textContent;
+                
+                this.title = `${label}: ${value}\nคลิกเพื่อดูกราฟรายละเอียด`;
+            });
+            
+            card.addEventListener('click', function() {
+                const label = this.querySelector('.vital-label').textContent;
+                alert(`📊 กราฟรายละเอียด ${label}\n\n(ในระบบจริงจะแสดงกราฟแนวโน้ม 24 ชั่วโมง\nพร้อมค่าเฉลี่ย สูงสุด ต่ำสุด และการเปลี่ยนแปลง)`);
+            });
+        });
+    </script>
+</body>
+</html>
+                        

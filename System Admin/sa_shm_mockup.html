@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[SA:SHM] System Health Monitoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            color: #2d3748;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-left .subtitle {
+            color: #4a5568;
+            font-size: 1.1rem;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #3182ce, #2c5282);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4);
+        }
+
+        .system-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .overview-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .overview-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .icon-servers { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .icon-uptime { background: linear-gradient(135deg, #48bb78, #38a169); }
+        .icon-load { background: linear-gradient(135deg, #ed8936, #dd6b20); }
+        .icon-storage { background: linear-gradient(135deg, #38b2ac, #319795); }
+
+        .overview-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .overview-label {
+            color: #4a5568;
+            font-size: 1rem;
+        }
+
+        .overview-trend {
+            font-size: 0.9rem;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .trend-up { color: #48bb78; }
+        .trend-down { color: #f56565; }
+        .trend-stable { color: #4a5568; }
+
+        .servers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .server-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .server-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .server-info h3 {
+            color: #2d3748;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .server-ip {
+            color: #4a5568;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .server-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-online {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-warning {
+            background: #feebc8;
+            color: #c05621;
+        }
+
+        .status-critical {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-offline {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .metric-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .metric-label {
+            color: #4a5568;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .metric-progress {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-normal { background: linear-gradient(90deg, #48bb78, #38a169); }
+        .progress-warning { background: linear-gradient(90deg, #ed8936, #dd6b20); }
+        .progress-critical { background: linear-gradient(90deg, #f56565, #e53e3e); }
+
+        .metric-change {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .logs-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .logs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logs-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .log-filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .log-filter-btn {
+            padding: 6px 12px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .log-filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .log-filter-btn:hover {
+            border-color: #667eea;
+        }
+
+        .logs-container {
+            background: #1a202c;
+            border-radius: 10px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .log-timestamp {
+            color: #68d391;
+            min-width: 140px;
+        }
+
+        .log-level {
+            min-width: 60px;
+            font-weight: 600;
+        }
+
+        .log-level.info { color: #63b3ed; }
+        .log-level.warn { color: #f6ad55; }
+        .log-level.error { color: #fc8181; }
+        .log-level.debug { color: #b794f6; }
+
+        .log-message {
+            color: #e2e8f0;
+            flex: 1;
+        }
+
+        .network-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .network-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .network-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .network-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .network-info h4 {
+            color: #2d3748;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .network-info span {
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .network-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .network-metric {
+            text-align: center;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .network-metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .network-metric-label {
+            color: #4a5568;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        .alerts-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .alerts-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            border-left: 4px solid;
+        }
+
+        .alert-critical {
+            background: #fed7d7;
+            border-left-color: #e53e3e;
+        }
+
+        .alert-warning {
+            background: #feebc8;
+            border-left-color: #dd6b20;
+        }
+
+        .alert-info {
+            background: #bee3f8;
+            border-left-color: #3182ce;
+        }
+
+        .alert-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            margin-top: 2px;
+        }
+
+        .alert-critical .alert-icon { background: #e53e3e; }
+        .alert-warning .alert-icon { background: #dd6b20; }
+        .alert-info .alert-icon { background: #3182ce; }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .alert-message {
+            color: #4a5568;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .alert-time {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .servers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .network-status {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .log-filters {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <h1>🖥️ ตรวจสอบสถานะระบบ</h1>
+                <div class="subtitle">การตรวจสอบสุขภาพระบบและประสิทธิภาพการทำงาน</div>
+            </div>
+            <button class="refresh-btn" onclick="refreshSystemData()">
+                <span>🔄</span> รีเฟรชข้อมูล
+            </button>
+        </div>
+
+        <!-- System Overview -->
+        <div class="system-overview">
+            <div class="overview-card">
+                <div class="overview-icon icon-servers">🖥️</div>
+                <div class="overview-value">4/4</div>
+                <div class="overview-label">เซิร์ฟเวอร์ออนไลน์</div>
+                <div class="overview-trend trend-stable">● สถานะคงที่</div>
+            </div>
+
+            <div class="overview-card">
+                <div class="overview-icon icon-uptime">⏱️</div>
+                <div class="overview-value">99.8%</div>
+                <div class="overview-label">Uptime (30 วัน)</div>
+                <div class="overview-trend trend-up">↗ +0.1% จากเดือนที่แล้ว</div>
+            </div>
+
+            <div class="overview-card">
+                <div class="overview-icon icon-load">📊</div>
+                <div class="overview-value">67%</div>
+                <div class="overview-label">System Load เฉลี่ย</div>
+                <div class="overview-trend trend-down">↘ -5% จากเมื่อวาน</div>
+            </div>
+
+            <div class="overview-card">
+                <div class="overview-icon icon-storage">💾</div>
+                <div class="overview-value">3.2TB</div>
+                <div class="overview-label">Storage ที่ใช้งาน</div>
+                <div class="overview-trend trend-up">↗ +120GB จากสัปดาห์ที่แล้ว</div>
+            </div>
+        </div>
+
+        <!-- Servers Status -->
+        <div class="servers-grid">
+            <!-- LoRaWAN Network Server -->
+            <div class="server-card">
+                <div class="server-header">
+                    <div class="server-info">
+                        <h3>LoRaWAN Network Server</h3>
+                        <div class="server-ip">192.168.1.10</div>
+                    </div>
+                    <div class="server-status status-online">
+                        <span>●</span> Online
+                    </div>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">CPU Usage</div>
+                        <div class="metric-value">45%</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-normal" style="width: 45%;"></div>
+                        </div>
+                        <div class="metric-change trend-stable">ไม่เปลี่ยนแปลง</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Memory</div>
+                        <div class="metric-value">12.8GB</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-warning" style="width: 80%;"></div>
+                        </div>
+                        <div class="metric-change trend-up">+12 users</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Response Time</div>
+                        <div class="metric-value">245ms</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-normal" style="width: 25%;"></div>
+                        </div>
+                        <div class="metric-change trend-down">-15ms</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Logs -->
+        <div class="logs-section">
+            <div class="logs-header">
+                <h3 class="logs-title">📝 System Logs (Real-time)</h3>
+                <div class="log-filters">
+                    <button class="log-filter-btn active" onclick="filterLogs('all')">ทั้งหมด</button>
+                    <button class="log-filter-btn" onclick="filterLogs('error')">Error</button>
+                    <button class="log-filter-btn" onclick="filterLogs('warn')">Warning</button>
+                    <button class="log-filter-btn" onclick="filterLogs('info')">Info</button>
+                </div>
+            </div>
+            <div class="logs-container" id="logsContainer">
+                <div class="log-entry">
+                    <span class="log-timestamp">2568-05-31 14:30:25</span>
+                    <span class="log-level error">ERROR</span>
+                    <span class="log-message">Analytics Server: Memory usage exceeded 90% threshold - immediate attention required</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-timestamp">2568-05-31 14:28:15</span>
+                    <span class="log-level warn">WARN</span>
+                    <span class="log-message">Database Server: High CPU usage detected (67%) - monitoring closely</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-timestamp">2568-05-31 14:25:30</span>
+                    <span class="log-level info">INFO</span>
+                    <span class="log-message">LoRaWAN Gateway ZN003: Device count increased to 95 devices</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-timestamp">2568-05-31 14:22:45</span>
+                    <span class="log-level info">INFO</span>
+                    <span class="log-message">Web Application: New user registered - wilai.zone@hatyai.go.th</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-timestamp">2568-05-31 14:20:10</span>
+                    <span class="log-level warn">WARN</span>
+                    <span class="log-message">Zone พัทลุง: 3 devices offline for more than 30 minutes</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-timestamp">2568-05-31 14:18:22</span>
+                    <span class="log-level info">INFO</span>
+                    <span class="log-message">Database Server: Automatic backup completed successfully (3.2GB)</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-timestamp">2568-05-31 14:15:55</span>
+                    <span class="log-level debug">DEBUG</span>
+                    <span class="log-message">Analytics Engine: Processing health data batch (2,847 records)</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-timestamp">2568-05-31 14:12:30</span>
+                    <span class="log-level info">INFO</span>
+                    <span class="log-message">Security: Failed login attempt blocked from IP 192.168.1.100</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Status -->
+        <div class="network-status">
+            <div class="network-card">
+                <div class="network-header">
+                    <div class="network-icon">🌐</div>
+                    <div class="network-info">
+                        <h4>Internet Connection</h4>
+                        <span>Primary ISP: AIS Fiber</span>
+                    </div>
+                </div>
+                <div class="network-metrics">
+                    <div class="network-metric">
+                        <div class="network-metric-value">156</div>
+                        <div class="network-metric-label">Mbps Down</div>
+                    </div>
+                    <div class="network-metric">
+                        <div class="network-metric-value">45</div>
+                        <div class="network-metric-label">Mbps Up</div>
+                    </div>
+                    <div class="network-metric">
+                        <div class="network-metric-value">12ms</div>
+                        <div class="network-metric-label">Latency</div>
+                    </div>
+                    <div class="network-metric">
+                        <div class="network-metric-value">0.1%</div>
+                        <div class="network-metric-label">Packet Loss</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="network-card">
+                <div class="network-header">
+                    <div class="network-icon">📡</div>
+                    <div class="network-info">
+                        <h4>LoRaWAN Network</h4>
+                        <span>24 Gateways Active</span>
+                    </div>
+                </div>
+                <div class="network-metrics">
+                    <div class="network-metric">
+                        <div class="network-metric-value">2,721</div>
+                        <div class="network-metric-label">Devices Online</div>
+                    </div>
+                    <div class="network-metric">
+                        <div class="network-metric-value">126</div>
+                        <div class="network-metric-label">Devices Offline</div>
+                    </div>
+                    <div class="network-metric">
+                        <div class="network-metric-value">95.6%</div>
+                        <div class="network-metric-label">Coverage</div>
+                    </div>
+                    <div class="network-metric">
+                        <div class="network-metric-value">-78dBm</div>
+                        <div class="network-metric-label">Avg RSSI</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="network-card">
+                <div class="network-header">
+                    <div class="network-icon">🔒</div>
+                    <div class="network-info">
+                        <h4>Security Status</h4>
+                        <span>Firewall & IDS Active</span>
+                    </div>
+                </div>
+                <div class="network-metrics">
+                    <div class="network-metric">
+                        <div class="network-metric-value">0</div>
+                        <div class="network-metric-label">Security Threats</div>
+                    </div>
+                    <div class="network-metric">
+                        <div class="network-metric-value">5</div>
+                        <div class="network-metric-label">Blocked IPs</div>
+                    </div>
+                    <div class="network-metric">
+                        <div class="network-metric-value">99.9%</div>
+                        <div class="network-metric-label">SSL/TLS</div>
+                    </div>
+                    <div class="network-metric">
+                        <div class="network-metric-value">A+</div>
+                        <div class="network-metric-label">Security Grade</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Alerts -->
+        <div class="alerts-panel" style="margin-top: 30px;">
+            <h3 class="alerts-title">🚨 System Alerts & Notifications</h3>
+            
+            <div class="alert-item alert-critical">
+                <div class="alert-icon">!</div>
+                <div class="alert-content">
+                    <div class="alert-title">Critical: Analytics Server Memory Usage</div>
+                    <div class="alert-message">Memory usage has reached 94% (30.1GB/32GB). Immediate action required to prevent system instability.</div>
+                    <div class="alert-time">2 นาทีที่แล้ว</div>
+                </div>
+            </div>
+
+            <div class="alert-item alert-warning">
+                <div class="alert-icon">⚠</div>
+                <div class="alert-content">
+                    <div class="alert-title">Warning: Database Server High Load</div>
+                    <div class="alert-message">CPU usage sustained at 67% for the past 15 minutes. Consider scaling resources if load continues.</div>
+                    <div class="alert-time">15 นาทีที่แล้ว</div>
+                </div>
+            </div>
+
+            <div class="alert-item alert-warning">
+                <div class="alert-icon">📡</div>
+                <div class="alert-content">
+                    <div class="alert-title">Warning: Multiple Device Disconnections</div>
+                    <div class="alert-message">3 LoRaWAN devices in Zone พัทลุง have been offline for over 30 minutes. Check gateway connectivity.</div>
+                    <div class="alert-time">45 นาทีที่แล้ว</div>
+                </div>
+            </div>
+
+            <div class="alert-item alert-info">
+                <div class="alert-icon">i</div>
+                <div class="alert-content">
+                    <div class="alert-title">Info: Scheduled Maintenance Reminder</div>
+                    <div class="alert-message">Database maintenance window scheduled for tonight at 02:00 AM. Expected downtime: 30 minutes.</div>
+                    <div class="alert-time">2 ชั่วโมงที่แล้ว</div>
+                </div>
+            </div>
+
+            <div class="alert-item alert-info">
+                <div class="alert-icon">✓</div>
+                <div class="alert-content">
+                    <div class="alert-title">Info: Security Scan Completed</div>
+                    <div class="alert-message">Weekly security scan completed successfully. No vulnerabilities detected. All systems secure.</div>
+                    <div class="alert-time">6 ชั่วโมงที่แล้ว</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function refreshSystemData() {
+            // Simulate refresh animation
+            const btn = document.querySelector('.refresh-btn');
+            btn.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                btn.style.transform = 'rotate(0deg)';
+                
+                // Simulate data refresh with random variations
+                updateMetrics();
+                addNewLogEntry();
+                
+                alert('ข้อมูลระบบได้รับการอัพเดทแล้ว');
+            }, 1000);
+        }
+
+        function updateMetrics() {
+            // Simulate metric updates
+            const cpuElements = document.querySelectorAll('.metric-value');
+            cpuElements.forEach((el, index) => {
+                if (el.textContent.includes('%')) {
+                    const currentValue = parseInt(el.textContent);
+                    const variation = Math.floor(Math.random() * 10) - 5; // ±5%
+                    const newValue = Math.max(0, Math.min(100, currentValue + variation));
+                    el.textContent = newValue + '%';
+                    
+                    // Update progress bar
+                    const progressBar = el.parentElement.querySelector('.progress-fill');
+                    if (progressBar) {
+                        progressBar.style.width = newValue + '%';
+                        
+                        // Update progress bar color based on value
+                        progressBar.className = 'progress-fill ';
+                        if (newValue < 50) {
+                            progressBar.className += 'progress-normal';
+                        } else if (newValue < 80) {
+                            progressBar.className += 'progress-warning';
+                        } else {
+                            progressBar.className += 'progress-critical';
+                        }
+                    }
+                }
+            });
+        }
+
+        function addNewLogEntry() {
+            const logsContainer = document.getElementById('logsContainer');
+            const now = new Date();
+            const timestamp = now.toLocaleString('th-TH', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            const logMessages = [
+                { level: 'info', message: 'System health check completed - all services operational' },
+                { level: 'info', message: 'New health data batch processed successfully (156 records)' },
+                { level: 'warn', message: 'Gateway ZN005: Signal strength below optimal threshold' },
+                { level: 'info', message: 'User authentication successful - admin@healthcare.go.th' }
+            ];
+
+            const randomLog = logMessages[Math.floor(Math.random() * logMessages.length)];
+            
+            const newLogEntry = document.createElement('div');
+            newLogEntry.className = 'log-entry';
+            newLogEntry.innerHTML = `
+                <span class="log-timestamp">${timestamp}</span>
+                <span class="log-level ${randomLog.level}">${randomLog.level.toUpperCase()}</span>
+                <span class="log-message">${randomLog.message}</span>
+            `;
+            
+            logsContainer.insertBefore(newLogEntry, logsContainer.firstChild);
+            
+            // Limit log entries to prevent memory issues
+            const logEntries = logsContainer.querySelectorAll('.log-entry');
+            if (logEntries.length > 20) {
+                logsContainer.removeChild(logEntries[logEntries.length - 1]);
+            }
+        }
+
+        function filterLogs(level) {
+            const filterButtons = document.querySelectorAll('.log-filter-btn');
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            
+            const logEntries = document.querySelectorAll('.log-entry');
+            logEntries.forEach(entry => {
+                const logLevel = entry.querySelector('.log-level').textContent.toLowerCase();
+                if (level === 'all' || logLevel === level) {
+                    entry.style.display = 'flex';
+                } else {
+                    entry.style.display = 'none';
+                }
+            });
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            updateMetrics();
+            
+            // Randomly add new log entries
+            if (Math.random() < 0.3) {
+                addNewLogEntry();
+            }
+        }, 30000);
+
+        // Simulate real-time updates every 5 seconds
+        setInterval(() => {
+            // Update timestamp in header
+            const now = new Date();
+            const timeString = now.toLocaleString('th-TH');
+            // Could update a timestamp element if it existed
+            
+            // Simulate small metric changes
+            const values = document.querySelectorAll('.network-metric-value, .overview-value');
+            values.forEach(val => {
+                if (val.textContent.includes('%') && Math.random() < 0.1) {
+                    const current = parseFloat(val.textContent);
+                    const change = (Math.random() - 0.5) * 2; // ±1%
+                    const newVal = Math.max(0, Math.min(100, current + change));
+                    val.textContent = newVal.toFixed(1) + '%';
+                }
+            });
+        }, 5000);
+    </script>
+</body>
+</html>2GB</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Disk I/O</div>
+                        <div class="metric-value">234MB/s</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-normal" style="width: 35%;"></div>
+                        </div>
+                        <div class="metric-change trend-down">-45MB/s</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Network</div>
+                        <div class="metric-value">156Mbps</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-normal" style="width: 52%;"></div>
+                        </div>
+                        <div class="metric-change trend-up">+23Mbps</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Server -->
+            <div class="server-card">
+                <div class="server-header">
+                    <div class="server-info">
+                        <h3>Database Server</h3>
+                        <div class="server-ip">192.168.1.11</div>
+                    </div>
+                    <div class="server-status status-online">
+                        <span>●</span> Online
+                    </div>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">CPU Usage</div>
+                        <div class="metric-value">67%</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-warning" style="width: 67%;"></div>
+                        </div>
+                        <div class="metric-change trend-up">+12%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Memory</div>
+                        <div class="metric-value">28.4GB</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-critical" style="width: 89%;"></div>
+                        </div>
+                        <div class="metric-change trend-up">+3.2GB</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Disk I/O</div>
+                        <div class="metric-value">1.2GB/s</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-warning" style="width: 78%;"></div>
+                        </div>
+                        <div class="metric-change trend-up">+340MB/s</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Connections</div>
+                        <div class="metric-value">234</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-normal" style="width: 47%;"></div>
+                        </div>
+                        <div class="metric-change trend-up">+23</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Server -->
+            <div class="server-card">
+                <div class="server-header">
+                    <div class="server-info">
+                        <h3>Analytics Server</h3>
+                        <div class="server-ip">192.168.1.12</div>
+                    </div>
+                    <div class="server-status status-warning">
+                        <span>⚠️</span> High Load
+                    </div>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">CPU Usage</div>
+                        <div class="metric-value">89%</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-critical" style="width: 89%;"></div>
+                        </div>
+                        <div class="metric-change trend-up">+23%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Memory</div>
+                        <div class="metric-value">30.1GB</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-critical" style="width: 94%;"></div>
+                        </div>
+                        <div class="metric-change trend-up">+4.8GB</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Processing</div>
+                        <div class="metric-value">2,847</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-warning" style="width: 71%;"></div>
+                        </div>
+                        <div class="metric-change trend-up">+156 records</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Queue</div>
+                        <div class="metric-value">23</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-warning" style="width: 58%;"></div>
+                        </div>
+                        <div class="metric-change trend-up">+8 jobs</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Web Application Server -->
+            <div class="server-card">
+                <div class="server-header">
+                    <div class="server-info">
+                        <h3>Web Application Server</h3>
+                        <div class="server-ip">192.168.1.13</div>
+                    </div>
+                    <div class="server-status status-online">
+                        <span>●</span> Online
+                    </div>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">CPU Usage</div>
+                        <div class="metric-value">34%</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-normal" style="width: 34%;"></div>
+                        </div>
+                        <div class="metric-change trend-down">-8%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Memory</div>
+                        <div class="metric-value">8.2GB</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-normal" style="width: 51%;"></div>
+                        </div>
+                        <div class="metric-change trend-stable">ไม่เปลี่ยนแปลง</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Active Users</div>
+                        <div class="metric-value">156</div>
+                        <div class="metric-progress">
+                            <div class="progress-fill progress-normal" style="width: 62%;"></div>
+                        </div>
+                        <div class="metric-change trend-up">+

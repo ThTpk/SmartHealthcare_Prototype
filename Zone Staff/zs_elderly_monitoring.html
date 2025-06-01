@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ติดตามผู้สูงอายุ - Smart Healthcare System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .breadcrumb {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .staff-info {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .staff-details {
+            flex: 1;
+        }
+
+        .staff-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .staff-role {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .shift-info {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .shift-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .quick-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .quick-stat {
+            text-align: center;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 12px 16px;
+            border-radius: 12px;
+        }
+
+        .quick-stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .quick-stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .monitoring-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+        }
+
+        .main-monitoring {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .monitoring-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .monitoring-title {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .monitoring-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 2px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-emergency {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-emergency:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 50px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        .elderly-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+
+        .elderly-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 25px;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .elderly-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .elderly-card.status-normal::before {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+        }
+
+        .elderly-card.status-risk::before {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+
+        .elderly-card.status-warning::before {
+            background: linear-gradient(90deg, #e67e22, #d35400);
+        }
+
+        .elderly-card.status-emergency::before {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            animation: pulse 1.5s infinite;
+        }
+
+        .elderly-card.status-offline::before {
+            background: linear-gradient(90deg, #95a5a6, #7f8c8d);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .elderly-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .elderly-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .elderly-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        .elderly-info {
+            flex: 1;
+        }
+
+        .elderly-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .elderly-id {
+            color: #7f8c8d;
+            font-size: 12px;
+            font-family: monospace;
+            margin-bottom: 5px;
+        }
+
+        .elderly-age {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-normal {
+            background: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+
+        .status-risk {
+            background: rgba(243, 156, 18, 0.2);
+            color: #e67e22;
+        }
+
+        .status-warning {
+            background: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+        }
+
+        .status-emergency {
+            background: rgba(231, 76, 60, 0.3);
+            color: #c0392b;
+            animation: pulseText 1.5s infinite;
+        }
+
+        .status-offline {
+            background: rgba(149, 165, 166, 0.2);
+            color: #7f8c8d;
+        }
+
+        @keyframes pulseText {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .vital-item {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .vital-label {
+            font-size: 11px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .vital-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .vital-unit {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .vital-warning {
+            color: #e67e22;
+        }
+
+        .vital-danger {
+            color: #e74c3c;
+        }
+
+        .device-status {
+            background: rgba(52, 152, 219, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .device-title {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .device-online {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #27ae60;
+            font-size: 12px;
+        }
+
+        .device-offline {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #e74c3c;
+            font-size: 12px;
+        }
+
+        .device-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .battery-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .battery-bar {
+            width: 20px;
+            height: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 2px;
+            position: relative;
+            background: #ecf0f1;
+        }
+
+        .battery-fill {
+            height: 100%;
+            border-radius: 1px;
+            transition: width 0.3s ease;
+        }
+
+        .battery-high { background: #27ae60; }
+        .battery-medium { background: #f39c12; }
+        .battery-low { background: #e74c3c; }
+
+        .last-update {
+            text-align: center;
+            font-size: 11px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .elderly-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        .btn-view {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-alert {
+            background: rgba(243, 156, 18, 0.1);
+            color: #f39c12;
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-emergency-small {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .priority-alerts {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .alerts-title {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            border-left: 4px solid;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .alert-item:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateX(5px);
+        }
+
+        .alert-emergency {
+            border-left-color: #e74c3c;
+        }
+
+        .alert-warning {
+            border-left-color: #f39c12;
+        }
+
+        .alert-info {
+            border-left-color: #3498db;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 2px;
+        }
+
+        .alert-message {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .alert-time {
+            font-size: 10px;
+            color: #bdc3c7;
+        }
+
+        .zone-summary {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+        }
+
+        .summary-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .recent-activity {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 13px;
+            color: #2c3e50;
+            margin-bottom: 2px;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 1024px) {
+            .monitoring-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: -1;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .monitoring-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .monitoring-controls {
+                justify-content: stretch;
+            }
+            
+            .search-filter {
+                flex-direction: column;
+            }
+            
+            .elderly-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <div class="header-icon">👁️</div>
+                ติดตามผู้สูงอายุ Smart Healthcare
+            </h1>
+            <div class="breadcrumb">หน้าหลัก > Zone Staff > ติดตามผู้สูงอายุ</div>
+        </div>
+
+        <!-- Staff Information -->
+        <div class="staff-info">
+            <div class="staff-details">
+                <div class="staff-name">สมหญิง ใจดี</div>
+                <div class="staff-role">เจ้าหน้าที่สาธารณสุข - โซนตำบลศรีสำโรง</div>
+                <div class="shift-info">
+                    <div class="shift-item">
+                        <span>🕐</span>
+                        <span>กะเช้า: 08:00 - 16:00 น.</span>
+                    </div>
+                    <div class="shift-item">
+                        <span>📅</span>
+                        <span>31 พฤษภาคม 2567</span>
+                    </div>
+                    <div class="shift-item">
+                        <span>⏰</span>
+                        <span>เข้าใช้งาน: 14:32 น.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="quick-stats">
+                <div class="quick-stat">
+                    <div class="quick-stat-number">147</div>
+                    <div class="quick-stat-label">ผู้สูงอายุทั้งหมด</div>
+                </div>
+                <div class="quick-stat">
+                    <div class="quick-stat-number">5</div>
+                    <div class="quick-stat-label">ต้องติดตาม</div>
+                </div>
+                <div class="quick-stat">
+                    <div class="quick-stat-number">1</div>
+                    <div class="quick-stat-label">ฉุกเฉิน</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="monitoring-layout">
+            <!-- Main Monitoring Area -->
+            <div class="main-monitoring">
+                <div class="monitoring-header">
+                    <h2 class="monitoring-title">รายการผู้สูงอายุ</h2>
+                    <div class="monitoring-controls">
+                        <button class="btn btn-primary">
+                            📊 รายงานรายวัน
+                        </button>
+                        <button class="btn btn-secondary">
+                            🔄 รีเฟรช
+                        </button>
+                        <button class="btn btn-emergency">
+                            🚨 SOS ฉุกเฉิน
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="search-filter">
+                    <div class="search-box">
+                        <div class="search-icon">🔍</div>
+                        <input type="text" class="search-input" placeholder="ค้นหาด้วยชื่อ เลขบัตรประชาชน หรือรหัสอุปกรณ์..." id="searchInput">
+                    </div>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">สถานะทั้งหมด</option>
+                        <option value="emergency">ฉุกเฉิน</option>
+                        <option value="warning">เฝ้าระวัง</option>
+                        <option value="risk">เสี่ยง</option>
+                        <option value="normal">ปกติ</option>
+                        <option value="offline">ออฟไลน์</option>
+                    </select>
+                    <select class="filter-select" id="ageFilter">
+                        <option value="">อายุทั้งหมด</option>
+                        <option value="60-70">60-70 ปี</option>
+                        <option value="70-80">70-80 ปี</option>
+                        <option value="80+">80+ ปี</option>
+                    </select>
+                </div>
+
+                <!-- Elderly Grid -->
+                <div class="elderly-grid" id="elderlyGrid">
+                    <!-- Elderly cards will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Priority Alerts -->
+                <div class="priority-alerts">
+                    <div class="alerts-title">
+                        🚨 การแจ้งเตือนด่วน
+                    </div>
+                    <div class="alert-item alert-emergency" onclick="viewAlert('emergency', 'นายสมชาย มั่นคง')">
+                        <div class="alert-content">
+                            <div class="alert-name">นายสมชาย มั่นคง</div>
+                            <div class="alert-message">อัตราการเต้นหัวใจ 125 bpm</div>
+                            <div class="alert-time">14:30 น.</div>
+                        </div>
+                    </div>
+                    <div class="alert-item alert-warning" onclick="viewAlert('warning', 'นางสมใจ ใจดี')">
+                        <div class="alert-content">
+                            <div class="alert-name">นางสมใจ ใจดี</div>
+                            <div class="alert-message">ความดันโลหิต 145/90 mmHg</div>
+                            <div class="alert-time">14:25 น.</div>
+                        </div>
+                    </div>
+                    <div class="alert-item alert-info" onclick="viewAlert('info', 'นายประยุทธ ดีใจ')">
+                        <div class="alert-content">
+                            <div class="alert-name">นายประยุทธ ดีใจ</div>
+                            <div class="alert-message">แบตเตอรี่เหลือ 15%</div>
+                            <div class="alert-time">14:15 น.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zone Summary -->
+                <div class="zone-summary">
+                    <div class="alerts-title">
+                        📊 สรุปสถานะโซน
+                    </div>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="summary-number">142</div>
+                            <div class="summary-label">ออนไลน์</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-number">5</div>
+                            <div class="summary-label">ออฟไลน์</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-number">97%</div>
+                            <div class="summary-label">อัตราออนไลน์</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-number">8</div>
+                            <div class="summary-label">แจ้งเตือนวันนี้</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="recent-activity">
+                    <div class="alerts-title">
+                        📋 กิจกรรมล่าสุด
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🚨</div>
+                        <div class="activity-content">
+                            <div class="activity-text">ตอบสนองการแจ้งเตือนฉุกเฉิน</div>
+                            <div class="activity-time">14:32 น.</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">👁️</div>
+                        <div class="activity-content">
+                            <div class="activity-text">ตรวจสอบข้อมูลผู้สูงอายุ</div>
+                            <div class="activity-time">14:20 น.</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📊</div>
+                        <div class="activity-content">
+                            <div class="activity-text">สร้างรายงานรายวัน</div>
+                            <div class="activity-time">09:15 น.</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🔄</div>
+                        <div class="activity-content">
+                            <div class="activity-text">ตรวจสอบสถานะอุปกรณ์</div>
+                            <div class="activity-time">08:30 น.</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🕐</div>
+                        <div class="activity-content">
+                            <div class="activity-text">เข้าสู่ระบบกะเช้า</div>
+                            <div class="activity-time">08:00 น.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample elderly data
+        const elderlyData = [
+            {
+                id: 'E001',
+                name: 'นายสมชาย มั่นคง',
+                citizenId: '1-1234-56789-12-3',
+                age: 72,
+                gender: 'male',
+                status: 'emergency',
+                vitals: {
+                    heartRate: { value: 125, unit: 'bpm', status: 'danger' },
+                    bloodPressure: { value: '160/95', unit: 'mmHg', status: 'danger' },
+                    spo2: { value: 94, unit: '%', status: 'warning' },
+                    temperature: { value: 37.1, unit: '°C', status: 'warning' }
+                },
+                device: {
+                    id: 'SW-2024-001',
+                    status: 'online',
+                    battery: 78,
+                    lastUpdate: '14:30'
+                },
+                lastUpdate: '14:30',
+                caregiver: 'สมใส ใจดี'
+            },
+            {
+                id: 'E002',
+                name: 'นางสมใจ ใจดี',
+                citizenId: '1-2345-67890-12-4',
+                age: 68,
+                gender: 'female',
+                status: 'warning',
+                vitals: {
+                    heartRate: { value: 85, unit: 'bpm', status: 'normal' },
+                    bloodPressure: { value: '145/90', unit: 'mmHg', status: 'warning' },
+                    spo2: { value: 96, unit: '%', status: 'normal' },
+                    temperature: { value: 36.8, unit: '°C', status: 'normal' }
+                },
+                device: {
+                    id: 'SW-2024-002',
+                    status: 'online',
+                    battery: 65,
+                    lastUpdate: '14:28'
+                },
+                lastUpdate: '14:28',
+                caregiver: 'วิไล สุขใส'
+            },
+            {
+                id: 'E003',
+                name: 'นางสาววิไล สุขใส',
+                citizenId: '1-3456-78901-23-5',
+                age: 65,
+                gender: 'female',
+                status: 'normal',
+                vitals: {
+                    heartRate: { value: 78, unit: 'bpm', status: 'normal' },
+                    bloodPressure: { value: '120/80', unit: 'mmHg', status: 'normal' },
+                    spo2: { value: 98, unit: '%', status: 'normal' },
+                    temperature: { value: 36.5, unit: '°C', status: 'normal' }
+                },
+                device: {
+                    id: 'SW-2024-003',
+                    status: 'online',
+                    battery: 92,
+                    lastUpdate: '14:29'
+                },
+                lastUpdate: '14:29',
+                caregiver: 'มาลี อารมณ์ดี'
+            },
+            {
+                id: 'E004',
+                name: 'นายประยุทธ ดีใจ',
+                citizenId: '1-4567-89012-34-6',
+                age: 74,
+                gender: 'male',
+                status: 'risk',
+                vitals: {
+                    heartRate: { value: 95, unit: 'bpm', status: 'warning' },
+                    bloodPressure: { value: '140/85', unit: 'mmHg', status: 'warning' },
+                    spo2: { value: 95, unit: '%', status: 'normal' },
+                    temperature: { value: 36.9, unit: '°C', status: 'normal' }
+                },
+                device: {
+                    id: 'SW-2024-004',
+                    status: 'online',
+                    battery: 15,
+                    lastUpdate: '14:15'
+                },
+                lastUpdate: '14:15',
+                caregiver: 'ประชา สุขใส'
+            },
+            {
+                id: 'E005',
+                name: 'นางสุมาลี อารมณ์ดี',
+                citizenId: '1-5678-90123-45-7',
+                age: 69,
+                gender: 'female',
+                status: 'normal',
+                vitals: {
+                    heartRate: { value: 72, unit: 'bpm', status: 'normal' },
+                    bloodPressure: { value: '115/75', unit: 'mmHg', status: 'normal' },
+                    spo2: { value: 99, unit: '%', status: 'normal' },
+                    temperature: { value: 36.4, unit: '°C', status: 'normal' }
+                },
+                device: {
+                    id: 'SW-2024-005',
+                    status: 'online',
+                    battery: 88,
+                    lastUpdate: '14:31'
+                },
+                lastUpdate: '14:31',
+                caregiver: 'สมพงษ์ ใหม่มา'
+            },
+            {
+                id: 'E006',
+                name: 'นายสมศักดิ์ มีสุข',
+                citizenId: '1-6789-01234-56-8',
+                age: 71,
+                gender: 'male',
+                status: 'offline',
+                vitals: {
+                    heartRate: { value: '--', unit: 'bpm', status: 'offline' },
+                    bloodPressure: { value: '--/--', unit: 'mmHg', status: 'offline' },
+                    spo2: { value: '--', unit: '%', status: 'offline' },
+                    temperature: { value: '--', unit: '°C', status: 'offline' }
+                },
+                device: {
+                    id: 'SW-2024-006',
+                    status: 'offline',
+                    battery: 0,
+                    lastUpdate: '12:45'
+                },
+                lastUpdate: '12:45',
+                caregiver: 'จิรา สว่างใส'
+            }
+        ];
+
+        function getStatusText(status) {
+            const statusMap = {
+                'normal': 'ปกติ',
+                'risk': 'เสี่ยง',
+                'warning': 'เฝ้าระวัง',
+                'emergency': 'ฉุกเฉิน',
+                'offline': 'ออฟไลน์'
+            };
+            return statusMap[status] || 'ไม่ทราบ';
+        }
+
+        function getElderlyAvatar(gender) {
+            return gender === 'male' ? '👴' : '👵';
+        }
+
+        function getBatteryIndicator(battery) {
+            if (battery === 0) return '<span style="color: #e74c3c;">ไม่มีสัญญาณ</span>';
+            
+            let fillClass = 'battery-high';
+            if (battery < 30) fillClass = 'battery-low';
+            else if (battery < 60) fillClass = 'battery-medium';
+            
+            return `
+                <div class="battery-indicator">
+                    <div class="battery-bar">
+                        <div class="battery-fill ${fillClass}" style="width: ${battery}%"></div>
+                    </div>
+                    <span style="font-size: 10px;">${battery}%</span>
+                </div>
+            `;
+        }
+
+        function createElderlyCard(elderly) {
+            const vitals = elderly.vitals;
+            
+            return `
+                <div class="elderly-card status-${elderly.status}" data-status="${elderly.status}" data-age="${elderly.age}">
+                    <div class="elderly-header">
+                        <div style="display: flex; align-items: center;">
+                            <div class="elderly-avatar">${getElderlyAvatar(elderly.gender)}</div>
+                            <div class="elderly-info">
+                                <div class="elderly-name">${elderly.name}</div>
+                                <div class="elderly-id">ID: ${elderly.id}</div>
+                                <div class="elderly-age">${elderly.age} ปี • ${elderly.gender === 'male' ? 'ชาย' : 'หญิง'}</div>
+                            </div>
+                        </div>
+                        <span class="status-badge status-${elderly.status}">${getStatusText(elderly.status)}</span>
+                    </div>
+                    
+                    <div class="vitals-grid">
+                        <div class="vital-item">
+                            <div class="vital-label">Heart Rate</div>
+                            <div class="vital-value ${vitals.heartRate.status === 'danger' ? 'vital-danger' : vitals.heartRate.status === 'warning' ? 'vital-warning' : ''}">
+                                ${vitals.heartRate.value} <span class="vital-unit">${vitals.heartRate.unit}</span>
+                            </div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-label">Blood Pressure</div>
+                            <div class="vital-value ${vitals.bloodPressure.status === 'danger' ? 'vital-danger' : vitals.bloodPressure.status === 'warning' ? 'vital-warning' : ''}">
+                                ${vitals.bloodPressure.value} <span class="vital-unit">${vitals.bloodPressure.unit}</span>
+                            </div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-label">SpO2</div>
+                            <div class="vital-value ${vitals.spo2.status === 'danger' ? 'vital-danger' : vitals.spo2.status === 'warning' ? 'vital-warning' : ''}">
+                                ${vitals.spo2.value} <span class="vital-unit">${vitals.spo2.unit}</span>
+                            </div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-label">Temperature</div>
+                            <div class="vital-value ${vitals.temperature.status === 'danger' ? 'vital-danger' : vitals.temperature.status === 'warning' ? 'vital-warning' : ''}">
+                                ${vitals.temperature.value} <span class="vital-unit">${vitals.temperature.unit}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="device-status">
+                        <div class="device-header">
+                            <div class="device-title">📱 ${elderly.device.id}</div>
+                            <div class="${elderly.device.status === 'online' ? 'device-online' : 'device-offline'}">
+                                <span>${elderly.device.status === 'online' ? '🟢' : '🔴'}</span>
+                                ${elderly.device.status === 'online' ? 'ออนไลน์' : 'ออฟไลน์'}
+                            </div>
+                        </div>
+                        <div class="device-info">
+                            <span>แบตเตอรี่:</span>
+                            ${getBatteryIndicator(elderly.device.battery)}
+                        </div>
+                    </div>
+                    
+                    <div class="last-update">
+                        อัพเดทล่าสุด: ${elderly.lastUpdate} น.
+                    </div>
+                    
+                    <div class="elderly-actions">
+                        <button class="btn btn-small btn-view" onclick="viewElderlyDetail('${elderly.id}')">
+                            👁️ ดูรายละเอียด
+                        </button>
+                        ${elderly.status === 'emergency' || elderly.status === 'warning' ? 
+                            `<button class="btn btn-small btn-emergency-small" onclick="handleEmergency('${elderly.id}')">
+                                🚨 ตอบสนอง
+                            </button>` : ''
+                        }
+                        <button class="btn btn-small btn-alert" onclick="contactCaregiver('${elderly.id}')">
+                            📞 ติดต่อผู้ดูแล
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderElderlyCards(dataToRender = elderlyData) {
+            const elderlyGrid = document.getElementById('elderlyGrid');
+            elderlyGrid.innerHTML = dataToRender.map(elderly => createElderlyCard(elderly)).join('');
+        }
+
+        function filterElderlyData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const ageFilter = document.getElementById('ageFilter').value;
+
+            const filteredData = elderlyData.filter(elderly => {
+                const matchesSearch = !searchTerm || 
+                    elderly.name.toLowerCase().includes(searchTerm) ||
+                    elderly.citizenId.includes(searchTerm) ||
+                    elderly.device.id.toLowerCase().includes(searchTerm);
+                
+                const matchesStatus = !statusFilter || elderly.status === statusFilter;
+                
+                let matchesAge = true;
+                if (ageFilter) {
+                    switch (ageFilter) {
+                        case '60-70': matchesAge = elderly.age >= 60 && elderly.age < 70; break;
+                        case '70-80': matchesAge = elderly.age >= 70 && elderly.age < 80; break;
+                        case '80+': matchesAge = elderly.age >= 80; break;
+                    }
+                }
+                
+                return matchesSearch && matchesStatus && matchesAge;
+            });
+
+            renderElderlyCards(filteredData);
+        }
+
+        function viewElderlyDetail(elderlyId) {
+            const elderly = elderlyData.find(e => e.id === elderlyId);
+            if (elderly) {
+                const details = `
+รายละเอียดผู้สูงอายุ: ${elderly.name}
+รหัส: ${elderly.id}
+เลขบัตรประชาชน: ${elderly.citizenId}
+อายุ: ${elderly.age} ปี
+เพศ: ${elderly.gender === 'male' ? 'ชาย' : 'หญิง'}
+สถานะ: ${getStatusText(elderly.status)}
+
+ข้อมูลสุขภาพปัจจุบัน:
+• อัตราการเต้นหัวใจ: ${elderly.vitals.heartRate.value} ${elderly.vitals.heartRate.unit}
+• ความดันโลหิต: ${elderly.vitals.bloodPressure.value} ${elderly.vitals.bloodPressure.unit}
+• ออกซิเจนในเลือด: ${elderly.vitals.spo2.value} ${elderly.vitals.spo2.unit}
+• อุณหภูมิร่างกาย: ${elderly.vitals.temperature.value} ${elderly.vitals.temperature.unit}
+
+อุปกรณ์: ${elderly.device.id}
+สถานะอุปกรณ์: ${elderly.device.status === 'online' ? 'ออนไลน์' : 'ออฟไลน์'}
+แบตเตอรี่: ${elderly.device.battery}%
+
+ผู้ดูแล: ${elderly.caregiver}
+อัพเดทล่าสุด: ${elderly.lastUpdate} น.
+                `.trim();
+                
+                alert(details);
+            }
+        }
+
+        function handleEmergency(elderlyId) {
+            const elderly = elderlyData.find(e => e.id === elderlyId);
+            if (elderly && confirm(`ตอบสนองการแจ้งเตือนฉุกเฉิน: ${elderly.name}\n\nดำเนินการ:\n1. แจ้งผู้ดูแล: ${elderly.caregiver}\n2. แจ้งหน่วยกู้ภัย\n3. บันทึกการตอบสนอง`)) {
+                
+                // Simulate emergency response
+                const responseTime = new Date().toLocaleTimeString('th-TH', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                alert(`ดำเนินการตอบสนองฉุกเฉินเรียบร้อย\n\nเวลาตอบสนอง: ${responseTime}\nสถานะ: กำลังประสานงานกู้ภัย\nผู้ปฏิบัติการ: สมหญิง ใจดี`);
+                
+                // Update elderly status (simulate)
+                if (elderly.status === 'emergency') {
+                    elderly.status = 'warning';
+                    renderElderlyCards();
+                }
+            }
+        }
+
+        function contactCaregiver(elderlyId) {
+            const elderly = elderlyData.find(e => e.id === elderlyId);
+            if (elderly) {
+                alert(`ติดต่อผู้ดูแล: ${elderly.caregiver}\n\nช่องทางการติดต่อ:\n📞 โทรศัพท์\n📧 อีเมล\n📱 LINE\n💬 SMS\n\n(ในระบบจริงจะเชื่อมต่อกับระบบการสื่อสาร)`);
+            }
+        }
+
+        function viewAlert(type, name) {
+            const alertMessages = {
+                'emergency': `เหตุฉุกเฉิน: ${name}\nต้องการความช่วยเหลือทันที`,
+                'warning': `การเตือน: ${name}\nค่าสุขภาพผิดปกติ ต้องติดตาม`,
+                'info': `ข้อมูล: ${name}\nแจ้งเตือนทั่วไป`
+            };
+            
+            alert(alertMessages[type] || `การแจ้งเตือน: ${name}`);
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterElderlyData);
+        document.getElementById('statusFilter').addEventListener('change', filterElderlyData);
+        document.getElementById('ageFilter').addEventListener('change', filterElderlyData);
+
+        // Simulate real-time updates
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                // Randomly update some data
+                elderlyData.forEach((elderly, index) => {
+                    if (Math.random() < 0.1) { // 10% chance to update
+                        // Update vitals slightly
+                        if (elderly.status !== 'offline') {
+                            const hr = elderly.vitals.heartRate;
+                            if (hr.value !== '--') {
+                                hr.value = Math.max(60, Math.min(130, hr.value + (Math.random() - 0.5) * 10));
+                                hr.value = Math.round(hr.value);
+                            }
+                            
+                            elderly.lastUpdate = new Date().toLocaleTimeString('th-TH', { 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                            });
+                            
+                            elderly.device.lastUpdate = elderly.lastUpdate;
+                        }
+                    }
+                });
+                
+                // Re-render if any changes occurred
+                filterElderlyData();
+            }, 15000); // Update every 15 seconds
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderElderlyCards();
+            startRealTimeUpdates();
+        });
+
+        // Handle emergency button
+        document.querySelector('.btn-emergency').addEventListener('click', function() {
+            const emergencyElderly = elderlyData.filter(e => e.status === 'emergency');
+            if (emergencyElderly.length > 0) {
+                const names = emergencyElderly.map(e => e.name).join('\n');
+                alert(`🚨 เหตุฉุกเฉินปัจจุบัน:\n\n${names}\n\nคลิกปุ่ม "ตอบสนอง" ในการ์ดแต่ละคนเพื่อดำเนินการ`);
+            } else {
+                alert('ไม่มีเหตุฉุกเฉินในขณะนี้');
+            }
+        });
+
+        // Handle refresh button
+        document.querySelector('.btn-secondary').addEventListener('click', function() {
+            const btn = this;
+            btn.innerHTML = '⏳ กำลังรีเฟรช...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                // Simulate data refresh
+                elderlyData.forEach(elderly => {
+                    if (elderly.status !== 'offline') {
+                        elderly.lastUpdate = new Date().toLocaleTimeString('th-TH', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        });
+                        elderly.device.lastUpdate = elderly.lastUpdate;
+                    }
+                });
+                
+                renderElderlyCards();
+                btn.innerHTML = '🔄 รีเฟรช';
+                btn.disabled = false;
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

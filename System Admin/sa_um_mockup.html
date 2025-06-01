@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[SA:UM] User Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            color: #2d3748;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-left .subtitle {
+            color: #4a5568;
+            font-size: 1.1rem;
+        }
+
+        .add-user-btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .add-user-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .filters-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .filters-row {
+            display: grid;
+            grid-template-columns: 1fr 180px 180px 150px;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            color: #4a5568;
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .filter-input, .filter-select {
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .users-table-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table thead {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .users-table th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .users-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+        }
+
+        .users-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .users-table tbody tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-details h4 {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .user-details span {
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .role-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .role-sa {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+            color: white;
+        }
+
+        .role-za {
+            background: linear-gradient(135deg, #3182ce, #2c5282);
+            color: white;
+        }
+
+        .role-zs {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+            color: white;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-inactive {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-pending {
+            background: #feebc8;
+            color: #c05621;
+        }
+
+        .zone-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .zone-tag {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .btn-edit:hover {
+            background: #90cdf4;
+        }
+
+        .btn-reset {
+            background: #fbb6ce;
+            color: #97266d;
+        }
+
+        .btn-reset:hover {
+            background: #f687b3;
+        }
+
+        .btn-delete {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .btn-delete:hover {
+            background: #feb2b2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .modal-header h2 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #a0aec0;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: #f7fafc;
+            color: #4a5568;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #4a5568;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .zone-selector {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .zone-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .filters-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .users-table-container {
+                overflow-x: auto;
+            }
+
+            .users-table {
+                min-width: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <h1>👥 จัดการผู้ใช้งาน</h1>
+                <div class="subtitle">ระบบจัดการบัญชีผู้ใช้และสิทธิ์การเข้าถึง</div>
+            </div>
+            <button class="add-user-btn" onclick="openAddModal()">
+                <span>➕</span> เพิ่มผู้ใช้งานใหม่
+            </button>
+        </div>
+
+        <!-- Statistics Overview -->
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-number">156</div>
+                <div class="stat-label">ผู้ใช้งานทั้งหมด</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">8</div>
+                <div class="stat-label">System Admin</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24</div>
+                <div class="stat-label">Zone Admin</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">124</div>
+                <div class="stat-label">Zone Staff</div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label>ค้นหาผู้ใช้งาน</label>
+                    <input type="text" class="filter-input" placeholder="ชื่อ, อีเมล, หรือเบอร์โทรศัพท์...">
+                </div>
+                <div class="filter-group">
+                    <label>บทบาท</label>
+                    <select class="filter-select">
+                        <option value="">ทั้งหมด</option>
+                        <option value="sa">System Admin</option>
+                        <option value="za">Zone Admin</option>
+                        <option value="zs">Zone Staff</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>สถานะ</label>
+                    <select class="filter-select">
+                        <option value="">ทั้งหมด</option>
+                        <option value="active">ใช้งาน</option>
+                        <option value="inactive">ปิดใช้งาน</option>
+                        <option value="pending">รอยืนยัน</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button class="btn-secondary">ล้างตัวกรอง</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="users-table-container">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>ผู้ใช้งาน</th>
+                        <th>บทบาท</th>
+                        <th>Zone ที่รับผิดชอบ</th>
+                        <th>สถานะ</th>
+                        <th>เข้าใช้งานล่าสุด</th>
+                        <th>วันที่สร้าง</th>
+                        <th>การดำเนินการ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">SA</div>
+                                <div class="user-details">
+                                    <h4>สมชาย ใจดี</h4>
+                                    <span>somchai.admin@healthcare.go.th</span><br>
+                                    <span>081-234-5678</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="role-badge role-sa">System Admin</span></td>
+                        <td>
+                            <div class="zone-tags">
+                                <span class="zone-tag">ทุก Zone</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-active">ใช้งาน</span></td>
+                        <td>31 พ.ค. 2568 14:25</td>
+                        <td>15 ม.ค. 2568</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn btn-edit" onclick="editUser('SA001')">แก้ไข</button>
+                                <button class="action-btn btn-reset" onclick="resetPassword('SA001')">รีเซ็ตรหัสผ่าน</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">วิ</div>
+                                <div class="user-details">
+                                    <h4>วิไล สุขสวัสดิ์</h4>
+                                    <span>wilai.zone@hatyai.go.th</span><br>
+                                    <span>074-456-789</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="role-badge role-za">Zone Admin</span></td>
+                        <td>
+                            <div class="zone-tags">
+                                <span class="zone-tag">หาดใหญ่</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-active">ใช้งาน</span></td>
+                        <td>31 พ.ค. 2568 13:45</td>
+                        <td>20 ม.ค. 2568</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn btn-edit" onclick="editUser('ZA001')">แก้ไข</button>
+                                <button class="action-btn btn-reset" onclick="resetPassword('ZA001')">รีเซ็ตรหัสผ่าน</button>
+                                <button class="action-btn btn-delete" onclick="deleteUser('ZA001')">ลบ</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">สุ</div>
+                                <div class="user-details">
+                                    <h4>สุรชาต ปัญญาเจริญ</h4>
+                                    <span>surachat.staff@hatyai.go.th</span><br>
+                                    <span>074-567-890</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="role-badge role-zs">Zone Staff</span></td>
+                        <td>
+                            <div class="zone-tags">
+                                <span class="zone-tag">หาดใหญ่</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-active">ใช้งาน</span></td>
+                        <td>31 พ.ค. 2568 12:30</td>
+                        <td>25 ม.ค. 2568</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn btn-edit" onclick="editUser('ZS001')">แก้ไข</button>
+                                <button class="action-btn btn-reset" onclick="resetPassword('ZS001')">รีเซ็ตรหัสผ่าน</button>
+                                <button class="action-btn btn-delete" onclick="deleteUser('ZS001')">ลบ</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">นง</div>
+                                <div class="user-details">
+                                    <h4>นงนุช มาลีวงศ์</h4>
+                                    <span>nongnuch.admin@banglamung.go.th</span><br>
+                                    <span>038-123-456</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="role-badge role-za">Zone Admin</span></td>
+                        <td>
+                            <div class="zone-tags">
+                                <span class="zone-tag">บางละมุง</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-pending">รอยืนยัน</span></td>
+                        <td>-</td>
+                        <td>30 พ.ค. 2568</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn btn-edit" onclick="editUser('ZA002')">แก้ไข</button>
+                                <button class="action-btn btn-reset" onclick="resetPassword('ZA002')">รีเซ็ตรหัสผ่าน</button>
+                                <button class="action-btn btn-delete" onclick="deleteUser('ZA002')">ลบ</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">ป</div>
+                                <div class="user-details">
+                                    <h4>ประสิทธิ์ เก่งการ</h4>
+                                    <span>prasit.test@healthcare.go.th</span><br>
+                                    <span>074-999-888</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="role-badge role-zs">Zone Staff</span></td>
+                        <td>
+                            <div class="zone-tags">
+                                <span class="zone-tag">คลองหอยโข่ง</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge status-inactive">ปิดใช้งาน</span></td>
+                        <td>28 พ.ค. 2568 16:20</td>
+                        <td>15 เม.ย. 2568</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn btn-edit" onclick="editUser('ZS002')">แก้ไข</button>
+                                <button class="action-btn btn-reset" onclick="resetPassword('ZS002')">รีเซ็ตรหัสผ่าน</button>
+                                <button class="action-btn btn-delete" onclick="deleteUser('ZS002')">ลบ</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">เพิ่มผู้ใช้งานใหม่</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <form id="userForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">ชื่อ *</label>
+                        <input type="text" id="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">นามสกุล *</label>
+                        <input type="text" id="lastName" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">อีเมล *</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">เบอร์โทรศัพท์ *</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userRole">บทบาท *</label>
+                        <select id="userRole" required onchange="toggleZoneSelector()">
+                            <option value="">เลือกบทบาท</option>
+                            <option value="sa">System Admin</option>
+                            <option value="za">Zone Admin</option>
+                            <option value="zs">Zone Staff</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="userStatus">สถานะ</label>
+                        <select id="userStatus">
+                            <option value="active">ใช้งาน</option>
+                            <option value="inactive">ปิดใช้งาน</option>
+                            <option value="pending">รอยืนยัน</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" id="zoneSection" style="display: none;">
+                    <label>Zone ที่รับผิดชอบ *</label>
+                    <div class="zone-selector">
+                        <div class="zone-checkbox">
+                            <input type="checkbox" id="zone_ZN001" value="ZN001">
+                            <label for="zone_ZN001">หาดใหญ่ (ZN001)</label>
+                        </div>
+                        <div class="zone-checkbox">
+                            <input type="checkbox" id="zone_ZN002" value="ZN002">
+                            <label for="zone_ZN002">บางละมุง (ZN002)</label>
+                        </div>
+                        <div class="zone-checkbox">
+                            <input type="checkbox" id="zone_ZN003" value="ZN003">
+                            <label for="zone_ZN003">คลองหอยโข่ง (ZN003)</label>
+                        </div>
+                        <div class="zone-checkbox">
+                            <input type="checkbox" id="zone_ZN004" value="ZN004">
+                            <label for="zone_ZN004">ป่าพะยอม (ZN004)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="initialPassword">รหัสผ่านเริ่มต้น *</label>
+                    <input type="password" id="initialPassword" required>
+                    <small style="color: #666; font-size: 0.8rem;">รหัสผ่านควรมีอย่างน้อย 8 ตัวอักษร</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">ยกเลิก</button>
+                    <button type="submit" class="btn-primary">บันทึก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'เพิ่มผู้ใช้งานใหม่';
+            document.getElementById('userForm').reset();
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        function editUser(userId) {
+            document.getElementById('modalTitle').textContent = 'แก้ไขข้อมูลผู้ใช้งาน';
+            
+            // Simulate loading existing data
+            if (userId === 'ZA001') {
+                document.getElementById('firstName').value = 'วิไล';
+                document.getElementById('lastName').value = 'สุขสวัสดิ์';
+                document.getElementById('email').value = 'wilai.zone@hatyai.go.th';
+                document.getElementById('phone').value = '074-456-789';
+                document.getElementById('userRole').value = 'za';
+                document.getElementById('userStatus').value = 'active';
+                toggleZoneSelector();
+                document.getElementById('zone_ZN001').checked = true;
+            }
+            
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        function deleteUser(userId) {
+            if (confirm(`คุณแน่ใจหรือไม่ที่จะลบผู้ใช้งาน ${userId}?\n\nการลบผู้ใช้งานจะไม่สามารถยกเลิกได้`)) {
+                alert(`ลบผู้ใช้งาน ${userId} เรียบร้อยแล้ว`);
+            }
+        }
+
+        function resetPassword(userId) {
+            if (confirm(`คุณต้องการรีเซ็ตรหัสผ่านสำหรับผู้ใช้งาน ${userId} หรือไม่?\n\nรหัสผ่านใหม่จะถูกส่งไปยังอีเมลของผู้ใช้งาน`)) {
+                alert(`รีเซ็ตรหัสผ่านสำหรับ ${userId} เรียบร้อยแล้ว\nรหัสผ่านใหม่ได้ถูกส่งไปยังอีเมลของผู้ใช้งานแล้ว`);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').classList.remove('show');
+        }
+
+        function toggleZoneSelector() {
+            const role = document.getElementById('userRole').value;
+            const zoneSection = document.getElementById('zoneSection');
+            
+            if (role === 'za' || role === 'zs') {
+                zoneSection.style.display = 'block';
+            } else {
+                zoneSection.style.display = 'none';
+                // Clear all zone selections
+                document.querySelectorAll('.zone-checkbox input').forEach(cb => cb.checked = false);
+            }
+        }
+
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('บันทึกข้อมูลผู้ใช้งานเรียบร้อยแล้ว');
+            closeModal();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('userModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

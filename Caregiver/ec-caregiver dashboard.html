@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elderly Caregiver Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-title i {
+            font-size: 1.8rem;
+            color: #667eea;
+        }
+
+        .header-title h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 500;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .alert-section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .alert-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .alert-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .alert-badge {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .alert-item {
+            background: linear-gradient(135deg, #fed7d7, #feb2b2);
+            border: 1px solid #fc8181;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alert-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f56565, #e53e3e);
+        }
+
+        .alert-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-info h4 {
+            color: #742a2a;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-info p {
+            color: #9c4221;
+            font-size: 0.9rem;
+        }
+
+        .alert-time {
+            color: #9c4221;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .elderly-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .elderly-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .elderly-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            border-radius: 0 16px 0 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-normal { background: linear-gradient(135deg, #48bb78, #38a169); }
+        .status-warning { background: linear-gradient(135deg, #ed8936, #dd6b20); }
+        .status-danger { background: linear-gradient(135deg, #f56565, #e53e3e); }
+
+        .elderly-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .elderly-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #4a5568;
+        }
+
+        .elderly-info h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .elderly-info p {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .health-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-item {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: #718096;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .metric-value.normal { color: #38a169; }
+        .metric-value.warning { color: #dd6b20; }
+        .metric-value.danger { color: #e53e3e; }
+
+        .last-update {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .view-details-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-details-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .summary-section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-number.normal { color: #38a169; }
+        .stat-number.warning { color: #dd6b20; }
+        .stat-number.danger { color: #e53e3e; }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .floating-action {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .floating-action:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+        }
+
+        .notification-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            max-width: 300px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+
+        .notification-popup.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #e53e3e;
+        }
+
+        .notification-body {
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 1rem;
+            }
+            
+            .elderly-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .health-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fas fa-heart"></i>
+                <h1>แผงควบคุมผู้ดูแล</h1>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">สม</div>
+                <div>
+                    <div>สมจิต รักครอบครัว</div>
+                    <div style="font-size: 0.8rem; color: #666;">ผู้ดูแลผู้สูงอายุ</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Alert Section -->
+        <div class="alert-section">
+            <div class="alert-header">
+                <div class="alert-title">
+                    <i class="fas fa-exclamation-triangle" style="color: #e53e3e;"></i>
+                    การแจ้งเตือนด่วน
+                    <span class="alert-badge">1</span>
+                </div>
+            </div>
+            <div class="alert-item">
+                <div class="alert-content">
+                    <div class="alert-info">
+                        <h4>คุณยาย สมหญิง - ค่าออกซิเจนต่ำ</h4>
+                        <p>SpO2: 88% (ค่าปกติ 95-100%) - ต้องตรวจสอบด่วน</p>
+                    </div>
+                    <div class="alert-time">5 นาทีที่แล้ว</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Elderly Cards Grid -->
+        <div class="elderly-grid">
+            <!-- Card 1 - Danger Status -->
+            <div class="elderly-card">
+                <div class="status-indicator status-danger">!</div>
+                <div class="elderly-header">
+                    <div class="elderly-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="elderly-info">
+                        <h3>คุณยาย สมหญิง จันทร์ดี</h3>
+                        <p>อายุ 78 ปี • คุณยาย</p>
+                    </div>
+                </div>
+                <div class="health-metrics">
+                    <div class="metric-item">
+                        <div class="metric-label">อัตราหัวใจ</div>
+                        <div class="metric-value danger">95 bpm</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">ออกซิเจน</div>
+                        <div class="metric-value danger">88%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">อุณหภูมิ</div>
+                        <div class="metric-value warning">37.2°C</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">ความดัน</div>
+                        <div class="metric-value warning">145/90</div>
+                    </div>
+                </div>
+                <div class="last-update">
+                    <span><i class="fas fa-clock"></i> อัพเดท 2 นาทีที่แล้ว</span>
+                    <button class="view-details-btn" onclick="viewDetails('สมหญิง จันทร์ดี')">ดูรายละเอียด</button>
+                </div>
+            </div>
+
+            <!-- Card 2 - Normal Status -->
+            <div class="elderly-card">
+                <div class="status-indicator status-normal">✓</div>
+                <div class="elderly-header">
+                    <div class="elderly-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="elderly-info">
+                        <h3>คุณปู่ บุญมี ศรีสุข</h3>
+                        <p>อายุ 82 ปี • คุณปู่</p>
+                    </div>
+                </div>
+                <div class="health-metrics">
+                    <div class="metric-item">
+                        <div class="metric-label">อัตราหัวใจ</div>
+                        <div class="metric-value normal">72 bpm</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">ออกซิเจน</div>
+                        <div class="metric-value normal">97%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">อุณหภูมิ</div>
+                        <div class="metric-value normal">36.5°C</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">ความดัน</div>
+                        <div class="metric-value normal">120/80</div>
+                    </div>
+                </div>
+                <div class="last-update">
+                    <span><i class="fas fa-clock"></i> อัพเดท 1 นาทีที่แล้ว</span>
+                    <button class="view-details-btn" onclick="viewDetails('บุญมี ศรีสุข')">ดูรายละเอียด</button>
+                </div>
+            </div>
+
+            <!-- Card 3 - Warning Status -->
+            <div class="elderly-card">
+                <div class="status-indicator status-warning">!</div>
+                <div class="elderly-header">
+                    <div class="elderly-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="elderly-info">
+                        <h3>คุณแม่ วิไล สุขใส</h3>
+                        <p>อายุ 68 ปี • คุณแม่</p>
+                    </div>
+                </div>
+                <div class="health-metrics">
+                    <div class="metric-item">
+                        <div class="metric-label">อัตราหัวใจ</div>
+                        <div class="metric-value warning">88 bpm</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">ออกซิเจน</div>
+                        <div class="metric-value warning">94%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">อุณหภูมิ</div>
+                        <div class="metric-value normal">36.8°C</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">ความดัน</div>
+                        <div class="metric-value warning">140/85</div>
+                    </div>
+                </div>
+                <div class="last-update">
+                    <span><i class="fas fa-clock"></i> อัพเดท 3 นาทีที่แล้ว</span>
+                    <button class="view-details-btn" onclick="viewDetails('วิไล สุขใส')">ดูรายละเอียด</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="summary-section">
+            <div class="summary-header">
+                <i class="fas fa-chart-bar"></i>
+                สรุปสุขภาพวันนี้
+            </div>
+            <div class="summary-stats">
+                <div class="stat-card">
+                    <div class="stat-number normal">2</div>
+                    <div class="stat-label">สถานะปกติ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number warning">1</div>
+                    <div class="stat-label">ต้องเฝ้าระวัง</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number danger">1</div>
+                    <div class="stat-label">ต้องดูแลด่วน</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: #667eea;">4</div>
+                    <div class="stat-label">การแจ้งเตือนวันนี้</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="floating-action" onclick="showNotificationSettings()" title="ตั้งค่าการแจ้งเตือน">
+        <i class="fas fa-cog"></i>
+    </button>
+
+    <!-- Notification Popup -->
+    <div class="notification-popup" id="notificationPopup">
+        <div class="notification-header">
+            <i class="fas fa-bell"></i>
+            การแจ้งเตือนใหม่
+        </div>
+        <div class="notification-body">
+            คุณยาย สมหญิง มีค่าออกซิเจนในเลือดต่ำกว่าปกติ กรุณาตรวจสอบ
+        </div>
+    </div>
+
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            updateHealthData();
+            startRealTimeUpdates();
+            
+            // Show initial notification
+            setTimeout(() => {
+                showNotification();
+            }, 2000);
+        });
+
+        function updateHealthData() {
+            // Simulate real-time health data updates
+            const metrics = document.querySelectorAll('.metric-value');
+            
+            metrics.forEach(metric => {
+                const currentValue = metric.textContent;
+                if (Math.random() < 0.1) { // 10% chance to update
+                    // Add slight variation to simulate real-time data
+                    if (currentValue.includes('bpm')) {
+                        const value = parseInt(currentValue);
+                        const newValue = value + Math.floor(Math.random() * 6) - 3;
+                        metric.textContent = newValue + ' bpm';
+                        
+                        // Update status based on heart rate
+                        updateMetricStatus(metric, newValue, [60, 80], [80, 100]);
+                    }
+                    else if (currentValue.includes('%')) {
+                        const value = parseInt(currentValue);
+                        const newValue = Math.max(85, Math.min(100, value + Math.floor(Math.random() * 4) - 2));
+                        metric.textContent = newValue + '%';
+                        
+                        // Update status based on SpO2
+                        updateMetricStatus(metric, newValue, [95, 100], [90, 95]);
+                    }
+                    else if (currentValue.includes('°C')) {
+                        const value = parseFloat(currentValue);
+                        const newValue = (value + (Math.random() * 0.4) - 0.2).toFixed(1);
+                        metric.textContent = newValue + '°C';
+                        
+                        // Update status based on temperature
+                        updateMetricStatus(metric, parseFloat(newValue), [36.0, 37.0], [37.0, 37.5]);
+                    }
+                }
+            });
+            
+            // Update timestamps
+            const timestamps = document.querySelectorAll('.last-update span');
+            timestamps.forEach(timestamp => {
+                const minutes = Math.floor(Math.random() * 5) + 1;
+                timestamp.innerHTML = `<i class="fas fa-clock"></i> อัพเดท ${minutes} นาทีที่แล้ว`;
+            });
+        }
+
+        function updateMetricStatus(element, value, normalRange, warningRange) {
+            element.classList.remove('normal', 'warning', 'danger');
+            
+            if (value >= normalRange[0] && value <= normalRange[1]) {
+                element.classList.add('normal');
+            } else if (value >= warningRange[0] && value <= warningRange[1]) {
+                element.classList.add('warning');
+            } else {
+                element.classList.add('danger');
+            }
+        }
+
+        function startRealTimeUpdates() {
+            // Update health data every 30 seconds
+            setInterval(updateHealthData, 30000);
+            
+            // Update summary stats every minute
+            setInterval(updateSummaryStats, 60000);
+        }
+
+        function updateSummaryStats() {
+            const normalCount = document.querySelectorAll('.metric-value.normal').length;
+            const warningCount = document.querySelectorAll('.metric-value.warning').length;
+            const dangerCount = document.querySelectorAll('.metric-value.danger').length;
+            
+            document.querySelector('.stat-number.normal').textContent = Math.floor(normalCount / 4);
+            document.querySelector('.stat-number.warning').textContent = Math.floor(warningCount / 4);
+            document.querySelector('.stat-number.danger').textContent = Math.floor(dangerCount / 4);
+        }
+
+        function viewDetails(name) {
+            alert(`กำลังเปิดหน้ารายละเอียดของ ${name}`);
+        }
+
+        function showNotification() {
+            const popup = document.getElementById('notificationPopup');
+            popup.classList.add('show');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 5000);
+            
+            // Play notification sound (in real app)
+            // new Audio('/notification-sound.mp3').play();
+        }
+
+        function showNotificationSettings() {
+            alert('เปิดหน้าตั้งค่าการแจ้งเตือน');
+        }
+
+        // Handle emergency alerts
+        function checkForEmergencies() {
+            const dangerMetrics = document.querySelectorAll('.metric-value.danger');
+            
+            if (dangerMetrics.length > 0) {
+                // Update alert badge
+                const alertBadge = document.querySelector('.alert-badge');
+                alertBadge.textContent = Math.ceil(dangerMetrics.length / 4);
+                
+                // Show notification
+                if (Math.random() < 0.3) { // 30% chance
+                    showNotification();
+                }
+            }
+        }
+
+        // Check for emergencies every 15 seconds
+        setInterval(checkForEmergencies, 15000);
+
+        // Handle card hover effects
+        document.querySelectorAll('.elderly-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Pull-to-refresh simulation for mobile
+        let startY = 0;
+        let pullDistance = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchmove', function(e) {
+            if (window.scrollY === 0) {
+                pullDistance = e.touches[0].clientY - startY;
+                if (pullDistance > 100) {
+                    document.body.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+                }
+            }
+        });
+
+        document.addEventListener('touchend', function(e) {
+            if (pullDistance > 100) {
+                updateHealthData();
+                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+            pullDistance = 0;
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                updateHealthData();
+            }
+        });
+    </script>
+</body>
+</html>

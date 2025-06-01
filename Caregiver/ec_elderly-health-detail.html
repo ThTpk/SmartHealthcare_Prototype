@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elderly Health Detail</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #667eea;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #f0f4ff;
+            transform: translateX(-2px);
+        }
+
+        .header-title h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .header-title p {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-danger {
+            background: linear-gradient(135deg, #fed7d7, #feb2b2);
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        .status-warning {
+            background: linear-gradient(135deg, #feebc8, #fbd38d);
+            color: #744210;
+            border: 1px solid #f6ad55;
+        }
+
+        .status-normal {
+            background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+            color: #22543d;
+            border: 1px solid #68d391;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .time-selector {
+            display: flex;
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 0.25rem;
+            gap: 0.25rem;
+        }
+
+        .time-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #718096;
+        }
+
+        .time-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-card {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .metric-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            color: #718096;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .metric-trend {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+
+        .trend-up { color: #e53e3e; }
+        .trend-down { color: #38a169; }
+        .trend-stable { color: #718096; }
+
+        .value-normal { color: #38a169; }
+        .value-warning { color: #dd6b20; }
+        .value-danger { color: #e53e3e; }
+
+        .chart-container {
+            height: 300px;
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            color: #718096;
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .chart-line {
+            stroke: #667eea;
+            stroke-width: 3;
+            fill: none;
+            filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.3));
+        }
+
+        .chart-area {
+            fill: url(#gradient);
+            opacity: 0.3;
+        }
+
+        .chart-dot {
+            fill: #667eea;
+            stroke: white;
+            stroke-width: 2;
+            r: 4;
+        }
+
+        .chart-dot:hover {
+            r: 6;
+            fill: #5a67d8;
+        }
+
+        .profile-card {
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #4a5568;
+            margin: 0 auto 1rem;
+        }
+
+        .profile-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-details {
+            text-align: left;
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .detail-label {
+            color: #718096;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .alert-item {
+            background: #fed7d7;
+            border: 1px solid #fc8181;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: #742a2a;
+            font-size: 0.9rem;
+        }
+
+        .alert-time {
+            color: #9c4221;
+            font-size: 0.75rem;
+        }
+
+        .alert-description {
+            color: #9c4221;
+            font-size: 0.85rem;
+        }
+
+        .recommendations {
+            background: #e6fffa;
+            border: 1px solid #81e6d9;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            color: #234e52;
+        }
+
+        .recommendation-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .recommendation-icon {
+            color: #38b2ac;
+            margin-top: 0.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+                gap: 1rem;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .time-selector {
+                flex-wrap: wrap;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="back-nav">
+                <button class="back-btn" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="header-title">
+                    <h1>คุณยาย สมหญิง จันทร์ดี</h1>
+                    <p>รายละเอียดสุขภาพแบบเรียลไทม์</p>
+                </div>
+            </div>
+            <div class="status-badge status-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                ต้องดูแลด่วน
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="content-area">
+            <!-- Current Health Metrics -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-heartbeat"></i>
+                        ข้อมูลสุขภาพปัจจุบัน
+                    </div>
+                    <div class="time-selector">
+                        <button class="time-btn" onclick="switchTimeframe('realtime')">เรียลไทม์</button>
+                        <button class="time-btn active" onclick="switchTimeframe('hourly')">รายชั่วโมง</button>
+                        <button class="time-btn" onclick="switchTimeframe('daily')">รายวัน</button>
+                    </div>
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon value-danger">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="metric-value value-danger">95</div>
+                        <div class="metric-label">อัตราหัวใจ (bpm)</div>
+                        <div class="metric-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +8 จากค่าเฉลี่ย
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon value-danger">
+                            <i class="fas fa-lungs"></i>
+                        </div>
+                        <div class="metric-value value-danger">88</div>
+                        <div class="metric-label">ออกซิเจนในเลือด (%)</div>
+                        <div class="metric-trend trend-up">
+                            <i class="fas fa-arrow-down"></i> -9% จากปกติ
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon value-warning">
+                            <i class="fas fa-thermometer-half"></i>
+                        </div>
+                        <div class="metric-value value-warning">37.2</div>
+                        <div class="metric-label">อุณหภูมิร่างกาย (°C)</div>
+                        <div class="metric-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> +0.7 จากปกติ
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon value-warning">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <div class="metric-value value-warning">145/90</div>
+                        <div class="metric-label">ความดันโลหิต (mmHg)</div>
+                        <div class="metric-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> สูงกว่าปกติ
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Trend Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-chart-line"></i>
+                        แนวโน้มสุขภาพ - อัตราการเต้นของหัวใจ
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <svg class="chart-canvas" viewBox="0 0 800 250">
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.3" />
+                                <stop offset="100%" style="stop-color:#667eea;stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Chart Area -->
+                        <path class="chart-area" d="M 50 180 L 150 160 L 250 140 L 350 150 L 450 170 L 550 190 L 650 200 L 750 195 L 750 230 L 50 230 Z" />
+                        
+                        <!-- Chart Line -->
+                        <path class="chart-line" d="M 50 180 L 150 160 L 250 140 L 350 150 L 450 170 L 550 190 L 650 200 L 750 195" />
+                        
+                        <!-- Data Points -->
+                        <circle class="chart-dot" cx="50" cy="180" data-value="72" data-time="00:00" />
+                        <circle class="chart-dot" cx="150" cy="160" data-value="75" data-time="04:00" />
+                        <circle class="chart-dot" cx="250" cy="140" data-value="78" data-time="08:00" />
+                        <circle class="chart-dot" cx="350" cy="150" data-value="76" data-time="12:00" />
+                        <circle class="chart-dot" cx="450" cy="170" data-value="82" data-time="16:00" />
+                        <circle class="chart-dot" cx="550" cy="190" data-value="88" data-time="20:00" />
+                        <circle class="chart-dot" cx="650" cy="200" data-value="92" data-time="22:00" />
+                        <circle class="chart-dot" cx="750" cy="195" data-value="95" data-time="ตอนนี้" />
+                        
+                        <!-- Grid Lines -->
+                        <g stroke="#e2e8f0" stroke-width="1" opacity="0.5">
+                            <line x1="50" y1="50" x2="50" y2="230" />
+                            <line x1="50" y1="230" x2="750" y2="230" />
+                            <line x1="50" y1="200" x2="750" y2="200" stroke-dasharray="5,5" />
+                            <line x1="50" y1="150" x2="750" y2="150" stroke-dasharray="5,5" />
+                            <line x1="50" y1="100" x2="750" y2="100" stroke-dasharray="5,5" />
+                        </g>
+                        
+                        <!-- Y-axis Labels -->
+                        <text x="30" y="235" font-size="12" fill="#718096">60</text>
+                        <text x="30" y="205" font-size="12" fill="#718096">80</text>
+                        <text x="30" y="155" font-size="12" fill="#718096">100</text>
+                        <text x="30" y="105" font-size="12" fill="#718096">120</text>
+                        
+                        <!-- X-axis Labels -->
+                        <text x="45" y="245" font-size="10" fill="#718096">00:00</text>
+                        <text x="245" y="245" font-size="10" fill="#718096">08:00</text>
+                        <text x="445" y="245" font-size="10" fill="#718096">16:00</text>
+                        <text x="645" y="245" font-size="10" fill="#718096">22:00</text>
+                        <text x="730" y="245" font-size="10" fill="#718096">ตอนนี้</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Sleep Pattern -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-bed"></i>
+                        รูปแบบการนอนหลับ
+                    </div>
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon value-normal">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="metric-value value-normal">7.5</div>
+                        <div class="metric-label">ชั่วโมงการนอน</div>
+                        <div class="metric-trend trend-stable">
+                            <i class="fas fa-minus"></i> ปกติ
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon value-warning">
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <div class="metric-value value-warning">3</div>
+                        <div class="metric-label">จำนวนครั้งที่ตื่น</div>
+                        <div class="metric-trend trend-up">
+                            <i class="fas fa-arrow-up"></i> มากกว่าปกติ
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <!-- Profile Card -->
+            <div class="card profile-card">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-name">คุณยาย สมหญิง จันทร์ดี</div>
+                <div class="profile-info">อายุ 78 ปี • คุณยาย</div>
+                
+                <div class="profile-details">
+                    <div class="detail-item">
+                        <span class="detail-label">โรคประจำตัว:</span>
+                        <span class="detail-value">เบาหวาน, ความดันสูง</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">ยาที่รับประทาน:</span>
+                        <span class="detail-value">Metformin, Amlodipine</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">ยาที่แพ้:</span>
+                        <span class="detail-value">Penicillin</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">อัพเดทล่าสุด:</span>
+                        <span class="detail-value">2 นาทีที่แล้ว</span>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn btn-primary" onclick="callEmergency()">
+                        <i class="fas fa-phone"></i> โทรฉุกเฉิน
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="viewHistory()">
+                        <i class="fas fa-history"></i> ประวัติ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Alerts -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-bell"></i>
+                    การแจ้งเตือนล่าสุด
+                </div>
+                
+                <div class="alert-item">
+                    <div class="alert-header">
+                        <div class="alert-title">ค่าออกซิเจนต่ำ</div>
+                        <div class="alert-time">5 นาทีที่แล้ว</div>
+                    </div>
+                    <div class="alert-description">
+                        SpO2 ลดลงเหลือ 88% ต้องตรวจสอบด่วน
+                    </div>
+                </div>
+                
+                <div class="alert-item">
+                    <div class="alert-header">
+                        <div class="alert-title">อัตราหัวใจสูง</div>
+                        <div class="alert-time">12 นาทีที่แล้ว</div>
+                    </div>
+                    <div class="alert-description">
+                        อัตราการเต้นหัวใจ 95 bpm สูงกว่าปกติ
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-lightbulb"></i>
+                    คำแนะนำการดูแล
+                </div>
+                
+                <div class="recommendations">
+                    <div class="recommendation-item">
+                        <i class="fas fa-check recommendation-icon"></i>
+                        <span>ให้พักผ่อนในท่านั่งหรือนอน</span>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check recommendation-icon"></i>
+                        <span>ตรวจวัดความดันโลหิตทุก 15 นาที</span>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check recommendation-icon"></i>
+                        <span>หากอาการไม่ดีขึ้น ให้โทรแจ้งหน่วยกู้ภัย</span>
+                    </div>
+                    <div class="recommendation-item">
+                        <i class="fas fa-check recommendation-icon"></i>
+                        <span>ไม่ควรให้ออกกำลังกายในช่วงนี้</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart tooltip functionality
+        document.querySelectorAll('.chart-dot').forEach(dot => {
+            dot.addEventListener('mouseenter', function(e) {
+                const value = this.getAttribute('data-value');
+                const time = this.getAttribute('data-time');
+                showTooltip(e, `${value} bpm ที่ ${time}`);
+            });
+            
+            dot.addEventListener('mouseleave', hideTooltip);
+        });
+
+        function showTooltip(event, text) {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'chart-tooltip';
+            tooltip.textContent = text;
+            tooltip.style.cssText = `
+                position: absolute;
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 0.5rem;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                pointer-events: none;
+                z-index: 1000;
+                left: ${event.pageX + 10}px;
+                top: ${event.pageY - 30}px;
+            `;
+            document.body.appendChild(tooltip);
+        }
+
+        function hideTooltip() {
+            const tooltip = document.querySelector('.chart-tooltip');
+            if (tooltip) tooltip.remove();
+        }
+
+        function switchTimeframe(timeframe) {
+            document.querySelectorAll('.time-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Simulate data update based on timeframe
+            updateChartData(timeframe);
+        }
+
+        function updateChartData(timeframe) {
+            const dots = document.querySelectorAll('.chart-dot');
+            dots.forEach((dot, index) => {
+                const baseY = 180;
+                const variation = Math.random() * 40 - 20;
+                const newY = Math.max(100, Math.min(220, baseY + variation));
+                dot.setAttribute('cy', newY);
+                
+                const newValue = Math.round(120 - (newY - 100) * 0.5);
+                dot.setAttribute('data-value', newValue);
+            });
+            
+            // Update the line path
+            const line = document.querySelector('.chart-line');
+            const area = document.querySelector('.chart-area');
+            let pathData = 'M ';
+            let areaData = 'M ';
+            
+            dots.forEach((dot, index) => {
+                const x = dot.getAttribute('cx');
+                const y = dot.getAttribute('cy');
+                pathData += `${x} ${y}${index < dots.length - 1 ? ' L ' : ''}`;
+                areaData += `${x} ${y}${index < dots.length - 1 ? ' L ' : ''}`;
+            });
+            
+            areaData += ' L 750 230 L 50 230 Z';
+            
+            line.setAttribute('d', pathData);
+            area.setAttribute('d', areaData);
+        }
+
+        function callEmergency() {
+            if (confirm('ต้องการโทรแจ้งหน่วยกู้ภัยหรือไม่?')) {
+                alert('กำลังโทรแจ้งหน่วยกู้ภัย 1669...');
+            }
+        }
+
+        function viewHistory() {
+            alert('กำลังเปิดประวัติการรักษาและข้อมูลสุขภาพย้อนหลัง');
+        }
+
+        // Real-time data updates
+        function updateRealTimeData() {
+            const metrics = [
+                { selector: '.metric-value.value-danger', range: [85, 100], unit: '', type: 'heart' },
+                { selector: '.metric-value.value-danger', range: [85, 95], unit: '', type: 'spo2' },
+                { selector: '.metric-value.value-warning', range: [36.8, 37.5], unit: '', type: 'temp' },
+                { selector: '.metric-value.value-warning', range: [140, 150], unit: '', type: 'bp_sys' }
+            ];
+
+            // Update heart rate
+            const heartElement = document.querySelector('.metrics-grid .metric-card:nth-child(1) .metric-value');
+            if (heartElement) {
+                const currentValue = parseInt(heartElement.textContent);
+                const newValue = currentValue + Math.floor(Math.random() * 6) - 3;
+                const clampedValue = Math.max(80, Math.min(110, newValue));
+                heartElement.textContent = clampedValue;
+                
+                // Update status class
+                heartElement.classList.remove('value-normal', 'value-warning', 'value-danger');
+                if (clampedValue > 100) heartElement.classList.add('value-danger');
+                else if (clampedValue > 85) heartElement.classList.add('value-warning');
+                else heartElement.classList.add('value-normal');
+            }
+
+            // Update SpO2
+            const spo2Element = document.querySelector('.metrics-grid .metric-card:nth-child(2) .metric-value');
+            if (spo2Element) {
+                const currentValue = parseInt(spo2Element.textContent);
+                const newValue = currentValue + Math.floor(Math.random() * 4) - 2;
+                const clampedValue = Math.max(85, Math.min(100, newValue));
+                spo2Element.textContent = clampedValue;
+                
+                // Update status class
+                spo2Element.classList.remove('value-normal', 'value-warning', 'value-danger');
+                if (clampedValue < 90) spo2Element.classList.add('value-danger');
+                else if (clampedValue < 95) spo2Element.classList.add('value-warning');
+                else spo2Element.classList.add('value-normal');
+            }
+
+            // Update temperature
+            const tempElement = document.querySelector('.metrics-grid .metric-card:nth-child(3) .metric-value');
+            if (tempElement) {
+                const currentValue = parseFloat(tempElement.textContent);
+                const newValue = currentValue + (Math.random() * 0.4) - 0.2;
+                const clampedValue = Math.max(36.0, Math.min(38.0, newValue));
+                tempElement.textContent = clampedValue.toFixed(1);
+                
+                // Update status class
+                tempElement.classList.remove('value-normal', 'value-warning', 'value-danger');
+                if (clampedValue > 37.5) tempElement.classList.add('value-danger');
+                else if (clampedValue > 37.0) tempElement.classList.add('value-warning');
+                else tempElement.classList.add('value-normal');
+            }
+
+            // Update status badge based on overall health
+            updateStatusBadge();
+        }
+
+        function updateStatusBadge() {
+            const heartRate = parseInt(document.querySelector('.metrics-grid .metric-card:nth-child(1) .metric-value').textContent);
+            const spo2 = parseInt(document.querySelector('.metrics-grid .metric-card:nth-child(2) .metric-value').textContent);
+            const temp = parseFloat(document.querySelector('.metrics-grid .metric-card:nth-child(3) .metric-value').textContent);
+            
+            const statusBadge = document.querySelector('.status-badge');
+            const statusIcon = statusBadge.querySelector('i');
+            
+            // Determine overall status
+            if (heartRate > 100 || spo2 < 90 || temp > 37.5) {
+                statusBadge.className = 'status-badge status-danger';
+                statusBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ต้องดูแลด่วน';
+            } else if (heartRate > 85 || spo2 < 95 || temp > 37.0) {
+                statusBadge.className = 'status-badge status-warning';
+                statusBadge.innerHTML = '<i class="fas fa-exclamation-circle"></i> ต้องเฝ้าระวัง';
+            } else {
+                statusBadge.className = 'status-badge status-normal';
+                statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> สถานะปกติ';
+            }
+        }
+
+        // Add new alert
+        function addNewAlert(title, description) {
+            const alertsContainer = document.querySelector('.card:last-child');
+            const newAlert = document.createElement('div');
+            newAlert.className = 'alert-item';
+            newAlert.innerHTML = `
+                <div class="alert-header">
+                    <div class="alert-title">${title}</div>
+                    <div class="alert-time">เพิ่งเกิดขึ้น</div>
+                </div>
+                <div class="alert-description">${description}</div>
+            `;
+            
+            // Insert as first alert
+            const firstAlert = alertsContainer.querySelector('.alert-item');
+            if (firstAlert) {
+                alertsContainer.insertBefore(newAlert, firstAlert);
+            } else {
+                alertsContainer.appendChild(newAlert);
+            }
+            
+            // Remove old alerts if more than 3
+            const alerts = alertsContainer.querySelectorAll('.alert-item');
+            if (alerts.length > 3) {
+                alerts[alerts.length - 1].remove();
+            }
+        }
+
+        // Emergency notification
+        function showEmergencyNotification() {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #f56565, #e53e3e);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 8px 24px rgba(245, 101, 101, 0.3);
+                z-index: 1001;
+                animation: slideIn 0.3s ease;
+                max-width: 300px;
+            `;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; animation: pulse 1s infinite;"></i>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">การแจ้งเตือนฉุกเฉิน!</div>
+                        <div style="font-size: 0.9rem;">ค่าสุขภาพมีความผิดปกติ กรุณาตรวจสอบด่วน</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Simulate emergency scenarios
+        function simulateEmergency() {
+            const scenarios = [
+                { type: 'spo2', title: 'ค่าออกซิเจนต่ำ', description: 'SpO2 ลดลงต่ำกว่า 90%' },
+                { type: 'heart', title: 'อัตราหัวใจผิดปกติ', description: 'อัตราการเต้นหัวใจสูงกว่า 100 bpm' },
+                { type: 'temp', title: 'มีไข้สูง', description: 'อุณหภูมิร่างกายสูงกว่า 37.5°C' }
+            ];
+            
+            if (Math.random() < 0.2) { // 20% chance
+                const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+                addNewAlert(scenario.title, scenario.description);
+                showEmergencyNotification();
+            }
+        }
+
+        // Chart animation
+        function animateChart() {
+            const dots = document.querySelectorAll('.chart-dot');
+            const line = document.querySelector('.chart-line');
+            const area = document.querySelector('.chart-area');
+            
+            // Add new data point (simulate real-time)
+            const lastDot = dots[dots.length - 1];
+            const currentX = parseFloat(lastDot.getAttribute('cx'));
+            const newX = Math.min(750, currentX + 20);
+            
+            if (newX <= 750) {
+                // Move all points left
+                dots.forEach((dot, index) => {
+                    const currentX = parseFloat(dot.getAttribute('cx'));
+                    const newX = currentX - 20;
+                    if (newX >= 50) {
+                        dot.setAttribute('cx', newX);
+                    }
+                });
+                
+                // Add new point at the end
+                const newY = 180 + (Math.random() * 40) - 20;
+                const newValue = Math.round(120 - (newY - 100) * 0.5);
+                lastDot.setAttribute('cx', 750);
+                lastDot.setAttribute('cy', Math.max(100, Math.min(220, newY)));
+                lastDot.setAttribute('data-value', newValue);
+                
+                // Update line and area paths
+                updateChartPaths();
+            }
+        }
+
+        function updateChartPaths() {
+            const dots = document.querySelectorAll('.chart-dot');
+            const line = document.querySelector('.chart-line');
+            const area = document.querySelector('.chart-area');
+            
+            let pathData = 'M ';
+            let areaData = 'M ';
+            
+            dots.forEach((dot, index) => {
+                const x = dot.getAttribute('cx');
+                const y = dot.getAttribute('cy');
+                if (parseFloat(x) >= 50) {
+                    pathData += `${x} ${y}${index < dots.length - 1 ? ' L ' : ''}`;
+                    areaData += `${x} ${y}${index < dots.length - 1 ? ' L ' : ''}`;
+                }
+            });
+            
+            areaData += ' L 750 230 L 50 230 Z';
+            
+            line.setAttribute('d', pathData);
+            area.setAttribute('d', areaData);
+        }
+
+        // Initialize real-time updates
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update data every 15 seconds
+            setInterval(updateRealTimeData, 15000);
+            
+            // Update chart every 30 seconds
+            setInterval(animateChart, 30000);
+            
+            // Check for emergencies every 20 seconds
+            setInterval(simulateEmergency, 20000);
+            
+            // Initial chart animation
+            setTimeout(animateChart, 2000);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                history.back();
+            } else if (e.key === 'e' || e.key === 'E') {
+                e.preventDefault();
+                callEmergency();
+            } else if (e.key === 'h' || e.key === 'H') {
+                e.preventDefault();
+                viewHistory();
+            }
+        });
+
+        // CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes pulse {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.7; transform: scale(1.1); }
+            }
+        `;
+        document.head.appendChild(style);

@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการผู้ดูแลผู้สูงอายุ - Smart Healthcare System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .breadcrumb {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .total-caregivers { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .active-caregivers { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+        .pending-approval { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .avg-elderly { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .content-title {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 2px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 50px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        .caregiver-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .caregiver-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 25px;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .caregiver-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .caregiver-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .caregiver-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .caregiver-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        .caregiver-info {
+            flex: 1;
+        }
+
+        .caregiver-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .caregiver-relation {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: #e67e22;
+        }
+
+        .status-inactive {
+            background: rgba(149, 165, 166, 0.2);
+            color: #7f8c8d;
+        }
+
+        .contact-info {
+            background: rgba(52, 152, 219, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3498db;
+        }
+
+        .elderly-assignments {
+            margin-bottom: 20px;
+        }
+
+        .assignments-title {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .elderly-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .elderly-tag {
+            padding: 6px 12px;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-settings {
+            background: rgba(243, 156, 18, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .notification-title {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notification-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .notification-type {
+            padding: 4px 8px;
+            background: rgba(243, 156, 18, 0.2);
+            color: #e67e22;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .caregiver-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        .btn-edit {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-assign {
+            background: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-notify {
+            background: rgba(243, 156, 18, 0.1);
+            color: #f39c12;
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-deactivate {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .close {
+            color: #7f8c8d;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-grid-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .elderly-selection {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .elderly-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .elderly-checkbox:last-child {
+            border-bottom: none;
+        }
+
+        .checkbox {
+            width: 16px;
+            height: 16px;
+            accent-color: #667eea;
+        }
+
+        .notification-preferences {
+            background: rgba(243, 156, 18, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .preference-group {
+            margin-bottom: 15px;
+        }
+
+        .preference-title {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #2c3e50;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-info {
+            background: rgba(52, 152, 219, 0.1);
+            color: #2980b9;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .action-buttons {
+                justify-content: stretch;
+            }
+            
+            .search-filter {
+                flex-direction: column;
+            }
+            
+            .caregiver-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <div class="header-icon">👥</div>
+                จัดการผู้ดูแลผู้สูงอายุ Smart Healthcare
+            </h1>
+            <div class="breadcrumb">หน้าหลัก > จัดการโซน > จัดการผู้ดูแลผู้สูงอายุ</div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">47</div>
+                        <div class="stat-label">ผู้ดูแลทั้งหมด</div>
+                    </div>
+                    <div class="stat-icon total-caregivers">👥</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">44</div>
+                        <div class="stat-label">ใช้งานปกติ</div>
+                    </div>
+                    <div class="stat-icon active-caregivers">✅</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">รออนุมัติ</div>
+                    </div>
+                    <div class="stat-icon pending-approval">⏳</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">2.1</div>
+                        <div class="stat-label">ผู้สูงอายุ/คน</div>
+                    </div>
+                    <div class="stat-icon avg-elderly">📊</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <h2 class="content-title">รายการผู้ดูแลผู้สูงอายุ</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="openAddCaregiverModal()">
+                        ➕ เพิ่มผู้ดูแลใหม่
+                    </button>
+                    <button class="btn btn-secondary">
+                        📊 ส่งออกรายงาน
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="search-filter">
+                <div class="search-box">
+                    <div class="search-icon">🔍</div>
+                    <input type="text" class="search-input" placeholder="ค้นหาด้วยชื่อ เบอร์โทร หรือชื่อผู้สูงอายุที่ดูแล..." id="searchInput">
+                </div>
+                <select class="filter-select" id="statusFilter">
+                    <option value="">สถานะทั้งหมด</option>
+                    <option value="active">ใช้งานปกติ</option>
+                    <option value="pending">รออนุมัติ</option>
+                    <option value="inactive">ไม่ใช้งาน</option>
+                </select>
+                <select class="filter-select" id="relationFilter">
+                    <option value="">ความสัมพันธ์ทั้งหมด</option>
+                    <option value="child">ลูก/หลาน</option>
+                    <option value="spouse">คู่สมรส</option>
+                    <option value="sibling">พี่น้อง</option>
+                    <option value="relative">ญาติ</option>
+                    <option value="caregiver">ผู้ดูแล</option>
+                </select>
+            </div>
+
+            <!-- Caregiver Grid -->
+            <div class="caregiver-grid" id="caregiverGrid">
+                <!-- Caregiver cards will be generated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Caregiver Modal -->
+    <div id="addCaregiverModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">เพิ่มผู้ดูแลผู้สูงอายุใหม่</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div class="alert alert-info">
+                ℹ️ ผู้ดูแลใหม่จะได้รับ OTP เพื่อยืนยันตัวตนผ่านเบอร์โทรศัพท์หรืออีเมล
+            </div>
+
+            <form id="addCaregiverForm">
+                <div class="form-grid form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">ชื่อ <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="caregiverFirstName" required placeholder="ชื่อจริง">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">นามสกุล <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="caregiverLastName" required placeholder="นามสกุล">
+                    </div>
+                </div>
+
+                <div class="form-grid form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">ความสัมพันธ์ <span class="required">*</span></label>
+                        <select class="form-input" id="caregiverRelation" required>
+                            <option value="">เลือกความสัมพันธ์</option>
+                            <option value="child">ลูก/หลาน</option>
+                            <option value="spouse">คู่สมรส</option>
+                            <option value="sibling">พี่น้อง</option>
+                            <option value="relative">ญาติ</option>
+                            <option value="neighbor">เพื่อนบ้าน</option>
+                            <option value="caregiver">ผู้ดูแลมืออาชีพ</option>
+                            <option value="other">อื่นๆ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">เบอร์โทรศัพท์ <span class="required">*</span></label>
+                        <input type="tel" class="form-input" id="caregiverPhone" required placeholder="08X-XXX-XXXX">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">อีเมล <span class="required">*</span></label>
+                    <input type="email" class="form-input" id="caregiverEmail" required placeholder="example@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">เลือกผู้สูงอายุที่จะดูแล <span class="required">*</span></label>
+                    <div class="elderly-selection" id="elderlySelection">
+                        <!-- Elderly checkboxes will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="notification-preferences">
+                    <div class="preference-title">🔔 การตั้งค่าการแจ้งเตือน</div>
+                    
+                    <div class="preference-group">
+                        <div class="preference-title">ประเภทการแจ้งเตือน</div>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="alertCritical" checked>
+                                <label for="alertCritical">ฉุกเฉิน (Critical)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="alertWarning" checked>
+                                <label for="alertWarning">เตือน (Warning)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="alertInfo">
+                                <label for="alertInfo">ข้อมูล (Info)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="preference-group">
+                        <div class="preference-title">ช่องทางการแจ้งเตือน</div>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="notifySMS" checked>
+                                <label for="notifySMS">SMS</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="notifyEmail" checked>
+                                <label for="notifyEmail">Email</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" class="checkbox" id="notifyPush" checked>
+                                <label for="notifyPush">Push Notification</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>
+                    <button type="submit" class="btn btn-primary">เพิ่มผู้ดูแลและส่ง OTP</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample caregiver data
+        const caregivers = [
+            {
+                id: 'CG001',
+                firstName: 'สมใส',
+                lastName: 'ใจดี',
+                relation: 'child',
+                phone: '089-123-4567',
+                email: 'somsai@email.com',
+                status: 'active',
+                elderlyAssigned: ['นางสมใจ ใจดี', 'นายสมชาย มั่นคง'],
+                notifications: ['Critical', 'Warning'],
+                channels: ['SMS', 'Email', 'Push'],
+                joinDate: '2024-01-15',
+                lastLogin: '2024-05-31 14:30'
+            },
+            {
+                id: 'CG002',
+                firstName: 'วิไล',
+                lastName: 'สุขใส',
+                relation: 'child',
+                phone: '081-987-6543',
+                email: 'wilai@email.com',
+                status: 'active',
+                elderlyAssigned: ['นางสาววิไล สุขใส'],
+                notifications: ['Critical', 'Warning', 'Info'],
+                channels: ['SMS', 'Email'],
+                joinDate: '2024-02-01',
+                lastLogin: '2024-05-31 11:45'
+            },
+            {
+                id: 'CG003',
+                firstName: 'ประยุทธ',
+                lastName: 'ดีมาก',
+                relation: 'spouse',
+                phone: '086-555-1234',
+                email: 'prayut@email.com',
+                status: 'active',
+                elderlyAssigned: ['นายประยุทธ ดีใจ'],
+                notifications: ['Critical'],
+                channels: ['SMS'],
+                joinDate: '2024-02-15',
+                lastLogin: '2024-05-30 16:20'
+            },
+            {
+                id: 'CG004',
+                firstName: 'มาลี',
+                lastName: 'อารมณ์ดี',
+                relation: 'caregiver',
+                phone: '092-888-9999',
+                email: 'malee@email.com',
+                status: 'active',
+                elderlyAssigned: ['นางสุมาลี อารมณ์ดี', 'นายสมศักดิ์ มีสุข'],
+                notifications: ['Critical', 'Warning'],
+                channels: ['SMS', 'Email', 'Push'],
+                joinDate: '2024-03-01',
+                lastLogin: '2024-05-31 13:15'
+            },
+            {
+                id: 'CG005',
+                firstName: 'สมพงษ์',
+                lastName: 'ใหม่มา',
+                relation: 'relative',
+                phone: '084-222-3333',
+                email: 'sompong@email.com',
+                status: 'pending',
+                elderlyAssigned: [],
+                notifications: ['Critical', 'Warning'],
+                channels: ['SMS', 'Email'],
+                joinDate: '2024-05-30',
+                lastLogin: null
+            },
+            {
+                id: 'CG006',
+                firstName: 'จิรา',
+                lastName: 'สว่างใส',
+                relation: 'child',
+                phone: '087-444-5555',
+                email: 'jira@email.com',
+                status: 'pending',
+                elderlyAssigned: [],
+                notifications: ['Critical'],
+                channels: ['SMS'],
+                joinDate: '2024-05-31',
+                lastLogin: null
+            }
+        ];
+
+        // Sample elderly data for assignment
+        const availableElderly = [
+            { id: 'E001', name: 'นางสมใจ ใจดี', assigned: true },
+            { id: 'E002', name: 'นายสมชาย มั่นคง', assigned: true },
+            { id: 'E003', name: 'นางสาววิไล สุขใส', assigned: true },
+            { id: 'E004', name: 'นายประยุทธ ดีใจ', assigned: true },
+            { id: 'E005', name: 'นางสุมาลี อารมณ์ดี', assigned: true },
+            { id: 'E006', name: 'นายสมศักดิ์ มีสุข', assigned: true },
+            { id: 'E007', name: 'นางพิมพ์ใส จันทร์เจ้า', assigned: false },
+            { id: 'E008', name: 'นายสมบัติ รวยมาก', assigned: false },
+            { id: 'E009', name: 'นางรัตนา ดีงาม', assigned: false }
+        ];
+
+        function getStatusBadge(status) {
+            const statusMap = {
+                'active': { class: 'status-active', text: 'ใช้งานปกติ' },
+                'pending': { class: 'status-pending', text: 'รออนุมัติ' },
+                'inactive': { class: 'status-inactive', text: 'ไม่ใช้งาน' }
+            };
+            const statusInfo = statusMap[status] || { class: 'status-inactive', text: 'ไม่ทราบ' };
+            return `<span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
+        }
+
+        function getRelationLabel(relation) {
+            const relationMap = {
+                'child': 'ลูก/หลาน',
+                'spouse': 'คู่สมรส',
+                'sibling': 'พี่น้อง',
+                'relative': 'ญาติ',
+                'neighbor': 'เพื่อนบ้าน',
+                'caregiver': 'ผู้ดูแลมืออาชีพ',
+                'other': 'อื่นๆ'
+            };
+            return relationMap[relation] || 'ไม่ระบุ';
+        }
+
+        function getCaregiverAvatar(firstName) {
+            const avatars = ['👨', '👩', '🧑', '👴', '👵'];
+            return avatars[firstName.length % avatars.length];
+        }
+
+        function createCaregiverCard(caregiver) {
+            return `
+                <div class="caregiver-card" data-status="${caregiver.status}" data-relation="${caregiver.relation}">
+                    <div class="caregiver-header">
+                        <div style="display: flex; align-items: center;">
+                            <div class="caregiver-avatar">${getCaregiverAvatar(caregiver.firstName)}</div>
+                            <div class="caregiver-info">
+                                <div class="caregiver-name">${caregiver.firstName} ${caregiver.lastName}</div>
+                                <div class="caregiver-relation">${getRelationLabel(caregiver.relation)}</div>
+                            </div>
+                        </div>
+                        ${getStatusBadge(caregiver.status)}
+                    </div>
+                    
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon">📞</div>
+                            <span>${caregiver.phone}</span>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">✉️</div>
+                            <span>${caregiver.email}</span>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">📅</div>
+                            <span>ลงทะเบียน: ${new Date(caregiver.joinDate).toLocaleDateString('th-TH')}</span>
+                        </div>
+                        ${caregiver.lastLogin ? `
+                        <div class="contact-item">
+                            <div class="contact-icon">🕒</div>
+                            <span>เข้าใช้ล่าสุด: ${caregiver.lastLogin}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="elderly-assignments">
+                        <div class="assignments-title">👥 ผู้สูงอายุที่ดูแล (${caregiver.elderlyAssigned.length} คน)</div>
+                        <div class="elderly-list">
+                            ${caregiver.elderlyAssigned.length > 0 ? 
+                                caregiver.elderlyAssigned.map(elderly => 
+                                    `<span class="elderly-tag">👤 ${elderly}</span>`
+                                ).join('') : 
+                                '<span style="color: #7f8c8d; font-size: 12px;">ยังไม่ได้กำหนดผู้สูงอายุ</span>'
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="notification-settings">
+                        <div class="notification-title">🔔 การแจ้งเตือน</div>
+                        <div class="notification-list">
+                            ${caregiver.notifications.map(type => 
+                                `<span class="notification-type">${type}</span>`
+                            ).join('')}
+                        </div>
+                        <div style="margin-top: 8px; font-size: 11px; color: #7f8c8d;">
+                            ช่องทาง: ${caregiver.channels.join(', ')}
+                        </div>
+                    </div>
+                    
+                    <div class="caregiver-actions">
+                        <button class="btn btn-small btn-edit" onclick="editCaregiver('${caregiver.id}')">
+                            ✏️ แก้ไข
+                        </button>
+                        <button class="btn btn-small btn-assign" onclick="assignElderly('${caregiver.id}')">
+                            👥 กำหนดผู้สูงอายุ
+                        </button>
+                        <button class="btn btn-small btn-notify" onclick="testNotification('${caregiver.id}')">
+                            📬 ทดสอบแจ้งเตือน
+                        </button>
+                        ${caregiver.status === 'active' ? 
+                            `<button class="btn btn-small btn-deactivate" onclick="deactivateCaregiver('${caregiver.id}')">
+                                🚫 ปิดใช้งาน
+                            </button>` :
+                            caregiver.status === 'pending' ?
+                            `<button class="btn btn-small btn-assign" onclick="approveCaregiver('${caregiver.id}')">
+                                ✅ อนุมัติ
+                            </button>` : ''
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCaregivers(caregiversToRender = caregivers) {
+            const caregiverGrid = document.getElementById('caregiverGrid');
+            caregiverGrid.innerHTML = caregiversToRender.map(caregiver => createCaregiverCard(caregiver)).join('');
+        }
+
+        function filterCaregivers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const relationFilter = document.getElementById('relationFilter').value;
+
+            const filteredCaregivers = caregivers.filter(caregiver => {
+                const matchesSearch = !searchTerm || 
+                    `${caregiver.firstName} ${caregiver.lastName}`.toLowerCase().includes(searchTerm) ||
+                    caregiver.phone.includes(searchTerm) ||
+                    caregiver.email.toLowerCase().includes(searchTerm) ||
+                    caregiver.elderlyAssigned.some(elderly => elderly.toLowerCase().includes(searchTerm));
+                
+                const matchesStatus = !statusFilter || caregiver.status === statusFilter;
+                const matchesRelation = !relationFilter || caregiver.relation === relationFilter;
+                
+                return matchesSearch && matchesStatus && matchesRelation;
+            });
+
+            renderCaregivers(filteredCaregivers);
+        }
+
+        function populateElderlySelection() {
+            const elderlySelection = document.getElementById('elderlySelection');
+            elderlySelection.innerHTML = availableElderly.map(elderly => `
+                <div class="elderly-checkbox">
+                    <input type="checkbox" class="checkbox" id="elderly_${elderly.id}" value="${elderly.id}" ${elderly.assigned ? 'disabled' : ''}>
+                    <label for="elderly_${elderly.id}" style="flex: 1; ${elderly.assigned ? 'color: #bdc3c7;' : ''}">
+                        ${elderly.name} ${elderly.assigned ? '(มีผู้ดูแลแล้ว)' : ''}
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        function openAddCaregiverModal() {
+            document.getElementById('addCaregiverModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            populateElderlySelection();
+        }
+
+        function closeModal() {
+            document.getElementById('addCaregiverModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('addCaregiverForm').reset();
+        }
+
+        function editCaregiver(caregiverId) {
+            const caregiver = caregivers.find(c => c.id === caregiverId);
+            if (caregiver) {
+                alert(`แก้ไขข้อมูลผู้ดูแล: ${caregiver.firstName} ${caregiver.lastName}\n(ฟีเจอร์นี้จะเปิดหน้าแก้ไขข้อมูล)`);
+            }
+        }
+
+        function assignElderly(caregiverId) {
+            const caregiver = caregivers.find(c => c.id === caregiverId);
+            if (caregiver) {
+                alert(`กำหนดผู้สูงอายุให้: ${caregiver.firstName} ${caregiver.lastName}\n(ฟีเจอร์นี้จะเปิดหน้าเลือกผู้สูงอายุ)`);
+            }
+        }
+
+        function testNotification(caregiverId) {
+            const caregiver = caregivers.find(c => c.id === caregiverId);
+            if (caregiver && confirm(`ส่งการแจ้งเตือนทดสอบให้ ${caregiver.firstName} ${caregiver.lastName}?`)) {
+                alert('ส่งการแจ้งเตือนทดสอบเรียบร้อยแล้ว');
+            }
+        }
+
+        function deactivateCaregiver(caregiverId) {
+            const caregiver = caregivers.find(c => c.id === caregiverId);
+            if (caregiver && confirm(`ต้องการปิดใช้งานผู้ดูแล ${caregiver.firstName} ${caregiver.lastName}?`)) {
+                caregiver.status = 'inactive';
+                renderCaregivers();
+                updateStats();
+                alert('ปิดใช้งานผู้ดูแลเรียบร้อยแล้ว');
+            }
+        }
+
+        function approveCaregiver(caregiverId) {
+            const caregiver = caregivers.find(c => c.id === caregiverId);
+            if (caregiver && confirm(`อนุมัติผู้ดูแล ${caregiver.firstName} ${caregiver.lastName}?`)) {
+                caregiver.status = 'active';
+                caregiver.lastLogin = new Date().toLocaleString('th-TH');
+                renderCaregivers();
+                updateStats();
+                alert('อนุมัติผู้ดูแลเรียบร้อยแล้ว');
+            }
+        }
+
+        function updateStats() {
+            const totalCaregivers = caregivers.length;
+            const activeCaregivers = caregivers.filter(c => c.status === 'active').length;
+            const pendingCaregivers = caregivers.filter(c => c.status === 'pending').length;
+            
+            const totalElderlyAssigned = caregivers.reduce((total, caregiver) => 
+                total + caregiver.elderlyAssigned.length, 0);
+            const avgElderlyPerCaregiver = activeCaregivers > 0 ? 
+                (totalElderlyAssigned / activeCaregivers).toFixed(1) : '0.0';
+
+            document.querySelector('.stat-card:nth-child(1) .stat-number').textContent = totalCaregivers;
+            document.querySelector('.stat-card:nth-child(2) .stat-number').textContent = activeCaregivers;
+            document.querySelector('.stat-card:nth-child(3) .stat-number').textContent = pendingCaregivers;
+            document.querySelector('.stat-card:nth-child(4) .stat-number').textContent = avgElderlyPerCaregiver;
+        }
+
+        function formatPhoneNumber(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length >= 3) {
+                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+            }
+            input.value = value;
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterCaregivers);
+        document.getElementById('statusFilter').addEventListener('change', filterCaregivers);
+        document.getElementById('relationFilter').addEventListener('change', filterCaregivers);
+
+        document.getElementById('caregiverPhone').addEventListener('input', function() {
+            formatPhoneNumber(this);
+        });
+
+        document.getElementById('addCaregiverForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const selectedElderly = Array.from(document.querySelectorAll('#elderlySelection input[type="checkbox"]:checked'))
+                .map(cb => availableElderly.find(e => e.id === cb.value)?.name)
+                .filter(name => name);
+
+            if (selectedElderly.length === 0) {
+                alert('กรุณาเลือกผู้สูงอายุอย่างน้อย 1 คน');
+                return;
+            }
+
+            const newCaregiver = {
+                id: `CG${String(caregivers.length + 1).padStart(3, '0')}`,
+                firstName: document.getElementById('caregiverFirstName').value,
+                lastName: document.getElementById('caregiverLastName').value,
+                relation: document.getElementById('caregiverRelation').value,
+                phone: document.getElementById('caregiverPhone').value,
+                email: document.getElementById('caregiverEmail').value,
+                status: 'pending',
+                elderlyAssigned: selectedElderly,
+                notifications: [],
+                channels: [],
+                joinDate: new Date().toISOString().split('T')[0],
+                lastLogin: null
+            };
+
+            // Collect notification preferences
+            if (document.getElementById('alertCritical').checked) newCaregiver.notifications.push('Critical');
+            if (document.getElementById('alertWarning').checked) newCaregiver.notifications.push('Warning');
+            if (document.getElementById('alertInfo').checked) newCaregiver.notifications.push('Info');
+
+            if (document.getElementById('notifySMS').checked) newCaregiver.channels.push('SMS');
+            if (document.getElementById('notifyEmail').checked) newCaregiver.channels.push('Email');
+            if (document.getElementById('notifyPush').checked) newCaregiver.channels.push('Push');
+
+            caregivers.push(newCaregiver);
+            renderCaregivers();
+            updateStats();
+            closeModal();
+            
+            alert(`เพิ่มผู้ดูแล ${newCaregiver.firstName} ${newCaregiver.lastName} เรียบร้อยแล้ว\nOTP ได้ถูกส่งไปยัง ${newCaregiver.phone} และ ${newCaregiver.email}`);
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('addCaregiverModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCaregivers();
+            updateStats();
+        });
+
+        // Auto-refresh status (simulate real-time updates)
+        setInterval(function() {
+            // Simulate random updates
+            caregivers.forEach(caregiver => {
+                if (Math.random() < 0.05 && caregiver.status === 'active') { // 5% chance
+                    caregiver.lastLogin = new Date().toLocaleString('th-TH');
+                }
+            });
+            
+            // Update display if needed
+            if (Math.random() < 0.1) { // 10% chance to refresh
+                renderCaregivers();
+            }
+        }, 30000); // Update every 30 seconds
+    </script>
+</body>
+</html>

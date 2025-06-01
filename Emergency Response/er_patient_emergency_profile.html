@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Emergency Profile - Smart Healthcare System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+            padding: 16px 20px;
+            box-shadow: 0 4px 8px rgba(220, 38, 38, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .emergency-badge {
+            background: white;
+            color: #dc2626;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .patient-header {
+            background: #fef2f2;
+            padding: 20px;
+            border-bottom: 1px solid #fecaca;
+        }
+
+        .patient-basic {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .patient-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 28px;
+        }
+
+        .patient-info h2 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #111827;
+        }
+
+        .patient-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            font-size: 14px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-indicators {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .status-critical {
+            background: #dc2626;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 600;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f9fafb;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .vital-item {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .vital-item.critical {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .vital-item.warning {
+            background: #fefbf2;
+            border-color: #fed7aa;
+        }
+
+        .vital-item.normal {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+
+        .vital-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .vital-value.critical {
+            color: #dc2626;
+        }
+
+        .vital-value.warning {
+            color: #f59e0b;
+        }
+
+        .vital-value.normal {
+            color: #10b981;
+        }
+
+        .vital-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .vital-time {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        .alert-item {
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-critical {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-warning {
+            background: #fefbf2;
+            border: 1px solid #fed7aa;
+        }
+
+        .alert-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .alert-icon.critical {
+            background: #dc2626;
+        }
+
+        .alert-icon.warning {
+            background: #f59e0b;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-table td {
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .info-table td:first-child {
+            font-weight: 600;
+            color: #374151;
+            width: 120px;
+        }
+
+        .medical-list {
+            list-style: none;
+        }
+
+        .medical-list li {
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border-left: 4px solid #e5e7eb;
+        }
+
+        .medical-list li.allergy {
+            border-left-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .medical-list li.medication {
+            border-left-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .medical-list li.condition {
+            border-left-color: #f59e0b;
+            background: #fefbf2;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            background: #6366f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .btn-emergency {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-emergency:hover {
+            background: #b91c1c;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .location-info {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .location-coordinates {
+            font-family: monospace;
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .patient-basic {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .vitals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .patient-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            🏥 Patient Emergency Profile
+        </h1>
+        <div class="emergency-badge">
+            ACTIVE EMERGENCY
+        </div>
+    </div>
+
+    <div class="patient-header">
+        <div class="patient-basic">
+            <div class="patient-avatar">สช</div>
+            <div class="patient-info">
+                <h2>นาย สมชาย ใจดี</h2>
+                <div class="patient-meta">
+                    <div class="meta-item">
+                        <span>🆔</span>
+                        <span>1-2345-67890-12-3</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>🎂</span>
+                        <span>อายุ 78 ปี (เกิด 15/03/2547)</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>📍</span>
+                        <span>โซน: หนองแสง</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>📱</span>
+                        <span>086-123-4567</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>🆔</span>
+                        <span>Device ID: SW-001234</span>
+                    </div>
+                </div>
+            </div>
+            <div class="status-indicators">
+                <div class="status-critical">CRITICAL ALERT</div>
+                <div style="font-size: 14px; color: #6b7280;">
+                    เวลาแจ้งเตือน: 14:28:15
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Location Information -->
+        <div class="location-info">
+            <h3 style="margin-bottom: 12px; color: #059669;">📍 ข้อมูลตำแหน่ง</h3>
+            <p><strong>ที่อยู่:</strong> 123/45 หมู่ 3 ตำบลหนองแสง อำเภอหนองแสง จังหวัดอุดรธานี 41000</p>
+            <div class="location-coordinates">
+                GPS: 17.4157° N, 102.7836° E | ระยะห่างจากโรงพยาบาล: 12.5 กม.
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <!-- Current Vital Signs -->
+            <div class="card">
+                <div class="card-header">
+                    ⚡ สัญญาณชีพปัจจุบัน
+                </div>
+                <div class="card-body">
+                    <div class="vitals-grid">
+                        <div class="vital-item critical">
+                            <div class="vital-value critical">180/120</div>
+                            <div class="vital-label">ความดันโลหิต</div>
+                            <div class="vital-time">mmHg - 14:28</div>
+                        </div>
+                        <div class="vital-item critical">
+                            <div class="vital-value critical">45</div>
+                            <div class="vital-label">อัตราหัวใจ</div>
+                            <div class="vital-time">bpm - 14:28</div>
+                        </div>
+                        <div class="vital-item warning">
+                            <div class="vital-value warning">91%</div>
+                            <div class="vital-label">SpO2</div>
+                            <div class="vital-time">14:27</div>
+                        </div>
+                        <div class="vital-item normal">
+                            <div class="vital-value normal">36.8°C</div>
+                            <div class="vital-label">อุณหภูมิ</div>
+                            <div class="vital-time">14:25</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Alerts -->
+            <div class="card">
+                <div class="card-header">
+                    🚨 การแจ้งเตือนฉุกเฉิน
+                </div>
+                <div class="card-body">
+                    <div class="alert-item alert-critical">
+                        <div class="alert-icon critical">!</div>
+                        <div>
+                            <div style="font-weight: 600; color: #dc2626;">ความดันโลหิตสูงร้ายแรง</div>
+                            <div style="font-size: 14px; color: #6b7280;">180/120 mmHg - เกินค่าปกติ</div>
+                        </div>
+                    </div>
+                    <div class="alert-item alert-critical">
+                        <div class="alert-icon critical">!</div>
+                        <div>
+                            <div style="font-weight: 600; color: #dc2626;">อัตราหัวใจต่ำผิดปกติ</div>
+                            <div style="font-size: 14px; color: #6b7280;">45 bpm - ต่ำกว่าค่าปกติ</div>
+                        </div>
+                    </div>
+                    <div class="alert-item alert-warning">
+                        <div class="alert-icon warning">⚠</div>
+                        <div>
+                            <div style="font-weight: 600; color: #f59e0b;">ระดับออกซิเจนต่ำ</div>
+                            <div style="font-size: 14px; color: #6b7280;">SpO2 91% - ควรเฝ้าระวัง</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical History -->
+            <div class="card">
+                <div class="card-header">
+                    🏥 ประวัติการรักษา
+                </div>
+                <div class="card-body">
+                    <h4 style="margin-bottom: 12px; color: #dc2626;">⚠️ ยาที่แพ้:</h4>
+                    <ul class="medical-list">
+                        <li class="allergy">Penicillin - ผื่นคัน, บวม</li>
+                        <li class="allergy">Aspirin - คลื่นไส้, อาเจียน</li>
+                    </ul>
+
+                    <h4 style="margin-bottom: 12px; color: #3b82f6; margin-top: 20px;">💊 ยาที่รับประทานอยู่:</h4>
+                    <ul class="medical-list">
+                        <li class="medication">Amlodipine 5mg - ลดความดัน (เช้า)</li>
+                        <li class="medication">Metformin 500mg - เบาหวาน (เช้า-เย็น)</li>
+                        <li class="medication">Atorvastatin 20mg - ไขมัน (เย็น)</li>
+                    </ul>
+
+                    <h4 style="margin-bottom: 12px; color: #f59e0b; margin-top: 20px;">🩺 โรคประจำตัว:</h4>
+                    <ul class="medical-list">
+                        <li class="condition">ความดันโลหิตสูง (ได้รับการรักษา 5 ปี)</li>
+                        <li class="condition">เบาหวานชนิดที่ 2 (ได้รับการรักษา 3 ปี)</li>
+                        <li class="condition">ไขมันในเลือดสูง</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Emergency Contacts -->
+            <div class="card">
+                <div class="card-header">
+                    📞 ผู้ติดต่อฉุกเฉิน
+                </div>
+                <div class="card-body">
+                    <div class="contact-item">
+                        <div class="contact-avatar">สห</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">นาง สมหญิง ใจดี</div>
+                            <div style="font-size: 14px; color: #6b7280;">ภรรยา</div>
+                            <div style="font-size: 14px; color: #3b82f6;">081-234-5678</div>
+                        </div>
+                        <button class="btn btn-emergency">โทร</button>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-avatar">สม</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">นาย สมศักดิ์ ใจดี</div>
+                            <div style="font-size: 14px; color: #6b7280;">ลูกชาย</div>
+                            <div style="font-size: 14px; color: #3b82f6;">089-876-5432</div>
+                        </div>
+                        <button class="btn btn-primary">โทร</button>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-avatar">หพ</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">หมอประจำตัว</div>
+                            <div style="font-size: 14px; color: #6b7280;">ดร.วิชัย เก่งการแพทย์</div>
+                            <div style="font-size: 14px; color: #3b82f6;">042-123-456 ต่อ 234</div>
+                        </div>
+                        <button class="btn btn-primary">โทร</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patient Information -->
+            <div class="card">
+                <div class="card-header">
+                    👤 ข้อมูลผู้ป่วย
+                </div>
+                <div class="card-body">
+                    <table class="info-table">
+                        <tr>
+                            <td>เพศ:</td>
+                            <td>ชาย</td>
+                        </tr>
+                        <tr>
+                            <td>น้ำหนัก:</td>
+                            <td>68 กก.</td>
+                        </tr>
+                        <tr>
+                            <td>ส่วนสูง:</td>
+                            <td>165 ซม.</td>
+                        </tr>
+                        <tr>
+                            <td>กรุ๊ปเลือด:</td>
+                            <td>O+</td>
+                        </tr>
+                        <tr>
+                            <td>วันที่เข้าระบบ:</td>
+                            <td>15 มกราคม 2568</td>
+                        </tr>
+                        <tr>
+                            <td>ผู้ดูแลหลัก:</td>
+                            <td>นาง สมหญิง ใจดี</td>
+                        </tr>
+                        <tr>
+                            <td>โรงพยาบาลประจำ:</td>
+                            <td>โรงพยาบาลหนองแสง</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    📈 กิจกรรมล่าสุด
+                </div>
+                <div class="card-body">
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-weight: 600; margin-bottom: 8px;">การเคลื่อนไหววันนี้:</div>
+                        <div style="background: #f3f4f6; padding: 12px; border-radius: 6px;">
+                            🚶‍♂️ เดินทั้งหมด: 1,245 ก้าว<br>
+                            ⏰ เวลาออกกำลังกาย: 25 นาที<br>
+                            💤 คุณภาพการนอน: 6.2/10 (นอน 22:30-05:45)
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 8px;">เหตุการณ์สำคัญ:</div>
+                        <div style="font-size: 14px; color: #6b7280;">
+                            • 14:28 - แจ้งเตือนความดันโลหิตสูง<br>
+                            • 14:25 - แจ้งเตือนอัตราหัวใจต่ำ<br>
+                            • 12:30 - รับประทานยาครั้งสุดท้าย<br>
+                            • 08:00 - ตรวจวัดสัญญาณชีพประจำวัน
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="margin-top: 20px; text-align: center;">
+            <button class="btn btn-emergency">🚑 ส่งทีมกู้ภัยทันที</button>
+            <button class="btn btn-emergency">📞 แจ้งโรงพยาบาล</button>
+            <button class="btn btn-primary">📋 อัพเดทสถานะ</button>
+            <button class="btn btn-primary">📊 ดูข้อมูลเพิ่มเติม</button>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh vital signs every 30 seconds
+        function updateVitals() {
+            const vitals = document.querySelectorAll('.vital-time');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('th-TH', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            vitals.forEach(vital => {
+                if (Math.random() > 0.7) { // Simulate some updates
+                    vital.textContent = vital.textContent.split(' - ')[0] + ' - ' + timeStr;
+                }
+            });
+        }
+
+        setInterval(updateVitals, 30000);
+
+        // Button handlers
+        document.querySelectorAll('.btn-emergency').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.textContent.includes('ส่งทีมกู้ภัย')) {
+                    this.textContent = '🚑 ทีมกำลังเดินทาง...';
+                    this.style.background = '#f59e0b';
+                } else if (this.textContent.includes('โทร')) {
+                    this.textContent = '📞 กำลังโทร...';
+                    this.style.background = '#10b981';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

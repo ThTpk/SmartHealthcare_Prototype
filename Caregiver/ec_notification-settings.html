@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Settings - Elderly Caregiver</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #667eea;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #f0f4ff;
+            transform: translateX(-2px);
+        }
+
+        .header-title h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .header-title p {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .main-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .settings-section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .setting-group {
+            margin-bottom: 2rem;
+        }
+
+        .setting-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .group-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .setting-item:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .setting-description {
+            font-size: 0.85rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #cbd5e0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .dropdown-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            font-size: 0.9rem;
+            min-width: 150px;
+            cursor: pointer;
+        }
+
+        .time-picker {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .time-input {
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            width: 80px;
+            text-align: center;
+        }
+
+        .elderly-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .elderly-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .elderly-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f0f4ff, #e6efff);
+        }
+
+        .elderly-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .elderly-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #4a5568;
+        }
+
+        .elderly-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .elderly-relation {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .notification-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .type-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .type-critical {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .type-warning {
+            background: #feebc8;
+            color: #744210;
+        }
+
+        .type-info {
+            background: #bee3f8;
+            color: #2a4365;
+        }
+
+        .channel-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .channel-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .channel-item.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f0f4ff, #e6efff);
+        }
+
+        .channel-icon {
+            font-size: 1.2rem;
+            color: #667eea;
+        }
+
+        .channel-label {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .frequency-slider {
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .slider-container {
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .test-notification {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .test-notification:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(237, 137, 54, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 0 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .elderly-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .channel-options {
+                flex-direction: column;
+            }
+            
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="back-nav">
+                <button class="back-btn" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="header-title">
+                    <h1>ตั้งค่าการแจ้งเตือน</h1>
+                    <p>กำหนดวิธีการรับการแจ้งเตือนสำหรับผู้สูงอายุที่ดูแล</p>
+                </div>
+            </div>
+            <button class="save-btn" onclick="saveSettings()">
+                <i class="fas fa-save"></i> บันทึกการตั้งค่า
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Elderly Selection -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="section-title">เลือกผู้สูงอายุที่ต้องการรับการแจ้งเตือน</div>
+            </div>
+            
+            <div class="elderly-list">
+                <div class="elderly-card selected" data-elderly="สมหญิง" onclick="toggleElderlySelection(this)">
+                    <div class="elderly-header">
+                        <div class="elderly-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="elderly-name">คุณยาย สมหญิง จันทร์ดี</div>
+                            <div class="elderly-relation">คุณยาย • อายุ 78 ปี</div>
+                        </div>
+                    </div>
+                    <div class="notification-types">
+                        <span class="type-badge type-critical">วิกฤต</span>
+                        <span class="type-badge type-warning">เตือน</span>
+                        <span class="type-badge type-info">ทั่วไป</span>
+                    </div>
+                </div>
+                
+                <div class="elderly-card selected" data-elderly="บุญมี" onclick="toggleElderlySelection(this)">
+                    <div class="elderly-header">
+                        <div class="elderly-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="elderly-name">คุณปู่ บุญมี ศรีสุข</div>
+                            <div class="elderly-relation">คุณปู่ • อายุ 82 ปี</div>
+                        </div>
+                    </div>
+                    <div class="notification-types">
+                        <span class="type-badge type-critical">วิกฤต</span>
+                        <span class="type-badge type-warning">เตือน</span>
+                    </div>
+                </div>
+                
+                <div class="elderly-card" data-elderly="วิไล" onclick="toggleElderlySelection(this)">
+                    <div class="elderly-header">
+                        <div class="elderly-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div class="elderly-name">คุณแม่ วิไล สุขใส</div>
+                            <div class="elderly-relation">คุณแม่ • อายุ 68 ปี</div>
+                        </div>
+                    </div>
+                    <div class="notification-types">
+                        <span class="type-badge type-warning">เตือน</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Types -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="section-title">ประเภทการแจ้งเตือนที่ต้องการรับ</div>
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">การแจ้งเตือนวิกฤต</div>
+                        <div class="setting-description">ภาวะฉุกเฉิน เช่น หัวใจเต้นผิดปกติ ออกซิเจนต่ำมาก</div>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">การแจ้งเตือนระดับเตือน</div>
+                        <div class="setting-description">ค่าสุขภาพเริ่มผิดปกติ เช่น ความดันสูง ไข้เล็กน้อย</div>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">การแจ้งเตือนทั่วไป</div>
+                        <div class="setting-description">ข้อมูลทั่วไป เช่น แบตเตอรี่ต่ำ อุปกรณ์ออฟไลน์</div>
+                    </div>
+                    <div class="toggle-switch" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Channels -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <div class="section-title">ช่องทางการแจ้งเตือน</div>
+            </div>
+            
+            <div class="setting-group">
+                <div class="group-title">
+                    <i class="fas fa-route"></i>
+                    เลือกช่องทางที่ต้องการรับการแจ้งเตือน
+                </div>
+                
+                <div class="channel-options">
+                    <div class="channel-item selected" data-channel="sms" onclick="toggleChannelSelection(this)">
+                        <div class="channel-icon">
+                            <i class="fas fa-sms"></i>
+                        </div>
+                        <div class="channel-label">SMS</div>
+                    </div>
+                    
+                    <div class="channel-item selected" data-channel="email" onclick="toggleChannelSelection(this)">
+                        <div class="channel-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="channel-label">Email</div>
+                    </div>
+                    
+                    <div class="channel-item selected" data-channel="push" onclick="toggleChannelSelection(this)">
+                        <div class="channel-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="channel-label">Push Notification</div>
+                    </div>
+                    
+                    <div class="channel-item" data-channel="line" onclick="toggleChannelSelection(this)">
+                        <div class="channel-icon">
+                            <i class="fab fa-line"></i>
+                        </div>
+                        <div class="channel-label">LINE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Settings -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="section-title">การตั้งค่าเวลา</div>
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">ระยะเวลาการแจ้งเตือน</div>
+                        <div class="setting-description">กำหนดช่วงเวลาที่ต้องการรับการแจ้งเตือน</div>
+                    </div>
+                    <div class="time-picker">
+                        <input type="time" class="time-input" value="06:00">
+                        <span>ถึง</span>
+                        <input type="time" class="time-input" value="22:00">
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">โหมดเงียบในเวลากลางคืน</div>
+                        <div class="setting-description">ระงับการแจ้งเตือนที่ไม่วิกฤตในช่วง 22:00-06:00</div>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">ความถี่การแจ้งเตือนซ้ำ</div>
+                        <div class="setting-description">หากไม่มีการตอบสนอง จะแจ้งเตือนซ้ำทุกกี่นาที</div>
+                    </div>
+                    <select class="dropdown-select">
+                        <option value="5">5 นาที</option>
+                        <option value="10" selected>10 นาที</option>
+                        <option value="15">15 นาที</option>
+                        <option value="30">30 นาที</option>
+                        <option value="60">1 ชั่วโมง</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Settings -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <div class="section-title">การตั้งค่าขั้นสูง</div>
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">ความไวของการตรวจจับ</div>
+                        <div class="setting-description">ระดับความไวในการตรวจจับความผิดปกติ</div>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="5" value="3" class="slider" id="sensitivitySlider">
+                        <div class="slider-labels">
+                            <span>ต่ำ</span>
+                            <span>กลาง</span>
+                            <span>สูง</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">การรวมกลุ่มการแจ้งเตือน</div>
+                        <div class="setting-description">รวมการแจ้งเตือนหลายรายการเป็นข้อความเดียว</div>
+                    </div>
+                    <div class="toggle-switch" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">การแจ้งเตือนเมื่อกลับสู่สภาวะปกติ</div>
+                        <div class="setting-description">แจ้งเตือนเมื่อค่าสุขภาพกลับเข้าสู่เกณฑ์ปกติ</div>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="test-notification" onclick="sendTestNotification()">
+                <i class="fas fa-paper-plane"></i> ทดสอบการแจ้งเตือน
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+
+        function toggleElderlySelection(element) {
+            element.classList.toggle('selected');
+            updateNotificationTypes(element);
+        }
+
+        function updateNotificationTypes(elderlyCard) {
+            const isSelected = elderlyCard.classList.contains('selected');
+            const typeBadges = elderlyCard.querySelectorAll('.type-badge');
+            
+            typeBadges.forEach(badge => {
+                badge.style.opacity = isSelected ? '1' : '0.5';
+            });
+        }
+
+        function toggleChannelSelection(element) {
+            element.classList.toggle('selected');
+        }
+
+        function saveSettings() {
+            const selectedElderly = Array.from(document.querySelectorAll('.elderly-card.selected'))
+                .map(card => card.dataset.elderly);
+            
+            const selectedChannels = Array.from(document.querySelectorAll('.channel-item.selected'))
+                .map(item => item.dataset.channel);
+            
+            const notificationTypes = {
+                critical: document.querySelector('.setting-item:nth-child(1) .toggle-switch').classList.contains('active'),
+                warning: document.querySelector('.setting-item:nth-child(2) .toggle-switch').classList.contains('active'),
+                info: document.querySelector('.setting-item:nth-child(3) .toggle-switch').classList.contains('active')
+            };
+
+            const timeSettings = {
+                startTime: document.querySelector('.time-picker input:first-child').value,
+                endTime: document.querySelector('.time-picker input:last-child').value,
+                nightMode: document.querySelector('.setting-item:nth-child(2) .toggle-switch').classList.contains('active'),
+                repeatFrequency: document.querySelector('.dropdown-select').value
+            };
+
+            const advancedSettings = {
+                sensitivity: document.getElementById('sensitivitySlider').value,
+                groupNotifications: document.querySelector('.settings-section:last-child .setting-item:nth-child(2) .toggle-switch').classList.contains('active'),
+                normalStatusAlert: document.querySelector('.settings-section:last-child .setting-item:nth-child(3) .toggle-switch').classList.contains('active')
+            };
+
+            const settings = {
+                selectedElderly,
+                selectedChannels,
+                notificationTypes,
+                timeSettings,
+                advancedSettings
+            };
+
+            // Simulate saving
+            showNotification('บันทึกการตั้งค่าเรียบร้อยแล้ว', 'success');
+            console.log('Saved settings:', settings);
+        }
+
+        function sendTestNotification() {
+            const selectedChannels = document.querySelectorAll('.channel-item.selected').length;
+            
+            if (selectedChannels === 0) {
+                showNotification('กรุณาเลือกช่องทางการแจ้งเตือนก่อน', 'warning');
+                return;
+            }
+
+            showNotification('กำลังส่งการแจ้งเตือนทดสอบ...', 'info');
+            
+            setTimeout(() => {
+                showNotification('ส่งการแจ้งเตือนทดสอบเรียบร้อยแล้ว', 'success');
+            }, 2000);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1001;
+                animation: slideIn 0.3s ease;
+                max-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            `;
+            
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, #48bb78, #38a169)';
+            } else if (type === 'warning') {
+                notification.style.background = 'linear-gradient(135deg, #ed8936, #dd6b20)';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, #4299e1, #3182ce)';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Update slider display
+        document.getElementById('sensitivitySlider').addEventListener('input', function() {
+            const value = this.value;
+            const labels = ['ต่ำมาก', 'ต่ำ', 'กลาง', 'สูง', 'สูงมาก'];
+            const sliderLabels = this.parentElement.querySelector('.slider-labels');
+            sliderLabels.innerHTML = `
+                <span>ต่ำ</span>
+                <span style="font-weight: 600; color: #667eea;">${labels[value - 1]}</span>
+                <span>สูง</span>
+            `;
+        });
+
+        // Initialize elderly card states
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.elderly-card').forEach(card => {
+                updateNotificationTypes(card);
+            });
+        });
+
+        // Form validation
+        function validateSettings() {
+            const selectedElderly = document.querySelectorAll('.elderly-card.selected').length;
+            const selectedChannels = document.querySelectorAll('.channel-item.selected').length;
+            const enabledTypes = document.querySelectorAll('.toggle-switch.active').length;
+            
+            if (selectedElderly === 0) {
+                showNotification('กรุณาเลือกผู้สูงอายุอย่างน้อย 1 คน', 'warning');
+                return false;
+            }
+            
+            if (selectedChannels === 0) {
+                showNotification('กรุณาเลือกช่องทางการแจ้งเตือนอย่างน้อย 1 ช่องทาง', 'warning');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Auto-save functionality
+        let autoSaveTimeout;
+        function autoSave() {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                if (validateSettings()) {
+                    // Auto-save in background
+                    console.log('Auto-saving settings...');
+                }
+            }, 2000);
+        }
+
+        // Add auto-save listeners
+        document.querySelectorAll('.toggle-switch, .elderly-card, .channel-item, .time-input, .dropdown-select, .slider').forEach(element => {
+            element.addEventListener('click', autoSave);
+            element.addEventListener('change', autoSave);
+            element.addEventListener('input', autoSave);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveSettings();
+            } else if (e.key === 'Escape') {
+                history.back();
+            }
+        });
+
+        // Simulate real-time preview
+        function showPreview() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 16px; padding: 2rem; max-width: 400px; width: 90%;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f56565, #e53e3e); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: #2d3748;">การแจ้งเตือนทดสอบ</div>
+                            <div style="font-size: 0.8rem; color: #718096;">คุณยาย สมหญิง - ค่าออกซิเจนต่ำ</div>
+                        </div>
+                    </div>
+                    <div style="color: #4a5568; margin-bottom: 1.5rem;">
+                        SpO2 ลดลงเหลือ 88% ต้องตรวจสอบด่วน
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%;">
+                        ปิด
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (modal.parentElement) {
+                    modal.remove();
+                }
+            }, 5000);
+        }
+
+        // Add preview button to test notification
+        document.querySelector('.test-notification').addEventListener('click', function() {
+            sendTestNotification();
+            setTimeout(showPreview, 1000);
+        });
+
+        // Contact information management
+        function updateContactInfo() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <div class="modal-title">อัพเดทข้อมูลการติดต่อ</div>
+                        <button class="close-btn" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div class="form-group">
+                            <label>เบอร์โทรศัพท์ (สำหรับ SMS):</label>
+                            <input type="tel" value="081-234-5678" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        </div>
+                        <div class="form-group">
+                            <label>อีเมล:</label>
+                            <input type="email" value="somjit@email.com" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        </div>
+                        <div class="form-group">
+                            <label>LINE User ID (ถ้ามี):</label>
+                            <input type="text" placeholder="@userid หรือ Line ID" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        </div>
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <button onclick="this.closest('.modal').remove()" style="flex: 1; padding: 0.75rem; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">ยกเลิก</button>
+                            <button onclick="this.closest('.modal').remove(); showNotification('อัพเดทข้อมูลเรียบร้อยแล้ว', 'success');" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; cursor: pointer;">บันทึก</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Add contact info button
+        const contactBtn = document.createElement('button');
+        contactBtn.textContent = 'อัพเดทข้อมูลการติดต่อ';
+        contactBtn.style.cssText = `
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 500;
+        `;
+        contactBtn.onclick = updateContactInfo;
+        document.querySelector('.settings-section:nth-child(3)').appendChild(contactBtn);
+
+        // CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            .modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+            
+            .modal-content {
+                background: white;
+                border-radius: 16px;
+                padding: 2rem;
+                max-width: 500px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+            
+            .modal-title {
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: #2d3748;
+            }
+            
+            .close-btn {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: #718096;
+                cursor: pointer;
+            }
+            
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .form-group label {
+                font-weight: 500;
+                color: #4a5568;
+            }
+        `;
+        document.head.appendChild(style);
